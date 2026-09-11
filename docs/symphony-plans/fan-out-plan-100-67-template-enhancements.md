@@ -7,7 +7,7 @@ Authority: [accepted R1–R9 / AC1–AC12](template-enhancements-design.md), mer
 This is a proposal for human review. Only 100-68 may execute accepted fan-out;
 100-67 creates no implementation tickets, release, deployment or cleanup.
 
-**17 outcomes: 11 new tickets and six reused tickets; eight dependency rounds.**
+**17 outcomes: 11 new tickets and six reused tickets; ten dependency rounds.**
 Three checkpoints publish reviewed increments, update the root through Copier,
 review the generated diff and exercise delivered behavior. Finalization follows.
 Line estimates below count additions/deletions across code, YAML, prose and tests;
@@ -18,7 +18,7 @@ remaining bounded remit, not a request to rewrite delivered work.
 | ---- | --------------------------------------------------------- | -------------- | ---------- |
 | K    | Existing 100-63: remove bundled skill                     | 80 / 320       | easy       |
 | O    | Existing 100-62: guided credential readiness              | 650 / 70       | hard       |
-| D    | Existing 100-61: deterministic PR diagram and guidance    | 600 / 50       | hard       |
+| D    | Existing 100-61: deterministic PR diagram and guidance    | 630 / 50       | hard       |
 | G    | TE-G: consistent factory transports and concise guidance  | 280 / 380      | hard       |
 | A    | TE-A: publish/adopt guidance and prove human setup        | 180 / 180      | hard       |
 | V    | TE-V: validate structured reviewer results                | 650 / 30       | hard       |
@@ -29,25 +29,26 @@ remaining bounded remit, not a request to rewrite delivered work.
 | B    | TE-B: publish/adopt review and prove both providers       | 200 / 200      | hard       |
 | Q    | TE-Q: acquire and classify cleanup candidates             | 750 / 0        | hard       |
 | X    | TE-X: approved, resumable cleanup execution               | 850 / 0        | hard       |
-| L    | TE-L: generated weekly/manual cleanup caller              | 220 / 20       | easy       |
-| I    | Existing 100-65: migrate client ingress without collision | 350 / 250      | hard       |
+| L    | TE-L: generated weekly/manual cleanup caller              | 250 / 20       | easy       |
+| I    | Existing 100-65: migrate client ingress without collision | 380 / 250      | hard       |
 | W    | TE-W: publish/adopt cleanup and ingress; live rehearsal   | 220 / 180      | hard       |
 | F    | TE-F: resolve project residue and finalize delivery       | 180 / 100      | hard       |
 
 ## Sources, current ownership and assumptions
 
-Read September 11, 2026, 23:12 UTC: current project brief including all five
-original note groups and factory correction; team 100's complete 65-issue listing;
+Source audit September 11, 2026, 23:12 UTC: current project brief including all
+five original note groups and factory correction; team 100's complete 65-issue listing;
 100-44/57–69 descriptions, relevant comments, relations and PR associations.
-The four Backlog candidates remain 100-44/60/61/65. No required planning source
+Rework refresh at 23:25 UTC checked current issue feedback, team states, main and
+template #8/#9; their heads and the four Backlog candidates 100-44/60/61/65 are unchanged. No required planning source
 was unavailable. The laptop notes are reproduced in project content; no laptop
 or Google Docs access is needed.
 
 | Source refreshed                                                                                         | Observed result and treatment                                                                                                                                                                                                                                                                 |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Template `main@ebf20fd`                                                                                  | README, SYMPHONY, SELF-ADOPTION, provenance, answers, config, factory/GraphQL resources, review callers and tests read. Design #7 and migration #10 are merged. No generated PR template; factory guidance still contradicts GraphQL fallback.                                                |
-| Template [#8](https://github.com/1000lines/symphony-client-template/pull/8), 100-62                      | Draft `659fc98`; fresh human request covers org/repo settings, with screenshots supplied to its owner. Existing owner handles that evidence and provisioning; this plan does not repeat setup implementation.                                                                                 |
-| Template [#9](https://github.com/1000lines/symphony-client-template/pull/9), 100-63                      | Open, ready, `966195a`; preserve removal and customized-file exclusions. K hands shared files to O, then G.                                                                                                                                                                                   |
+| Template [#8](https://github.com/1000lines/symphony-client-template/pull/8), 100-62                      | Draft `659fc98`, issue Inactive; fresh human request covers org/repo settings, with screenshots supplied to its owner. Existing owner handles that evidence and provisioning; this plan does not repeat setup implementation.                                                                 |
+| Template [#9](https://github.com/1000lines/symphony-client-template/pull/9), 100-63                      | Open, ready, `966195a`; preserve removal and customized-file exclusions. K hands shared files to O, then G and D.                                                                                                                                                                             |
 | Template [#10](https://github.com/1000lines/symphony-client-template/pull/10), 100-57                    | Merged `0e04431`; issue Done. CI/wakeup alpha migration is delivered source. Remaining publication/root operational proof stays with 100-57; do not reopen or duplicate it.                                                                                                                   |
 | Template [#6](https://github.com/1000lines/symphony-client-template/pull/6), 100-64                      | Merged `d2dd1dd`; issue Done. Current root records template `e8d6f36` and review workflow/helpers `ac15fc1`.                                                                                                                                                                                  |
 | Workflows [#2](https://github.com/1000lines/symphony-client-workflows/pull/2), 100-64                    | Still draft `ac15fc1`; workflow main/alpha `77cfb2d`. P must consume its accepted interfaces on main; no predecessor commits copied into P. Existing owner/Jeremy supplies acceptance/publication, not a duplicate provider ticket.                                                           |
@@ -82,14 +83,25 @@ would add handoffs without independent outcomes. This plan keeps small contracts
 and cleanup eligibility separate from their side effects, reuses the four backlog
 owners, and batches publication/adoption into three useful increments.
 
-The longest paths are K–O–G–A–B–I–W–F and V–P–C–T–B–I–W–F: **eight nodes**,
-not an elapsed-time forecast. Review, guidance and cleanup lanes can progress in
-parallel with disjoint files and task-specific branches. G also removes the latest-template/root lockstep test assumption so source-only increments can pass before their published adoption checkpoint. G→N/T carries that specific prerequisite. K/O are existing writers;
-their edge orders remaining reconciliation/acceptance of shared SYMPHONY/tests,
-not retroactive changes to their open PRs. C/T and B/I/W serialize repeated
-workflow/root edits. A/B/W serialize writes to publication refs and root proof
-resources. Every graph edge is hard and has a concrete artifact or ownership
-handoff below; no transitive edge is duplicated. Fan-in uses direct relations.
+The longest path is K–O–G–D–A–B–L–I–W–F: **ten nodes**, not an elapsed-time
+forecast. Review and cleanup implementation can progress alongside guidance.
+Compared with the initial eight-round proposal, G must establish recorded-root
+validation before D adds generated files. Keeping that prerequisite in G avoids
+expanding the underway K/O PRs; D then owns its invocation link in SYMPHONY.
+L follows B and precedes I so inventory writers remain ordered and cleanup enters
+the third adoption milestone. These two extra rounds preserve the three coherent
+milestones without weakening tests or combining unrelated changes into one PR.
+
+Template `tests/test_render.py` writers are ordered **K→O→G→D→B→L→I** (D→B via A).
+G verifies the recorded root independently; D/L/I each update the strict current
+render inventory and affected assertions in the same PR as their generated files.
+A/B/W adopt successively; only their assigned generated root paths may change.
+K/O order remaining reconciliation/acceptance of shared SYMPHONY/tests, not
+retroactive changes to their open PRs. G→N/T supplies recorded-root validation for
+source-only caller/guidance edits; C→T hands off shared review files. B→L also
+keeps cleanup additions out of the earlier published review baseline. A/B/W
+serialize publication refs and root proof resources. Every edge is a hard artifact
+or ownership handoff; no transitive edge is duplicated. Fan-in uses direct relations.
 
 ## DAG
 
@@ -98,25 +110,25 @@ handoff below; no transitive edge is duplicated. Fan-in uses direct relations.
 flowchart LR
   K["Round 1: 100-63 — Remove bundled skill"]
   O["Round 2: 100-62 — Complete guided credential readiness"]
-  D["Round 1: 100-61 — Generate deterministic PR diagrams and guidance"]
-  G["Round 3: TE-G — Align factory transports and concise guidance"]
-  A["Round 4: TE-A — Publish and self-adopt guidance; prove setup"]
+  D["Round 4: 100-61 — Generate deterministic PR diagrams and guidance"]
+  G["Round 3: TE-G — Align factory transports and recorded-root validation"]
+  A["Round 5: TE-A — Publish and self-adopt guidance; prove setup"]
   V["Round 1: TE-V — Validate structured reviewer results"]
   P["Round 2: TE-P — Isolate assessment and wire trusted publication"]
   C["Round 3: TE-C — Complete concise review communication and reactions"]
   N["Round 4: 100-60 — Reactivate from structured non-approval reviews"]
   T["Round 4: 100-44 — Expose optional review settings and measured timings"]
-  B["Round 5: TE-B — Publish and self-adopt review; prove both providers"]
+  B["Round 6: TE-B — Publish and self-adopt review; prove both providers"]
   Q["Round 1: TE-Q — Acquire and classify project cleanup candidates"]
   X["Round 2: TE-X — Execute approved cleanup with resumable readbacks"]
-  L["Round 3: TE-L — Generate weekly and manual project cleanup caller"]
-  I["Round 6: 100-65 — Migrate client ingress without provider collision (held)"]
-  W["Round 7: TE-W — Publish and self-adopt cleanup and ingress; rehearse"]
-  F["Round 8: TE-F — Resolve project residue and finalize delivery"]
+  L["Round 7: TE-L — Generate weekly and manual project cleanup caller"]
+  I["Round 8: 100-65 — Migrate client ingress without provider collision (held)"]
+  W["Round 9: TE-W — Publish and self-adopt cleanup and ingress; rehearse"]
+  F["Round 10: TE-F — Resolve project residue and finalize delivery"]
   K --> O
   O --> G
-  D --> G
-  G --> A
+  G --> D
+  D --> A
   V --> P
   P --> C
   P --> N
@@ -128,9 +140,9 @@ flowchart LR
   N --> B
   Q --> X
   X --> L
-  B --> I
+  B --> L
+  L --> I
   I --> W
-  L --> W
   W --> F
 ```
 
@@ -191,7 +203,7 @@ nodes:
     title: "Complete guided credential readiness"
     type: existing_task
     difficulty: hard
-    initial_state: Active
+    initial_state: Inactive
     labels: []
     branch:
       {
@@ -230,7 +242,7 @@ nodes:
       }
   - id: G
     payload_key: TE-G
-    title: "Align factory transports and concise guidance"
+    title: "Align factory transports and recorded-root validation"
     type: task
     difficulty: hard
     initial_state: Active
@@ -514,8 +526,8 @@ nodes:
 edges:
   - { from: K, to: O }
   - { from: O, to: G }
-  - { from: D, to: G }
-  - { from: G, to: A }
+  - { from: G, to: D }
+  - { from: D, to: A }
   - { from: V, to: P }
   - { from: P, to: C }
   - { from: P, to: N }
@@ -527,26 +539,26 @@ edges:
   - { from: N, to: B }
   - { from: Q, to: X }
   - { from: X, to: L }
-  - { from: B, to: I }
+  - { from: B, to: L }
+  - { from: L, to: I }
   - { from: I, to: W }
-  - { from: L, to: W }
   - { from: W, to: F }
 ```
 
 ## Decisions
 
-| Decision                                                  | Rationale and enforcing owner                                                                                                                                                                                                                                      |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| D1: structured result, read-only reviewer, trusted writes | R1: V validates; P invokes existing providers without write credentials and persists through the current ledger before publication. No new controller schema or second finding history.                                                                            |
-| D2: explicit new-verdict handoff                          | R2: N consumes correlated records from P. Missing/stale records diagnose and request a fresh review, never parse prose into authority. C owns readiness and completion reactions.                                                                                  |
-| D3: key-driven providers and observed settings            | R3/100-64 supersede earlier selected-answer behavior. T retains eight answers, optional settings, fast default, no auth fallback; B proves both providers at one unchanged head.                                                                                   |
-| D4: deterministic client PR presentation                  | D reuses shared parser, separates fetching/rendering, uses state rather than checkpoint prose, keeps current highlight independent, omits graphs below three nodes or two edges. G makes invocation discoverable; A proves use.                                    |
-| D5: reviewed cleanup eligibility before execution         | Q/X implement accepted R5 exactly; L is thin. Human approval of a specific candidate set and protected environment precede mutations; W proves controlled operation.                                                                                               |
-| D6: small guidance with transport parity                  | G follows R8, consumes K/O, preserves preflight/staging/readback and hosted auth. ≤120 lines per focused skill/SYMPHONY, ≤160 per focused reference; D's PR template ≤60. Revise needlessly verbose prose toward 40% less without losing requirements.             |
-| D7: publication and installed behavior are separate       | A/B/W own successive alpha/root handoffs, recording actual refs and live results; G separates recorded-root verification from candidate-template/update tests. 100-57/58/59/64 keep outstanding obligations. No automatic release updater or self-referential SHA. |
-| D8: direct blockers and clean main-based PRs              | Manifest/relation table and 100-68 enforce exact topology, staged creation/readback, retained holds and current-head review. No no-op join, special ancestry or implied blocker.                                                                                   |
-| D9: one authoritative client ingress                      | I uses the accepted client filename/name and exact trust checks, preserves provider-owned files; W proves one review/handoff per event in adopted clients.                                                                                                         |
-| D10: existing owners and bounded finalization             | F audits only this project, preserves 100-58/59 and 100-69, and uses existing replan rules for discoveries. No wholesale revival of earlier canceled work.                                                                                                         |
+| Decision                                                  | Rationale and enforcing owner                                                                                                                                                                                                                                                                         |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1: structured result, read-only reviewer, trusted writes | R1: V validates; P invokes existing providers without write credentials and persists through the current ledger before publication. No new controller schema or second finding history.                                                                                                               |
+| D2: explicit new-verdict handoff                          | R2: N consumes correlated records from P. Missing/stale records diagnose and request a fresh review, never parse prose into authority. C owns readiness and completion reactions.                                                                                                                     |
+| D3: key-driven providers and observed settings            | R3/100-64 supersede earlier selected-answer behavior. T retains eight answers, optional settings, fast default, no auth fallback; B proves both providers at one unchanged head.                                                                                                                      |
+| D4: deterministic client PR presentation                  | D reuses shared parser, separates fetching/rendering, uses state rather than checkpoint prose, keeps current highlight independent, omits graphs below three nodes or two edges. D links invocation after G hands off SYMPHONY; A proves use.                                                         |
+| D5: reviewed cleanup eligibility before execution         | Q/X implement accepted R5 exactly; L is thin. Human approval of a specific candidate set and protected environment precede mutations; W proves controlled operation.                                                                                                                                  |
+| D6: small guidance with transport parity                  | G follows R8, consumes K/O, preserves preflight/staging/readback and hosted auth. ≤120 lines per focused skill/SYMPHONY, ≤160 per focused reference; D's PR template ≤60. Revise needlessly verbose prose toward 40% less without losing requirements.                                                |
+| D7: publication and installed behavior are separate       | A/B/W own successive alpha/root handoffs, recording actual refs and live results; G establishes separate recorded-root/current-render tests before D; D/L/I maintain strict inventories in order. 100-57/58/59/64 keep outstanding obligations. No automatic release updater or self-referential SHA. |
+| D8: direct blockers and clean main-based PRs              | Manifest/relation table and 100-68 enforce exact topology, staged creation/readback, retained holds and current-head review. No no-op join, special ancestry or implied blocker.                                                                                                                      |
+| D9: one authoritative client ingress                      | I uses the accepted client filename/name and exact trust checks, preserves provider-owned files; W proves one review/handoff per event in adopted clients.                                                                                                                                            |
+| D10: existing owners and bounded finalization             | F audits only this project, preserves 100-58/59 and 100-69, and uses existing replan rules for discoveries. No wholesale revival of earlier canceled work.                                                                                                                                            |
 
 ## Ticket execution contract
 
@@ -627,25 +639,25 @@ seams; any introduced seam needs existing `integration_pattern` and
 ### D — 100-61: generate PR diagrams and concise guidance
 
 - **scope:** R4/AC6: deterministic rendering and actual creation/refresh invocation, reproducing #49's Done-with-pending-prose regression.
-- **owned_files:** T `template/scripts/symphony/render-pr-progress.mjs`, `template/scripts/symphony/fetch-pr-progress.mjs`, `template/.github/pull_request_template.md`, `template/docs/engineering/symphony/pull-requests.md`, `tests/test-pr-progress.mjs`, `tests/test_pr_guidance.py` (new). Reuse the installed shared parser through the documented tooling location; do not copy/fork its schema or emit a client Node package just for parsing.
-- **owned_external_resources:** own Misc task PR; state/PR acquisition is read-only. **dependencies:** no DAG predecessor; preserve the explicit Copier-readiness hold described above.
-- **acceptance_checks:** pure same-input/same-output; exact topology/IDs; escaped labels/URLs; Done green, Active/Evaluating blue, waiting amber, unknown/terminal non-Done neutral; independent purple Current PR outline; real links/no-PR text; omit undersized graphs. Generated guidance invokes fetching/rendering on creation and refresh; G links it and A verifies the installed path/browser result.
+- **owned_files:** T `template/scripts/symphony/render-pr-progress.mjs`, `template/scripts/symphony/fetch-pr-progress.mjs`, `template/.github/pull_request_template.md`, `template/docs/engineering/symphony/pull-requests.md`, `tests/test-pr-progress.mjs`, `tests/test_pr_guidance.py` (new), `tests/test_render.py`, `template/SYMPHONY.md.jinja` (creation/refresh link only, after G). Reuse the installed shared parser through the documented tooling location; do not copy/fork its schema or emit a client Node package just for parsing.
+- **owned_external_resources:** own Misc task PR; state/PR acquisition is read-only. **dependencies:** G's recorded-root validation and SYMPHONY handoff on main; preserve the explicit Copier-readiness hold described above.
+- **acceptance_checks:** pure same-input/same-output; exact topology/IDs; escaped labels/URLs; Done green, Active/Evaluating blue, waiting amber, unknown/terminal non-Done neutral; independent purple Current PR outline; real links/no-PR text; omit undersized graphs. Generated guidance and its SYMPHONY link invoke fetching/rendering on creation and refresh; A verifies the installed path/browser result. Add every new generated path to `GENERATED` and retain exact file-set equality; current renders contain the new assets while recorded-root validation still passes before A adopts them.
 - **validation:** T, `node --test tests/test-pr-progress.mjs`; fixtures for #49, failed lookup, hostile label/URL and all states. The Python integration test invokes the Node suite so mandatory template CI runs it. **delivery_notes / exclusions:** ≤60-line PR template, ≤160-line reference; no new planning format, legend or hand-edited state classes. A owns root propagation and live proof; retain this issue's AC6 obligation until linked proof exists.
 
 ### G — TE-G: align factory transports and reduce guidance bloat
 
-- **scope:** R6/R7/R8/AC8/AC10: remove contradictory auth instructions, retain useful guards and link D's creation/refresh path. Make render validation support the accepted periodic-adoption model.
+- **scope:** R6/R7/R8/AC8/AC10: remove contradictory auth instructions, retain useful guards and establish recorded-root validation before source-only increments. D later adds its creation/refresh link after receiving SYMPHONY ownership.
 - **owned_files:** T `template/SYMPHONY.md.jinja`, `template/.agents/skills/symphony-project-factory/SKILL.md`, `template/.agents/skills/linear-graphql/SKILL.md`, its `agents/openai.yaml`, `tests/test_render.py`, `tests/test_factory_guidance.py`, `tests/test-factory-transport.mjs`. Script implementation is read-only unless a demonstrated parity defect requires a reviewed ownership amendment.
-- **owned_external_resources:** own PR; fixture transport only, no live factory writes. **dependencies:** O hands reconciled guidance after K; D supplies executable PR guidance to link.
-- **required_actions / acceptance_checks:** injected tool preferred; absent-tool human sessions use shipped authenticated script; same viewer/workspace/team preflight, sources/colors/labels/states/assignee checks, concrete preview, Backlog staging, two blocker-direction readbacks and activation unless held. Auth/partial failure leaves dependent work stopped and staged IDs reusable. No extra confirmation for already-authorized writes. Hosted workers keep injected auth and no factory installation. Cover wrong workspace, missing auth/source/label, preview, partial failure and retry in fixtures. The existing root-equals-latest-template assertion otherwise prevents periodic adoption: verify the root against its recorded committed template source instead, while independently testing current-source fresh renders and update diffs/preservation. Never skip a mismatch or weaken CI/config/adopter checks; missing recorded source fails closed. Node tests run through the Python fixture so mandatory template CI covers them.
-- **validation:** T, Docs, `node --test tests/test-factory-transport.mjs`. **delivery_notes / exclusions:** focused skill/SYMPHONY ≤120 lines without hiding requirements in extra files; unchanged shared templates/schema/criteria, eight answers, personal skills and worker auth. A performs real fallback setup and root propagation.
+- **owned_external_resources:** own PR; fixture transport only, no live factory writes. **dependencies:** O hands reconciled guidance/tests after K; no D prerequisite.
+- **required_actions / acceptance_checks:** injected tool preferred; absent-tool human sessions use shipped authenticated script; same viewer/workspace/team preflight, sources/colors/labels/states/assignee checks, concrete preview, Backlog staging, two blocker-direction readbacks and activation unless held. Auth/partial failure leaves dependent work stopped and staged IDs reusable. No extra confirmation for already-authorized writes. Hosted workers keep injected auth and no factory installation. Cover wrong workspace, missing auth/source/label, preview, partial failure and retry in fixtures. The existing root-equals-latest-template assertion otherwise prevents periodic adoption: verify generated root bytes and membership against its recorded committed template source, with only existing documented package-CI/adoption exceptions. Keep that inventory separate from the exact current-source `GENERATED` set. Independently test current-source fresh renders and old-source→current-source Copier updates, including added/removed paths and adopter preservation. A source-only addition must pass before root adoption; unexpected/missing current output, altered recorded-root bytes and unavailable recorded source must fail. Never derive the expected set from the output under test, skip mismatches or weaken CI/config/adopter checks. Node tests run through the Python fixture so mandatory template CI covers them.
+- **validation:** T, Docs, `node --test tests/test-factory-transport.mjs`. **delivery_notes / exclusions:** focused skill/SYMPHONY ≤120 lines without hiding requirements in extra files; unchanged shared templates/schema/criteria, eight answers, personal skills and worker auth. Hand `tests/test_render.py` and SYMPHONY to D; A performs real fallback setup and root propagation.
 
 ### A — TE-A: publish/adopt guidance and exercise setup
 
-- **scope:** first R7/AC9 checkpoint, real R4/R8 delivery after G and inherited D/O/K acceptance.
+- **scope:** first R7/AC9 checkpoint, real R4/R8 delivery after D and inherited G/O/K acceptance.
 - **owned_files:** T generated root counterparts of D/G/K/O assets; `.copier-answers.yml`, `SELF-ADOPTION.md`, `PROVENANCE.md`, `README.md`; preserve `.symphony.cfg.json` and `.github/workflows/ci.yml` settings, editing only Copier conflict reconciliation if necessary.
 - **owned_external_resources:** template `refs/heads/alpha` publication handed off by 100-57/Jeremy; task-linked root proof PR and an authorized disposable Linear project named `template-enhancements-<issue>-factory-proof`, its three seeds/relations. Jeremy supplies explicit test-target authorization/credentials; no arbitrary existing-project mutation. B receives alpha/root proof ownership afterward.
-- **dependencies:** G merged, with D/O/K inherited; confirm 100-57 release handoff, no competing alpha writer, no same-name alpha tag. These external checks gate publication only.
+- **dependencies:** D merged, with G/O/K inherited; confirm 100-57 release handoff, no competing alpha writer, no same-name alpha tag. These external checks gate publication only.
 - **required_actions / acceptance_checks:** after human source acceptance advance alpha through normal authorized publication, resolve both alpha refs, `copier update --vcs-ref=alpha` in an isolated root using Copier 9.18.2 and saved answers. Review generated diff, preserve customized/removed/adopter files and root CI/config; record truthful URL/commit and workflow/helper refs. Run real absent-tool factory preview/setup/readback in a human-operated generated client, then repeat safely. Exercise generated PR creation/refresh and verify actual GitHub diagram rendering. Follow up discrepancies through existing replan rules.
 - **validation:** T + Docs, Git-URL render and update/repeat fixtures; mandatory exact-head CI, followed by trusted installed behavior with PR/project/readback links. **exclusions:** workflow alpha advancement, credential redesign, cleanup feature execution; source fixtures do not prove live setup.
 
@@ -693,8 +705,8 @@ seams; any introduced seam needs existing `integration_pattern` and
 
 - **scope:** R7 checkpoint for AC2–AC5/AC9/AC12, consuming P/C/N/T with A's already adopted guidance.
 - **owned_files:** T generated/root review/manual/event/handoff/check-cleanup callers, corresponding `template/.github/workflows/` caller ref mappings only, `.github/symphony/REVIEW.md`, `.copier-answers.yml`, `tests/test_render.py`, `SELF-ADOPTION.md`, `PROVENANCE.md`, `README.md`; W `PROVENANCE.md` publication record only. Expand caller inventory from accepted 100-64 before edits.
-- **owned_external_resources:** both repositories' alpha branches after A and existing 100-64/Jeremy handoff; one dedicated root proof PR/linked issue and its review/comment/check/reaction records. Jeremy alone supplies effective provider settings/keys for test runs; record no values. I then W receive mutation ownership.
-- **dependencies:** A root baseline; T final review/communication interface; N compatible structured routing, all merged. Do not release a publisher without its consumer.
+- **owned_external_resources:** both repositories' alpha branches after A and existing 100-64/Jeremy handoff; one dedicated root proof PR/linked issue and its review/comment/check/reaction records. Jeremy alone supplies effective provider settings/keys for test runs; record no values. L receives the render-test handoff; I then W receive the client migration/proof handoff.
+- **dependencies:** A root baseline and D's render-test handoff; T final review/communication interface; N compatible structured routing, all merged. Do not release a publisher without its consumer.
 - **acceptance_checks:** publish human-accepted refs, repeat isolated Copier update and diff review, migrate remaining SHA-pinned callers/helpers to reviewed published alpha together. Land trusted root callers before proof. On the **same PR and head**, run both providers with unchanged implementation, using the accepted key-availability selection contract. Record actual workflow/helper/template refs, provider output/verdict, App advisory queued/running/result, draft→ready, reaction replacement and non-approval→Active readback. Exercise stale/new-feedback/failure/denial/duplicate guards, matching check-cleanup listener and cancellation/recovery; reuse valid 100-57/58/64 artifacts only at applicable refs.
 - **validation:** T + W for touched files; current-head CI in each PR, published render/update; actual workflow/run/attempt/review/check/Linear links. **exclusions:** credentials as code, source-only proof, closing prior operational owners. Missing grants produce precise Jeremy action/readback, not claimed success.
 
@@ -719,25 +731,25 @@ seams; any introduced seam needs existing `integration_pattern` and
 ### L — TE-L: ship the thin cleanup caller
 
 - **scope:** R5 generated weekly/manual entry, following X's released interface.
-- **owned_files:** T `template/.github/workflows/symphony-project-folder-cleanup.yml.jinja`, `template/docs/engineering/symphony/project-folder-cleanup.md`, `tests/test_cleanup_render.py` (new).
-- **owned_external_resources:** own PR only; no environment or schedule activation claims. **dependencies:** X entry point on main.
-- **acceptance_checks:** Monday 03:00 UTC schedule and workflow_dispatch; sole positive integer input `stale_days`, default 60. Thin trusted shared caller; minimal explicit App/Linear secrets and no provider secrets. Document report/approval/readback and exact disposable-directory contract, no permission bypass. W publishes refs and propagates the caller.
+- **owned_files:** T `template/.github/workflows/symphony-project-folder-cleanup.yml.jinja`, `template/docs/engineering/symphony/project-folder-cleanup.md`, `tests/test_cleanup_render.py` (new), `tests/test_render.py` (exact generated inventory and cleanup assertions).
+- **owned_external_resources:** own PR only; no environment or schedule activation claims. **dependencies:** X entry point on main; B's published review baseline and render-test handoff. This keeps cleanup additions out of A/B adoption.
+- **acceptance_checks:** Monday 03:00 UTC schedule and workflow_dispatch; sole positive integer input `stale_days`, default 60. Thin trusted shared caller; minimal explicit App/Linear secrets and no provider secrets. Document report/approval/readback and exact disposable-directory contract, no permission bypass. Add both caller/reference paths to `GENERATED`; keep exact current-render equality and recorded-root validation passing without those root files. Hand render tests to I; W publishes refs and propagates the caller/reference.
 - **validation:** T + Docs; inspect rendered triggers/input/default/protection and explicit secret forwarding. **exclusions:** shared implementation duplication, direct root edits or actual cleanup.
 
 ### I — 100-65: separate client and provider ingress
 
 - **scope:** R9/AC11, retained Misc/Backlog until Jeremy explicitly activates; no inferred project move.
-- **owned_files:** T `template/.github/workflows/cadence-review-ingress.yml.jinja`→`cadence-client-review-ingress.yml.jinja`, event/handoff template subscriptions, `tests/test_ingress_migration.py`; W `.github/workflows/cadence-ai-review-events.yml`, `.github/workflows/cadence-linear-rework.yml`, `.github/workflows/cadence-review-ingress.yml`, `.github/workflows/scripts/cadence-forwarded-event.mjs`, its test. W's new generated-client files are owned only as the reviewed Copier output inventory, preserving provider files and package CI/config.
-- **owned_external_resources:** own two-repository PRs and isolated workflow-repo adoption workspace; no alpha write ownership. **dependencies:** B published review baseline/root resource handoff; explicit hold release additionally required.
-- **acceptance_checks:** `cadence-client-review-ingress.yml` / “Cadence Client Review Ingress” authoritative for workflow repo's own PRs; preserve provider source while retiring overlapping admission. Rename subscriptions/exact trusted path checks together; reject unrelated impersonation. Copier retires only old generated path, preserves independently maintained content; repeat update proves no collision. W supplies real adopted delivery evidence for both clients.
+- **owned_files:** T `template/.github/workflows/cadence-review-ingress.yml.jinja`→`cadence-client-review-ingress.yml.jinja`, event/handoff template subscriptions, `tests/test_ingress_migration.py`, `tests/test_render.py` (INGRESS/generated inventory and existing name/subscription assertions); W `.github/workflows/cadence-ai-review-events.yml`, `.github/workflows/cadence-linear-rework.yml`, `.github/workflows/cadence-review-ingress.yml`, `.github/workflows/scripts/cadence-forwarded-event.mjs`, its test. W's new generated-client files are owned only as the reviewed Copier output inventory, preserving provider files and package CI/config.
+- **owned_external_resources:** own two-repository PRs and isolated workflow-repo adoption workspace; no alpha write ownership. **dependencies:** L's accepted inventory/test handoff, inheriting B's published review baseline; explicit hold release additionally required.
+- **acceptance_checks:** `cadence-client-review-ingress.yml` / “Cadence Client Review Ingress” authoritative for workflow repo's own PRs; preserve provider source while retiring overlapping admission. Rename subscriptions/exact trusted path checks together; reject unrelated impersonation. Copier retires only old generated path, preserves independently maintained content; repeat update proves no collision. Update `INGRESS`/`GENERATED` and existing name/subscription assertions together: fresh output contains only the renamed client ingress, while recorded-root validation still checks the old adopted ingress until W. W supplies real adopted delivery evidence for both clients.
 - **validation:** T + W, forwarded-event and repeat-update tests. **exclusions:** arbitrary accepted workflow names, direct example patch, bypassing the hold. Keep original AC11 obligation linked to W proof.
 
 ### W — TE-W: publish/adopt cleanup and ingress; rehearse
 
 - **scope:** third R7 checkpoint for AC7/AC9/AC11/AC12, actual delivered cleanup and one ingress delivery.
-- **owned_files:** T generated root cleanup/ingress/event/handoff counterparts, `.copier-answers.yml`, `SELF-ADOPTION.md`, `PROVENANCE.md`, `README.md`; W generated client counterparts from I's accepted inventory and `PROVENANCE.md`. Preserve both package CI/configs and provider-owned source. No new cleanup implementation.
+- **owned_files:** T generated root cleanup/ingress/event/handoff counterparts, `docs/engineering/symphony/project-folder-cleanup.md`, `.copier-answers.yml`, `SELF-ADOPTION.md`, `PROVENANCE.md`, `README.md`; W generated client counterparts from I's accepted inventory and `PROVENANCE.md`. Preserve both package CI/configs and provider-owned source. No new cleanup implementation.
 - **owned_external_resources:** both alpha branches after B/I handoff; dedicated root and workflow-client proof PRs; Jeremy-authorized disposable Linear project `template-enhancements-<issue>-cleanup-proof`, its disposable tickets/PRs, exact `docs/symphony-plans/<disposable-code>/` folder and protected cleanup environment. Record actual resolved IDs and approved candidate set before mutation. No other project is authorized for live rehearsal.
-- **dependencies:** I accepted migration and L accepted caller (X/Q inherited). **acceptance_checks:** publish reviewed refs, Copier update/repeat both clients, review generated diff, record installed refs. Actual renamed ingress causes exactly one review/handoff; unrelated workflow rejected. Real weekly/manual dry-run records zero writes; verify schedule enablement separately from manual execution. Human approves a controlled stale candidate; observe ordered cancellations/closure, all readbacks, deletion-only PR and human merge. Exercise fresh activity/partial failure/retry proportionally with controlled fixtures; do not invent live failures. Preserve all history.
+- **dependencies:** I accepted migration, inheriting L's caller and X/Q; B's published baseline and L inventory are transitive prerequisites. **acceptance_checks:** publish reviewed refs, Copier update/repeat both clients, review generated diff, record installed refs. Actual renamed ingress causes exactly one review/handoff; unrelated workflow rejected. Real weekly/manual dry-run records zero writes; verify schedule enablement separately from manual execution. Human approves a controlled stale candidate; observe ordered cancellations/closure, all readbacks, deletion-only PR and human merge. Exercise fresh activity/partial failure/retry proportionally with controlled fixtures; do not invent live failures. Preserve all history.
 - **validation:** T + W + Docs; current-head CI on both PRs; run/attempt/input/ref/actor/state and deletion-PR links. **delivery_notes / exclusions:** no live project-code cleanup without explicit target authorization; missing admin protection remains dry-run only. F receives final census and any precise external handoff.
 
 ### F — TE-F: resolve project residue and finalize
@@ -762,10 +774,10 @@ is valid before mapping/readback. Use these same edges in `.mmd` and manifest.
 - issueId: db444d98-498c-4e10-b751-b4fa784431b1
   relatedIssueId: "${TE-G}"
   type: blocks
-- issueId: 43a896b1-42ab-4d15-be78-e8e9fd74fb4e
-  relatedIssueId: "${TE-G}"
-  type: blocks
 - issueId: "${TE-G}"
+  relatedIssueId: 43a896b1-42ab-4d15-be78-e8e9fd74fb4e
+  type: blocks
+- issueId: 43a896b1-42ab-4d15-be78-e8e9fd74fb4e
   relatedIssueId: "${TE-A}"
   type: blocks
 - issueId: "${TE-V}"
@@ -796,12 +808,12 @@ is valid before mapping/readback. Use these same edges in `.mmd` and manifest.
   relatedIssueId: "${TE-L}"
   type: blocks
 - issueId: "${TE-B}"
+  relatedIssueId: "${TE-L}"
+  type: blocks
+- issueId: "${TE-L}"
   relatedIssueId: bb02cc03-4877-4c8e-add0-043cd6b32986
   type: blocks
 - issueId: bb02cc03-4877-4c8e-add0-043cd6b32986
-  relatedIssueId: "${TE-W}"
-  type: blocks
-- issueId: "${TE-L}"
   relatedIssueId: "${TE-W}"
   type: blocks
 - issueId: "${TE-W}"
