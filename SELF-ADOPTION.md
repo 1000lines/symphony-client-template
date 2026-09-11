@@ -13,3 +13,20 @@ ingress, wakeups, instructions and skills are generated client files.
 This proves rendering and package CI, not a completed live Cadence review or
 Symphony-authored follow-up. Those remain downstream integration work. Jeremy
 accepted publication of this subset on September 11, 2026.
+
+## Verified publication update — 100-69
+
+Copier 9.18.2 updated this existing client from `01ccd00` to source commit
+`b40c2477b4e16ebd956dbe5390cf2f7eb8060cc0` using `copier update --defaults
+--vcs-ref=b40c2477b4e16ebd956dbe5390cf2f7eb8060cc0`. The normal public source URL
+is retained in `.copier-answers.yml`; Git's per-process `insteadOf` pointed that
+URL at this issue's local source checkout for pre-publication validation.
+This is local adoption evidence, not a published main/alpha release.
+
+The update added the label/publication helper and updated `SYMPHONY.md` and
+review ingress. Existing required-check config, application CI, copied skills
+and omitted optional CI caller were preserved. The helper bytes match Copier
+source and the shared-workflows helper (SHA-256 recorded in PROVENANCE.md).
+A repeated update at the same source commit leaves the client clean.
+No symphony-example checkout was changed. Human review/release and subsequent
+adopter Copier updates remain the rollout handoff.
