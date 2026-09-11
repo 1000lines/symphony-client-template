@@ -31,8 +31,6 @@ SKILLS = {
     ".agents/skills/linear-graphql/scripts/linear-graphql.mjs",
     REPLAN,
     "docs/engineering/symphony/replanning.md",
-    ".agents/skills/karpathy-guidelines/SKILL.md",
-    ".agents/skills/karpathy-guidelines/EXAMPLES.md",
 }
 GENERATED = SKILLS | {
     INGRESS, ".symphony.cfg.json", ".gitattributes", "SYMPHONY.md",
@@ -102,6 +100,7 @@ class RenderTest(unittest.TestCase):
                 for relative in files:
                     content = (output / relative).read_text()
                     self.assertNotIn("ROOT-ONLY-SENTINEL", content, relative)
+                    self.assertNotIn("karpathy", content.lower(), relative)
                     self.assertNotRegex(content, r"\[\[\s*[a-zA-Z_]")
                     self.assertNotIn("[%", content, relative)
                     if relative.endswith((".yml", ".yaml")):
@@ -233,9 +232,6 @@ class RenderTest(unittest.TestCase):
                 header = yaml.safe_load((output / relative).read_text().split("---", 2)[1])
                 self.assertTrue(header["name"])
                 self.assertTrue(header["description"])
-        karpathy = (output / ".agents/skills/karpathy-guidelines/SKILL.md").read_text()
-        self.assertIn("license: MIT", karpathy)
-        self.assertIn("Andrej Karpathy", karpathy)
         self.assertIn("docs/engineering/symphony/replanning.md", (output / REPLAN).read_text())
         # Resolve actual local Markdown links from the client, including replan resources.
         for relative in ("SYMPHONY.md", "docs/engineering/symphony/replanning.md"):
@@ -243,6 +239,69 @@ class RenderTest(unittest.TestCase):
             for target in re.findall(r"\]\(([^)]+)\)", path.read_text()):
                 if "://" not in target:
                     self.assertTrue((path.parent / target).is_file(), (relative, target))
+
+    def test_update_removes_bundled_skill_and_preserves_adopter_changes(self):
+        skill = ".agents/skills/karpathy-guidelines/SKILL.md"
+        examples = ".agents/skills/karpathy-guidelines/EXAMPLES.md"
+        # A prior template revision with the removed distribution. Keep the
+        # fixture self-contained so updates also run in shallow CI checkouts.
+        for relative in (skill, examples):
+            path = self.source / "template" / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("Bundled Karpathy fixture\n")
+        for relative in ("SYMPHONY.md.jinja", f"{FACTORY}/SKILL.md"):
+            path = self.source / "template" / relative
+            path.write_text(path.read_text() + f"\nLoad `{skill}`.\n")
+        self.git(self.source, "add", "template")
+        self.git(self.source, "-c", "user.name=Fixture", "-c",
+                 "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false",
+                 "commit", "-m", "Prior template with bundled skill")
+        self.git(self.source, "branch", "-f", "alpha", "HEAD")
+        clients = [self.render(self.answers(), name) for name in ("unchanged", "adopter")]
+        preserved = {
+            skill: "Adopter's modified coding guidelines\n",
+            ".agents/skills/karpathy-guidelines/LOCAL.md": "Adopter's added notes\n",
+            ".agents/skills/adopter/SKILL.md": "Independent adopter skill\n",
+            "src/application.txt": "Existing application\n",
+        }
+        for relative, content in preserved.items():
+            path = clients[1] / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content)
+        for output in clients:
+            self.git(output, "init", "--initial-branch=main")
+            self.git(output, "add", ".")
+            self.git(output, "-c", "user.name=Fixture", "-c",
+                     "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false",
+                     "commit", "-m", "Existing generated client")
+
+        self.git(self.source, "restore", f"--source={self.commit}",
+                 "--staged", "--worktree", "template")
+        self.git(self.source, "-c", "user.name=Fixture", "-c",
+                 "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false",
+                 "commit", "-m", "Remove bundled skill")
+        self.git(self.source, "branch", "-f", "alpha", "HEAD")
+        for output in clients:
+            with self.subTest(client=output.name):
+                # Copier 9.18.2 deletes removed template paths even when locally
+                # modified. Exclude the reviewed adopter-owned file explicitly.
+                options = ["--exclude", skill] if output.name == "adopter" else []
+                result = subprocess.run(
+                    [sys.executable, "-m", "copier", "update", "--defaults",
+                     "--vcs-ref=alpha", *options], cwd=output, stdin=subprocess.DEVNULL,
+                    capture_output=True, text=True, timeout=30,
+                )
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertFalse((output / examples).exists())
+                for relative in ("SYMPHONY.md", f"{FACTORY}/SKILL.md"):
+                    self.assertNotIn("karpathy", (output / relative).read_text().lower())
+                saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+                self.assertEqual(saved["_src_path"], str(self.source))
+                self.assertEqual(self.git(self.source, "rev-parse", saved["_commit"]),
+                                 self.git(self.source, "rev-parse", "alpha"))
+        self.assertFalse((clients[0] / ".agents/skills/karpathy-guidelines").exists())
+        for relative, content in preserved.items():
+            self.assertEqual((clients[1] / relative).read_text(), content, relative)
 
     def test_existing_repository_preservation_and_reviewed_attributes_merge(self):
         output = self.root / "existing"
