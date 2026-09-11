@@ -37,9 +37,10 @@ pending or missing uses Unhappy with `wake:15m`; failures return nonterminal
 tickets to Active; passing checks return them to Inactive for review. Preserve
 terminal states and current-head guards. Live mode/bridge proof remains CT-A.
 
-This initial publication includes CI, wakeups and review ingress. Review, handoff
-and cleanup callers are deferred; the ingress alone does not run a review.
-Use the available workflows and report missing functionality when it is needed.
+The generated review event, direct/manual, handoff and cleanup callers use
+explicit named secrets and the same reviewed shared workflow/helper revision.
+Ingress remains secret-free. Follow the review context for provider selection
+and report live execution separately from generated-file verification.
 
 ## Client session skills
 
@@ -53,6 +54,8 @@ Load these skills from this generated client in the human-operated session:
 - [Replan](scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md), loaded
   explicitly from this nested location with the client
   [replanning guide](docs/engineering/symphony/replanning.md) and factory templates.
+- [Karpathy guidelines](.agents/skills/karpathy-guidelines/SKILL.md), with
+  [examples](.agents/skills/karpathy-guidelines/EXAMPLES.md), for coding work.
 
 Keep a separate [reviewed tooling checkout](https://github.com/1000lines/symphony-example/tree/fd383f5760a2ba62ea6f6295bd6dd21cc0cb9e9e)
 with its own locked dependencies and CT-C mode-aware config reader. Verify the
@@ -71,8 +74,9 @@ project factory out of the unattended hosted worker profile.
 
 Author App: "1000lines-symphony". Reviewer App: "1000lines-cadence".
 Reviewer choice: "claude"; see [review context](.github/symphony/REVIEW.md).
-Provision credentials separately from answers and commands. The selected reviewer
-requires its matching API key even if the other provider's key is present.
+Provision credentials separately from answers and commands. At runtime an OpenAI
+key selects Codex (including when both keys exist), otherwise an Anthropic key
+selects Claude. Neither key fails early; authentication failures never fall back.
 
 Public MVP forks use the accepted existing Cadence App; installation does not
 provide the named Actions secrets. Direct/private targets use the inert
@@ -89,4 +93,5 @@ Primary source: [Orchestra-Bio/symphony-example](https://github.com/Orchestra-Bi
 Orchestra Bio symphony-example / Copyright 2026 Orchestra Bio, Inc.
 Development source and [usage/provenance](https://github.com/1000lines/symphony-example/tree/baa646a45721713231a1801c2271f524ccfc37ce/templates/symphony-client):
 1000lines/symphony-example, [Apache-2.0](https://github.com/1000lines/symphony-example/blob/d5e9692b84c3f338014b964fd9713143fb723b55/LICENSE).
+The copied Karpathy skill retains its MIT declaration and original attribution.
 Preserve the target's own LICENSE, NOTICE and unrelated files.

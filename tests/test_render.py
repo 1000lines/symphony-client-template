@@ -16,6 +16,13 @@ PACKAGE = Path(__file__).resolve().parents[1]
 INGRESS = ".github/workflows/cadence-review-ingress.yml"
 CI = ".github/workflows/symphony-client-ci.yml"
 WAKEUPS = ".github/workflows/symphony-client-wakeups.yml"
+REVIEW_CALLERS = {
+    '.github/workflows/cadence-ai-review-events.yml',
+    '.github/workflows/cadence-ai-review-trigger.yml',
+    '.github/workflows/cadence-ai-review.yml',
+    '.github/workflows/cadence-linear-rework.yml',
+    '.github/workflows/cadence-review-check-cleanup.yml',
+}
 CI_SOURCE = "1000lines/symphony-example"
 CI_REF = "fd383f5760a2ba62ea6f6295bd6dd21cc0cb9e9e"
 REPLAN = "scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md"
@@ -32,7 +39,7 @@ SKILLS = {
     REPLAN,
     "docs/engineering/symphony/replanning.md",
 }
-GENERATED = SKILLS | {
+GENERATED = SKILLS | REVIEW_CALLERS | {
     INGRESS, ".symphony.cfg.json", ".gitattributes", "SYMPHONY.md",
     ".github/symphony/REVIEW.md", ".github/symphony/cadence-app-manifest.json",
     ".copier-answers.yml", CI, WAKEUPS,
@@ -129,6 +136,7 @@ class RenderTest(unittest.TestCase):
                               "CADENCE_AI_REVIEW_ANTHROPIC_API_KEY", review)
                 self.check_ingress(output, answers)
                 self.check_ci_callers(output, answers)
+                self.check_review_callers(output)
                 manifest = json.loads((output / ".github/symphony/cadence-app-manifest.json").read_text())
                 self.assertEqual(manifest["name"], answers["cadence_app_slug"])
                 self.assertEqual(manifest["url"], f"https://github.com/{answers['repo_slug']}")
@@ -139,6 +147,28 @@ class RenderTest(unittest.TestCase):
                 self.assertFalse(manifest["public"])
                 self.assertEqual(manifest["default_events"], [])
                 self.check_skills(output)
+
+    def check_review_callers(self, output):
+        for relative in REVIEW_CALLERS:
+            workflow = yaml.safe_load((output / relative).read_text())
+            job, = workflow["jobs"].values()
+            secrets = {"CADENCE_APP_PRIVATE_KEY"}
+            if not relative.endswith("cadence-review-check-cleanup.yml"):
+                secrets.add("CADENCE_LINEAR_API_TOKEN")
+            if "cadence-ai-review" in relative:
+                secrets.update({"CADENCE_OPENAI_API_KEY", "CADENCE_AI_REVIEW_ANTHROPIC_API_KEY"})
+            self.assertEqual(job["secrets"], {
+                key: "${{ secrets." + key + " }}" for key in secrets
+            })
+            source, ref = job["uses"].split("@")
+            self.assertEqual(source, "1000lines/symphony-client-workflows/" + relative)
+            self.assertRegex(ref, r"^[a-f0-9]{40}$")
+            self.assertEqual(job["with"]["helpers-ref"], ref)
+            self.assertLessEqual(set(job), {"uses", "with", "secrets", "if"})
+            self.assertNotIn("inherit", (output / relative).read_text())
+        review = (output / ".github/symphony/REVIEW.md").read_text()
+        for phrase in ("Both | Codex", "Neither | Early configuration error", "openai-api-key"):
+            self.assertIn(phrase, review)
 
     def check_ci_callers(self, output, answers):
         ci = yaml.safe_load((output / CI).read_text())

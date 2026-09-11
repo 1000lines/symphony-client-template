@@ -11,7 +11,7 @@ and is now maintained in
 [`1000lines/symphony-client-template`](https://github.com/1000lines/symphony-client-template).
 `template/` alone maps to generated participant files.
 
-The current distribution contains 21 generated paths, including twelve
+The current distribution contains 26 generated paths, including twelve
 skill/resource files for project factory, Linear GraphQL and replan. Per
 [Jeremy's 100-63 decision](https://linear.app/1000lines/issue/100-63), the two
 Karpathy skill files and their loading references are no longer bundled.
