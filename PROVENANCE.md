@@ -141,3 +141,21 @@ consumer. Later `alpha` migration remains CT-F-owned as described above.
 ## Initial public publication
 
 Imported from `1000lines/symphony-example@e362e5ad76fa8070ef27bf54fec9d6750195466c`. Jeremy directed publication of the available subset on September 11, 2026; prior completeness gates are deferred. Package CI runs tests from the parent directory to avoid recursive fixture copying. No seed files were changed.
+
+## PR publication — 100-69
+
+The Copier source now distributes `scripts/symphony/ensure-pr-labels.mjs` from
+`1000lines/symphony-client-workflows`, the owning shared helper source. It reuses
+the existing label repair implementation and installed App broker, adds native
+PR creation with required labels, and verifies readback before completion.
+The helper's SHA-256 is
+`208ddd033fb297206f1cde3f4a0ffe1e34166a441528a3a58d6b8e339838a62f`.
+Changes to this distributed copy must first be made and tested in the shared
+source, then propagated to adopters through Copier.
+
+Generated `SYMPHONY.md` supplies the publication command on every worker session;
+review ingress admits the native `symphony` label event. The matching forwarded
+event/router change belongs to the shared-workflows release. Other deferred
+review callers remain under their existing follow-up ownership. Tests cover
+fresh generation, an existing client's Copier update and a clean repeat, without
+patching symphony-example or claiming live workflow/host deployment.

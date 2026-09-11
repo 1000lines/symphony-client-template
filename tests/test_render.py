@@ -37,7 +37,7 @@ SKILLS = {
 GENERATED = SKILLS | {
     INGRESS, ".symphony.cfg.json", ".gitattributes", "SYMPHONY.md",
     ".github/symphony/REVIEW.md", ".github/symphony/cadence-app-manifest.json",
-    ".copier-answers.yml", CI, WAKEUPS,
+    ".copier-answers.yml", CI, WAKEUPS, "scripts/symphony/ensure-pr-labels.mjs",
 }
 
 
@@ -214,6 +214,8 @@ class RenderTest(unittest.TestCase):
         workflow = yaml.safe_load(text)
         self.assertEqual(workflow["name"], "Cadence Review Ingress")
         self.assertEqual(workflow["permissions"], {})
+        self.assertIn("labeled", workflow[True]["pull_request_target"]["types"])
+        self.assertIn("github.event.label.name == 'symphony'", workflow["jobs"]["ingress"]["if"])
         # PyYAML's YAML 1.1 resolver reads the unquoted GitHub `on` key as True.
         self.assertEqual(set(workflow[True]), {
             "pull_request_target", "issue_comment", "pull_request_review",
@@ -281,6 +283,49 @@ class RenderTest(unittest.TestCase):
         self.assertEqual([line.rsplit(": ", 1)[1] for line in result.splitlines()],
                          ["set", "unset", "unspecified"])
         self.assertIn("binary: set", self.git(output, "check-attr", "binary", "--", "data.dat"))
+
+    def test_publication_helper_propagates_by_copier_update_and_repeat_is_clean(self):
+        helper = "scripts/symphony/ensure-pr-labels.mjs"
+        paths = [helper, "SYMPHONY.md.jinja", INGRESS + ".jinja"]
+        current = {path: (self.source / "template" / path).read_bytes() for path in paths}
+        (self.source / "template" / helper).unlink()
+        guide = self.source / "template/SYMPHONY.md.jinja"
+        guide.write_text(re.sub(r"## Publish and verify PR labels.*?(?=## Client session skills)",
+                               "", guide.read_text(), flags=re.S))
+        ingress = self.source / "template" / (INGRESS + ".jinja")
+        ingress.write_text(ingress.read_text().replace(", labeled]", "]"))
+        self.git(self.source, "add", ".")
+        self.git(self.source, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                 "commit", "-m", "Prior publication behavior")
+        self.git(self.source, "branch", "-f", "alpha")
+        output = self.render(self.answers(), "upgrade")
+        (output / "application.txt").write_text("Adopter-owned content\n")
+        self.git(output, "init", "--initial-branch=main")
+
+        def commit(directory, message):
+            self.git(directory, "add", ".")
+            self.git(directory, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                     "commit", "-m", message)
+
+        commit(output, "Existing adopter")
+        for path, contents in current.items():
+            (self.source / "template" / path).write_bytes(contents)
+        commit(self.source, "Verified publication")
+        self.git(self.source, "branch", "-f", "alpha")
+
+        def update():
+            subprocess.run([sys.executable, "-m", "copier", "update", "--defaults", "--vcs-ref=alpha"],
+                           cwd=output, check=True, capture_output=True, timeout=30)
+
+        update()
+        self.assertEqual((output / helper).read_bytes(), current[helper])
+        self.assertIn("--publish", (output / "SYMPHONY.md").read_text())
+        self.assertIn("labeled", yaml.safe_load((output / INGRESS).read_text())[True]["pull_request_target"]["types"])
+        self.assertEqual((output / "application.txt").read_text(), "Adopter-owned content\n")
+        self.assertFalse(list(output.rglob("*.rej")))
+        commit(output, "Copier upgrade")
+        update()
+        self.assertEqual(self.git(output, "status", "--porcelain"), "")
 
 
 if __name__ == "__main__":

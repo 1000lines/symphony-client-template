@@ -39,3 +39,8 @@ and [license](LICENSE).
 The root client files are generated from the public template; reusable source
 remains under `template/`. See [self-instantiation](SELF-ADOPTION.md) and
 [recorded answers](.copier-answers.yml).
+
+PR publication uses the generated `scripts/symphony/ensure-pr-labels.mjs` helper;
+see [publication guidance](template/SYMPHONY.md.jinja). Its shared source is
+`symphony-client-workflows`. Copier distributes updates to the helper and
+instructions together; App workers reuse their installed repository-bound broker.

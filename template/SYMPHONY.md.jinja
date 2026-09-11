@@ -41,6 +41,48 @@ This initial publication includes CI, wakeups and review ingress. Review, handof
 and cleanup callers are deferred; the ingress alone does not run a review.
 Use the available workflows and report missing functionality when it is needed.
 
+## Publish and verify PR labels
+
+For every publication, including the first PR after a worker restart, a resumed
+workspace and a replacement PR, use the Copier-managed helper below. Push the
+task branch first and pass a prepared PR body. In App mode, bind this repository
+using the installed repository skill before running the command; keep
+`SYMPHONY_GITHUB_APP_AUTH`, the bound `SYMPHONY_GITHUB_APP_CONFIG` and private
+cache available. The helper rechecks the App identity, repository scope and
+Issues/PR write grants even when credentials were cached by an earlier worker.
+
+```sh
+node scripts/symphony/ensure-pr-labels.mjs --issue TEAM-123 --repo OWNER/REPO \
+  --publish --base BASE --head symphony/PROJECT/TEAM-123/DESCRIPTION \
+  --title '[TEAM-123]: Brief title' --body-file PR_BODY.md --assignee HUMAN_LOGIN
+```
+
+Substitute the current issue, repository, selected project base and human lead.
+This creates a draft with native `gh pr create --label`, then reads back labels
+and repairs missing ones through the same helper. It resolves the owning Linear
+project's current `project-color` on each run and again after creation; never
+take the color from a branch, issue label, saved workspace or previous project.
+An existing matching open PR is verified without creating another; resolve a
+different open head before publishing a replacement. Unrelated labels survive.
+
+Publication is complete only after the helper reports a PR number and verified
+`symphony` plus current project-color labels. A failed command or `no-open-pr`
+is incomplete. Inspect any partially created PR before retrying. Record actual
+identity and label readback in the workpad. Missing metadata needs correction in
+the current Linear project. Missing repository labels go through the human
+lead's existing authorized project/repository setup; permission failures need
+the owner to approve the existing App installation and rebind the workspace.
+Do not silently create labels, replace the label set or expand worker scopes.
+
+For a PR created through another native GitHub path, immediately run the same
+command without `--publish` and its creation arguments to repair and verify it.
+Use labels at creation wherever supported. Native `labeled` events recover
+review/wakeup eligibility when labels arrive after `opened`; repeated correct
+verification does not add labels or emit more events. The generated review
+ingress admits only the `symphony` label addition. Its consumer must include the
+matching shared-workflows label-event support before claiming live review
+delivery; installing files alone is not that evidence.
+
 ## Client session skills
 
 Load these skills from this generated client in the human-operated session:
