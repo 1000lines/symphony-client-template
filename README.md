@@ -33,3 +33,9 @@ python -m unittest discover -s symphony-client-template/tests -v
 
 [Client guidance](template/SYMPHONY.md.jinja), [source provenance](PROVENANCE.md),
 and [license](LICENSE).
+
+## This repository uses its own template
+
+The root client files are generated from the public template; reusable source
+remains under `template/`. See [self-instantiation](SELF-ADOPTION.md) and
+[recorded answers](.copier-answers.yml).

@@ -1,0 +1,21 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 01ccd00
+_src_path: https://github.com/1000lines/symphony-client-template.git
+build_command: python3 -m compileall -q tests
+cadence_app_slug: 1000lines-cadence
+cadence_reviewer: claude
+default_branch: main
+linear_team_key: '100'
+repo_slug: 1000lines/symphony-client-template
+symphony_app_slug: 1000lines-symphony
+test_command: 'package_dir="$PWD"
+
+    python3 -m venv ../.symphony-template-venv
+
+    ../.symphony-template-venv/bin/python -m pip install -r tests/requirements.txt
+
+    cd ..
+
+    ./.symphony-template-venv/bin/python -m unittest discover -s "$package_dir/tests"
+    -v'
+
