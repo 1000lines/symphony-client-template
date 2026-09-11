@@ -12,10 +12,13 @@ CI, existing secrets and unrelated files. Rendering files is only the first stag
 
 ## Guide the operator through credentials
 
-Show this table and inventory **names/scope only** with `gh secret list --repo
-OWNER/REPO`, `gh variable list --repo OWNER/REPO`, and the repository's selected
-organization-secret metadata. Reuse repository secrets or organization secrets
-already granted to this repository. Metadata presence alone does not verify a key.
+Show this table. Inventory repository and organization Actions **names/scopes**
+with `gh secret list` / `gh variable list` using `--repo OWNER/REPO` and, for an
+organization, `--org OWNER`. Check effective grants with the repository's
+`actions/organization-secrets` and `actions/organization-variables` API endpoints.
+If metadata access needs admin, accept an owner's settings screenshots/export;
+record unreadable scopes as unverified. Reuse existing settings without rotation.
+Organization presence does not establish target access or usable credentials.
 
 | Actions setting | Kind | Purpose / scope |
 | --- | --- | --- |
@@ -31,23 +34,34 @@ already granted to this repository. Metadata presence alone does not verify a ke
 
 At least one provider key is required. OpenAI only selects Codex; Anthropic only
 selects Claude; both select Codex; neither is incomplete. A selected invalid key
-fails with no fallback. The reviewed [100-64 provider/caller release](https://linear.app/1000lines/issue/100-64)
-owns this behavior. Until that release is installed, a recorded Copier choice or
-an OpenAI secret does not establish a working Codex path. Inspect the actual
-published caller/callee contract instead of assuming the legacy choice was wired.
+fails with no fallback. A recorded Copier preference does not override this rule.
+Inspect the installed caller/callee revision and verify its selected provider;
+an OpenAI secret alone does not establish a working Codex path.
 
 Use repository scope (or an existing organization grant) for **all** table
 settings. `GITHUB_TOKEN` is provided by Actions. Do not request
 `CADENCE_BOT_GITHUB_TOKEN` or `CADENCE_PRIVATE_KEY`.
 
-Direct the operator to GitHub Settings → Secrets and variables → Actions for
-missing secrets, or to `gh secret set NAME --repo OWNER/REPO` in their own terminal
-using its hidden prompt. A private PEM may be piped from the operator's protected
+Direct the operator to repository or organization Settings → Secrets and variables
+→ Actions. For a new org setting, select the target repositories explicitly;
+reuse an existing grant when it already covers the adopter. If the organization
+has no suitable setting, provision at either scope:
+
+- Repository: `gh secret set NAME --repo OWNER/REPO` (hidden prompt).
+- Organization: `gh secret set NAME --org OWNER --visibility selected --repos REPO`
+  (hidden prompt; preserve other repository grants when changing existing settings).
+- Variables: `gh variable set NAME --repo OWNER/REPO --body VALUE`, or
+  `gh variable set NAME --org OWNER --visibility selected --repos REPO --body VALUE`.
+
+A private PEM may be piped from the operator's protected
 file with `gh secret set CADENCE_APP_PRIVATE_KEY --repo OWNER/REPO < /secure/key.pem`.
 Never request values in chat, Copier answers, command arguments, logs, PRs or tickets.
 Never retrieve existing secret values, print key-bearing environment variables,
-or rotate working settings during a repeat run. Variables are nonsecret and may
-be supplied with `gh variable set NAME --repo OWNER/REPO --body VALUE`.
+or rotate working settings during a repeat run. Repository settings override
+organization settings of the same name. Check those overrides and GitHub plan
+eligibility: organization Actions settings are unavailable to private repositories
+on GitHub Free; repository settings are the alternative. See GitHub's
+[scope and provisioning guide](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets).
 
 ## Check the App and environment
 
@@ -66,8 +80,10 @@ readiness uses the caller repository's `GITHUB_TOKEN` with contents/PR write.
 
 Inspect `gh api repos/OWNER/REPO/environments/cadence-controller` and its
 `deployment-branch-policies`, `secrets` and `variables` endpoints. Create/configure
-this environment through repository Settings if absent. Admit the actual default
-branch; preserve required reviewers and other protection rules. Confirm the
+this environment through repository Settings if absent. Choose **Selected branches
+and tags**, with exactly one **branch** rule naming the actual default branch;
+no wildcards, tags or additional branches. Preserve required reviewers and other
+protection rules. Confirm the
 workflow can satisfy those rules; a waiting job is pending, not configured proof.
 Do not widen admission to PR refs to make a probe run. Verify the environment
 exists before dispatch: GitHub can implicitly create an unprotected environment.
@@ -111,11 +127,11 @@ unmerged workflow code to make onboarding appear complete.
    source SHA, App/installation IDs, provider/model, result and any missing setting.
 3. **Live review verified.** Use a small authorized, Symphony-authored PR assigned
    to the human lead, labeled `symphony`, linked to a nonterminal Linear issue and
-   carrying current-head application CI. Dispatch `symphony-client-review.yml`
+   carrying current-head application CI. Dispatch `cadence-ai-review.yml`
    with `pr_numbers=NUMBER`. Confirm the selected provider executed, a **new**
    Cadence App review and advisory check cover this head, and the linked
-   `## Cadence Workpad` records the review. Confirm `Cadence Review Ingress` and
-   `Symphony Client Handoff` actually ran from the review event and record the
+   `## Cadence Workpad` records the review. Confirm `cadence-review-ingress.yml`
+   and `cadence-linear-rework.yml` ran from the review event and record the
    confirmed Linear write/transition or appropriate human-review handoff/skip.
    Exercise an authorized human PR comment as well; verify event routing reaches
    review and handoff without secrets on ingress. Check cleanup and CI wakeup run

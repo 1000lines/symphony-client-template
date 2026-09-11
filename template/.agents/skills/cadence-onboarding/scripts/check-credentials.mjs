@@ -29,6 +29,26 @@ export function verifyInstallation({ appSlug, reviewer, repository }, installati
   }
 }
 
+export async function verifyEnvironment(github, { owner, repo, defaultBranch }) {
+  const params = { owner, repo, environment_name: "cadence-controller" };
+  const route = "GET /repos/{owner}/{repo}/environments/{environment_name}";
+  let environment;
+  try { environment = (await github.request(route, params)).data; }
+  catch (error) {
+    throw new Error(`Cannot read cadence-controller (HTTP ${error.status || "unknown"}). Have the repository admin create/check the environment; the probe needs Actions read.`);
+  }
+  const policy = environment.deployment_branch_policy;
+  const remedy = "Configure cadence-controller: Selected branches and tags, exactly one branch rule for the actual default branch; no tags or wildcards.";
+  if (!policy?.custom_branch_policies || policy.protected_branches) throw new Error(remedy);
+  let rules;
+  try { rules = await github.paginate(`${route}/deployment-branch-policies`, params); }
+  catch (error) {
+    throw new Error(`Cannot read cadence-controller deployment branch policies (HTTP ${error.status || "unknown"}). Verify Actions read and ask the repository admin for policy readback.`);
+  }
+  if (!defaultBranch || /[*?\[\]\\]/.test(defaultBranch) || rules.length !== 1 ||
+      rules[0].name !== defaultBranch || rules[0].type !== "branch") throw new Error(remedy);
+}
+
 export async function verifyServices(env, fetchImpl = fetch) {
   const setup = reviewSetup(env);
   if (!/^[A-Z0-9]+$/.test(env.LINEAR_TEAM_KEY || "")) throw new Error("Missing/invalid target configuration linear.teamKey (LINEAR_TEAM_KEY).");

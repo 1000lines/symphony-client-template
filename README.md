@@ -18,18 +18,26 @@ Keep secrets out of answers and preserve existing application files.
 
 After generation or update, use the generated
 [Cadence onboarding skill](template/.agents/skills/cadence-onboarding/SKILL.md).
-It lists exact settings and scopes, reuses available credentials, guides secure
-provisioning and runs the native `Symphony Client Setup` credential probe. Record
-files generated, credentials configured and live review verified separately.
-The probe is not proof of actual reviewer/callee forwarding or provider execution;
-[100-64](https://linear.app/1000lines/issue/100-64) owns the reviewed provider/caller
-release required for those stages. Never store secret values in Copier answers.
+It covers every Cadence secret and identity/model variable, secure repository or
+organization provisioning, and the native `Symphony Client Setup` probe. Record
+files generated, credentials configured and live review verified separately;
+secret presence and a successful probe do not establish live review readiness.
 
+The package includes CI/wakeup, review event/manual, handoff and cleanup callers,
+configuration, and client skills. Both provider secrets are explicitly forwarded:
+`CADENCE_OPENAI_API_KEY` selects Codex, otherwise
+`CADENCE_AI_REVIEW_ANTHROPIC_API_KEY` selects Claude. Both selects Codex; neither
+fails early. The reviewer answer is an onboarding preference. See the generated
+[review context](template/.github/symphony/REVIEW.md.jinja) for the exact secret
+mapping and provisioning boundary with 100-62.
 
-The current package includes CI/wakeup callers, review ingress, configuration,
-and client skills. The review/handoff/cleanup callers and Codex provider wiring
-are deferred. Selecting a reviewer records the choice; it does not install those
-missing callers. CI/wakeup callers retain their working, pinned seed references.
+CI/wakeup callers in this revision use
+`1000lines/symphony-client-workflows@alpha`, including the trusted wakeup helpers.
+Review/handoff/cleanup callers retain their matching workflow/helper commit pins
+until that implementation is published on workflow alpha. The moving branch is
+intentional; [provenance](PROVENANCE.md#workflow-alpha-integration) records the
+inspected commits, and [self-instantiation](SELF-ADOPTION.md) separates the public
+template render from the migration awaiting publication.
 
 ## Development
 

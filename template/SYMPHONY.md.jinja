@@ -37,9 +37,10 @@ pending or missing uses Unhappy with `wake:15m`; failures return nonterminal
 tickets to Active; passing checks return them to Inactive for review. Preserve
 terminal states and current-head guards. Live mode/bridge proof remains CT-A.
 
-This initial publication includes CI, wakeups and review ingress. Review, handoff
-and cleanup callers are deferred; the ingress alone does not run a review.
-Use the available workflows and report missing functionality when it is needed.
+The generated review event, direct/manual, handoff and cleanup callers use
+explicit named secrets and the same reviewed shared workflow/helper revision.
+Ingress remains secret-free. Follow the review context for provider selection
+and report live execution separately from generated-file verification.
 
 ## Client session skills
 
@@ -75,17 +76,14 @@ Start with the [Cadence onboarding skill](.agents/skills/cadence-onboarding/SKIL
 for exact credential names/scopes, App installation and grants, environment
 admission and readiness evidence. Its native `Symphony Client Setup` probe
 validates repository-visible and protected-job credentials without running an AI
-review. Actual caller forwarding and live review/check/Linear handoff require the
-reviewed [100-64 provider/caller release](https://linear.app/1000lines/issue/100-64).
-The older reviewer-choice guidance below describes the initial publication;
-the onboarding skill records the commissioned key-selection contract and keeps
-readiness pending until that provider path is installed and verified.
-
+review. Verify the installed caller jobs and a real review/check/Linear handoff
+before reporting onboarding complete.
 
 Author App: [[ symphony_app_slug | to_json ]]. Reviewer App: [[ cadence_app_slug | to_json ]].
 Reviewer choice: [[ cadence_reviewer | to_json ]]; see [review context](.github/symphony/REVIEW.md).
-Provision credentials separately from answers and commands. The selected reviewer
-requires its matching API key even if the other provider's key is present.
+Provision credentials separately from answers and commands. At runtime an OpenAI
+key selects Codex (including when both keys exist), otherwise an Anthropic key
+selects Claude. Neither key fails early; authentication failures never fall back.
 
 Public MVP forks use the accepted existing Cadence App; installation does not
 provide the named Actions secrets. Direct/private targets use the inert
@@ -93,8 +91,8 @@ provide the named Actions secrets. Direct/private targets use the inert
 [GitHub manifest registration flow](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest).
 It requests repository read access and PR/issue/check write access, with no
 webhook receiver or subscribed events; native GitHub Actions provide delivery.
-The owner verifies the created App's grants/IDs and provisions secrets through
-CT-O. Rendering is not App registration or credential provisioning.
+The owner verifies the created App's grants/IDs and provisions credentials using
+the onboarding skill. Rendering is not App registration or credential provisioning.
 
 ## Source and license
 

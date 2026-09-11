@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 env:
@@ -38,9 +39,10 @@ jobs:
             if (context.ref !== `refs/heads/${context.payload.repository.default_branch}`) {
               throw new Error('Run Cadence onboarding/review from the target default branch. Do not widen environment admission for a PR ref.');
             }
-            const { reviewSetup } = await import(`${process.env.GITHUB_WORKSPACE}/.agents/skills/cadence-onboarding/scripts/check-credentials.mjs`);
+            const { reviewSetup, verifyEnvironment } = await import(`${process.env.GITHUB_WORKSPACE}/.agents/skills/cadence-onboarding/scripts/check-credentials.mjs`);
+            await verifyEnvironment(github, { ...context.repo, defaultBranch: context.payload.repository.default_branch });
             const { provider } = reviewSetup(process.env);
-            core.info(`Repository-visible settings found; selected provider: ${provider}. Credentials not yet verified.`);
+            core.info(`Default-branch-only environment policy verified. Repository-visible settings found; selected provider: ${provider}. Credentials not yet verified.`);
 
   credentials:
     name: Verify job-visible credentials

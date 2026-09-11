@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { reviewSetup, verifyServices, verifyInstallation } from "../template/.agents/skills/cadence-onboarding/scripts/check-credentials.mjs";
+import { reviewSetup, verifyServices, verifyInstallation, verifyEnvironment } from "../template/.agents/skills/cadence-onboarding/scripts/check-credentials.mjs";
 
 const settings = {
   CADENCE_APP_PRIVATE_KEY: "synthetic-app-key",
@@ -10,6 +10,31 @@ const settings = {
   CADENCE_CODEX_MODEL: "test-codex-model", CADENCE_CLAUDE_MODEL: "claude-opus-5",
   LINEAR_TEAM_KEY: "100",
 };
+
+test("environment admission requires only the default branch before any credential probes", async () => {
+  const target = { owner: "owner", repo: "client", defaultBranch: "release/main" };
+  const policy = { custom_branch_policies: true, protected_branches: false };
+  const branch = { name: target.defaultBranch, type: "branch" };
+  const github = (deployment_branch_policy, rules) => ({
+    request: async () => ({ data: { deployment_branch_policy } }),
+    paginate: async () => rules,
+  });
+  await verifyEnvironment(github(policy, [branch]), target);
+  for (const invalid of [null, {}, { custom_branch_policies: false, protected_branches: true }]) {
+    await assert.rejects(() => verifyEnvironment(github(invalid, []), target), /Selected branches and tags/);
+  }
+  for (const rules of [[], [branch, { name: "feature/*", type: "branch" }],
+    [{ ...branch, type: "tag" }], [{ ...branch, name: "main" }],
+    [{ ...branch, name: "*" }], [{ name: target.defaultBranch }]]) {
+    await assert.rejects(() => verifyEnvironment(github(policy, rules), target), /exactly one branch rule/);
+  }
+  for (const method of ["request", "paginate"]) {
+    const api = github(policy, [branch]);
+    api[method] = async () => { throw Object.assign(new Error("private response body"), { status: 403 }); };
+    await assert.rejects(() => verifyEnvironment(api, target),
+      error => /HTTP 403/.test(error.message) && !error.message.includes("private response"));
+  }
+});
 
 test("the minted App must match the configured identity and single target installation", () => {
   const expected = { appSlug: "review-app", reviewer: "review-app[bot]", repository: "owner/client" };
