@@ -71,6 +71,17 @@ project factory out of the unattended hosted worker profile.
 
 ## Review and App setup
 
+Start with the [Cadence onboarding skill](.agents/skills/cadence-onboarding/SKILL.md)
+for exact credential names/scopes, App installation and grants, environment
+admission and readiness evidence. Its native `Symphony Client Setup` probe
+validates repository-visible and protected-job credentials without running an AI
+review. Actual caller forwarding and live review/check/Linear handoff require the
+reviewed [100-64 provider/caller release](https://linear.app/1000lines/issue/100-64).
+The older reviewer-choice guidance below describes the initial publication;
+the onboarding skill records the commissioned key-selection contract and keeps
+readiness pending until that provider path is installed and verified.
+
+
 Author App: [[ symphony_app_slug | to_json ]]. Reviewer App: [[ cadence_app_slug | to_json ]].
 Reviewer choice: [[ cadence_reviewer | to_json ]]; see [review context](.github/symphony/REVIEW.md).
 Provision credentials separately from answers and commands. The selected reviewer

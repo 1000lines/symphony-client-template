@@ -16,6 +16,16 @@ Answer the repository, branch, Linear team, App slugs, reviewer and build/test
 questions. Review the generated diff before applying it to an existing repo.
 Keep secrets out of answers and preserve existing application files.
 
+After generation or update, use the generated
+[Cadence onboarding skill](template/.agents/skills/cadence-onboarding/SKILL.md).
+It lists exact settings and scopes, reuses available credentials, guides secure
+provisioning and runs the native `Symphony Client Setup` credential probe. Record
+files generated, credentials configured and live review verified separately.
+The probe is not proof of actual reviewer/callee forwarding or provider execution;
+[100-64](https://linear.app/1000lines/issue/100-64) owns the reviewed provider/caller
+release required for those stages. Never store secret values in Copier answers.
+
+
 The current package includes CI/wakeup callers, review ingress, configuration,
 and client skills. The review/handoff/cleanup callers and Codex provider wiring
 are deferred. Selecting a reviewer records the choice; it does not install those

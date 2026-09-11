@@ -26,6 +26,8 @@ SKILLS = {
     *(f"{FACTORY}/templates/tickets/{name}.md" for name in (
         "requirements-and-design", "plan-project", "trigger-fan-out",
         "broaden-fanout-integration", "standup")),
+    ".agents/skills/cadence-onboarding/SKILL.md",
+    ".agents/skills/cadence-onboarding/scripts/check-credentials.mjs",
     ".agents/skills/linear-graphql/SKILL.md",
     ".agents/skills/linear-graphql/agents/openai.yaml",
     ".agents/skills/linear-graphql/scripts/linear-graphql.mjs",
@@ -37,7 +39,7 @@ SKILLS = {
 GENERATED = SKILLS | {
     INGRESS, ".symphony.cfg.json", ".gitattributes", "SYMPHONY.md",
     ".github/symphony/REVIEW.md", ".github/symphony/cadence-app-manifest.json",
-    ".copier-answers.yml", CI, WAKEUPS,
+    ".copier-answers.yml", CI, WAKEUPS, ".github/workflows/symphony-client-setup.yml",
 }
 
 
@@ -140,6 +142,45 @@ class RenderTest(unittest.TestCase):
                 self.assertFalse(manifest["public"])
                 self.assertEqual(manifest["default_events"], [])
                 self.check_skills(output)
+
+    def test_repeat_onboarding_is_clean_and_keeps_credentials_out_of_answers(self):
+        output = self.render(self.answers(), "repeat")
+        (output / "application.txt").write_text("adopter-owned file\n")
+        self.git(output, "init", "--initial-branch=main")
+        self.git(output, "add", ".")
+        self.git(output, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                 "-c", "commit.gpgsign=false", "commit", "-m", "Adopt generated files")
+        result = subprocess.run([sys.executable, "-m", "copier", "update", "--defaults", "--vcs-ref=alpha"],
+                                cwd=output, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(self.git(output, "status", "--porcelain"), "")
+        self.assertEqual((output / "application.txt").read_text(), "adopter-owned file\n")
+        saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+        self.assertEqual(set(saved), set(self.answers()) | {"_src_path", "_commit"})
+        workflow = yaml.safe_load((output / ".github/workflows/symphony-client-setup.yml").read_text())
+        self.assertEqual(set(workflow[True]), {"workflow_dispatch"})
+        repository_job = workflow["jobs"]["repository-settings"]
+        protected_job = workflow["jobs"]["credentials"]
+        self.assertNotIn("environment", repository_job)
+        self.assertEqual(protected_job["environment"], "cadence-controller")
+        self.assertEqual(protected_job["needs"], "repository-settings")
+        settings = {"CADENCE_APP_PRIVATE_KEY", "CADENCE_LINEAR_API_TOKEN", "CADENCE_OPENAI_API_KEY",
+                    "CADENCE_AI_REVIEW_ANTHROPIC_API_KEY"}
+        for job in (repository_job, protected_job):
+            check = next(step for step in job["steps"] if "CADENCE_OPENAI_API_KEY" in step.get("env", {}))
+            self.assertEqual(set(check["env"]), settings)
+            for key in settings:
+                self.assertEqual(check["env"][key], "${{ secrets." + key + " }}")
+            checkout = job["steps"][0]
+            self.assertEqual(checkout["with"]["ref"], "${{ github.event.repository.default_branch }}")
+            self.assertFalse(checkout["with"]["persist-credentials"])
+        mint = next(step for step in protected_job["steps"] if step.get("id") == "app-token")["with"]
+        for grant in ("metadata", "contents", "actions"):
+            self.assertEqual(mint[f"permission-{grant}"], "read")
+        for grant in ("pull-requests", "issues", "checks"):
+            self.assertEqual(mint[f"permission-{grant}"], "write")
+        self.assertNotIn("codex-action", str(workflow))
+        self.assertNotIn("claude-code-action", str(workflow))
 
     def check_ci_callers(self, output, answers):
         ci = yaml.safe_load((output / CI).read_text())
