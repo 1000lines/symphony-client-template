@@ -32,7 +32,7 @@ cadence_reviewer:
   choices:
     - claude
     - codex
-  help: Reviewer to use; provision its matching API key separately.
+  help: Onboarding preference; provision keys separately. Runtime prefers OpenAI when both keys exist.
 
 build_command:
   type: str
