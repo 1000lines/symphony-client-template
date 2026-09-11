@@ -54,8 +54,6 @@ Load these skills from this generated client in the human-operated session:
 - [Replan](scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md), loaded
   explicitly from this nested location with the client
   [replanning guide](docs/engineering/symphony/replanning.md) and factory templates.
-- [Karpathy guidelines](.agents/skills/karpathy-guidelines/SKILL.md), with
-  [examples](.agents/skills/karpathy-guidelines/EXAMPLES.md), for coding work.
 
 Keep a separate [reviewed tooling checkout](https://github.com/1000lines/symphony-example/tree/fd383f5760a2ba62ea6f6295bd6dd21cc0cb9e9e)
 with its own locked dependencies and CT-C mode-aware config reader. Verify the
@@ -93,5 +91,4 @@ Primary source: [Orchestra-Bio/symphony-example](https://github.com/Orchestra-Bi
 Orchestra Bio symphony-example / Copyright 2026 Orchestra Bio, Inc.
 Development source and [usage/provenance](https://github.com/1000lines/symphony-example/tree/baa646a45721713231a1801c2271f524ccfc37ce/templates/symphony-client):
 1000lines/symphony-example, [Apache-2.0](https://github.com/1000lines/symphony-example/blob/d5e9692b84c3f338014b964fd9713143fb723b55/LICENSE).
-The copied Karpathy skill retains its MIT declaration and original attribution.
 Preserve the target's own LICENSE, NOTICE and unrelated files.

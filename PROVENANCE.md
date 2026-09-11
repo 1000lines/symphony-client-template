@@ -5,10 +5,17 @@ The primary source is
 Credit its contributors for the upstream Symphony example and tooling from which
 the `1000lines/symphony-example` development repository derives.
 
-This package is developed at `templates/symphony-client/` in
-[`1000lines/symphony-example`](https://github.com/1000lines/symphony-example).
-The package root maps to the future published template repository root;
+This package was developed at `templates/symphony-client/` in
+[`1000lines/symphony-example`](https://github.com/1000lines/symphony-example)
+and is now maintained in
+[`1000lines/symphony-client-template`](https://github.com/1000lines/symphony-client-template).
 `template/` alone maps to generated participant files.
+
+The current distribution contains 26 generated paths, including twelve
+skill/resource files for project factory, Linear GraphQL and replan. Per
+[Jeremy's 100-63 decision](https://linear.app/1000lines/issue/100-63), the two
+Karpathy skill files and their loading references are no longer bundled.
+The conversion counts below describe earlier revisions.
 
 CT-Q adds the question configuration, development documentation, tests, and CI.
 The interface and layout follow the
@@ -55,11 +62,12 @@ may gain `.jinja`; rendered names retain the inventory's paths.
 | `SYMPHONY.md`, `.github/symphony/REVIEW.md`, `.github/symphony/cadence-app-manifest.json`, `.copier-answers.yml` | New approved guidance, inert direct App manifest and ordinary Copier metadata.                                                                                                                                               |
 | Five copied workflow bodies                                                                                      | Removed from output; CT-L's exact additions are listed below.                                                                                                                                                                |
 
-The 21 initial paths are seven workflow/config/guidance/metadata files plus all
-fourteen skills/resources. Six skill/resource files remain byte-identical to the
+The 21 initial paths were seven workflow/config/guidance/metadata files plus all
+fourteen skills/resources. Six skill/resource files were byte-identical to the
 copy: factory project-description, Linear agent metadata/helper, replan guide,
-and Karpathy skill/examples. Eight Markdown files change only path resolution.
-The MIT declaration, Karpathy attribution and source whitespace are preserved.
+and Karpathy skill/examples. Eight Markdown files changed only path resolution.
+That revision preserved the MIT declaration, Karpathy attribution and source
+whitespace.
 The seed NOTICE attribution is retained in generated `SYMPHONY.md`:
 **Orchestra Bio symphony-example / Copyright 2026 Orchestra Bio, Inc.**
 Generated output never replaces the application's LICENSE or NOTICE. The package

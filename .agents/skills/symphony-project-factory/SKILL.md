@@ -64,7 +64,6 @@ set of required sources:
 - Prior fan-out examples relevant to the request, including committed plans in
   `docs/symphony-plans/` and old project plans the current issue names.
 - `$SYMPHONY_TOOLING_ROOT/scripts/symphony/runtime-bundle/workflow/WORKFLOW.md`.
-- `.agents/skills/karpathy-guidelines/SKILL.md`.
 - Existing `.agents/skills/*/SKILL.md` frontmatter conventions and any local
   Symphony skills that the new project's starter tickets will reference.
 - The project color helper output from the accepted color-helper implementation.
