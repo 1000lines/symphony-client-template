@@ -19,7 +19,11 @@ Keep secrets out of answers and preserve existing application files.
 The current package includes CI/wakeup callers, review ingress, configuration,
 and client skills. The review/handoff/cleanup callers and Codex provider wiring
 are deferred. Selecting a reviewer records the choice; it does not install those
-missing callers. CI/wakeup callers retain their working, pinned seed references.
+missing callers. CI/wakeup callers in this revision use
+`1000lines/symphony-client-workflows@alpha`, including the trusted wakeup helpers.
+The moving branch is intentional; [provenance](PROVENANCE.md#workflow-alpha-integration)
+records the inspected commits, and [self-instantiation](SELF-ADOPTION.md) separates
+the current public template render from the migration awaiting publication.
 
 ## Development
 

@@ -13,3 +13,55 @@ ingress, wakeups, instructions and skills are generated client files.
 This proves rendering and package CI, not a completed live Cadence review or
 Symphony-authored follow-up. Those remain downstream integration work. Jeremy
 accepted publication of this subset on September 11, 2026.
+
+## Workflow alpha migration — 100-57
+
+A fresh Git-URL render with Copier 9.18.2 and `--vcs-ref=alpha` resolved the public
+template to `58021a73ac3a6c2141a1217fc88c27e590df8143` on September 11, 2026.
+It emitted 23 client files, excluding root documentation, tests and package CI.
+The root's eight answers were retained, including `cadence_reviewer: claude`.
+`.copier-answers.yml` now records that real public source and commit.
+
+An isolated render of the revised template with those same answers produced one
+root client change: `symphony-client-wakeups.yml` now calls the workflow repository
+at `@alpha` and checks out its helpers at `alpha`. The optional generated command
+caller remains omitted. The root's `Client template tests` requirement
+(`.github/workflows/ci.yml`, GitHub Actions App **15368**), command arrays,
+instructions and skills are preserved. A dedicated render test compares the
+root client with generated output and checks this package-CI exception.
+
+Source metadata intentionally records the last public render, before the local
+caller migration. The isolated candidate's local path/commit is not substituted
+for public provenance. At this readback, template alpha still contains the seed
+callers; the migration must be accepted on main before advancing that branch.
+Workflow/helper alpha resolved to `77cfb2d1f4e0e488af207096b1785b63ffc0398b`;
+that is a source readback, not an observed helper checkout from a migrated run.
+
+### Validation and remaining live proof
+
+The [100-57 Codex workpad](https://linear.app/1000lines/issue/100-57#comment-520b993c)
+records exact render commands, local/container results and current-head CI.
+The public render proves the accepted template is fetchable; the isolated
+render proves the revised mappings and root/package separation. Neither proves
+trusted default-branch listener activation.
+
+The caller explicitly delivers `CADENCE_LINEAR_API_TOKEN` to wakeups; command CI
+and ingress receive no named secrets. Repository secret-name readback returned
+an empty list. Organization-secret delivery has not been verified. Actions-policy
+readback returned HTTP 403 requiring repository Actions-policy permission; this
+does not establish that Actions is disabled (package CI has run successfully).
+Jeremy owns credential provisioning and any required policy readback for
+`1000lines/symphony-client-template`.
+
+After acceptance and alpha publication, repeat the Git-URL render, then use a
+task-linked development PR to record destination workflow/helper SHAs and live
+wakeup results. Full Cadence proof also needs the deferred review, handoff and
+cleanup callers/interfaces. Their future boundaries require
+`CADENCE_APP_PRIVATE_KEY`, `CADENCE_LINEAR_API_TOKEN`, and the matching explicit
+reviewer key: `CADENCE_OPENAI_API_KEY` for Codex or
+`CADENCE_AI_REVIEW_ANTHROPIC_API_KEY` for Claude, without fallback. For the required
+Codex proof, explicitly select Codex when regenerating that review caller.
+Record the current-head review, App-owned advisory queued/running/result check,
+draft-to-ready transition, matching cleanup workflow name, and cancellation/
+recovery runs here. Those results are outstanding; this repository does not yet
+claim completed live self-use through the published pair.
