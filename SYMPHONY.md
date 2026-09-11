@@ -37,9 +37,10 @@ pending or missing uses Unhappy with `wake:15m`; failures return nonterminal
 tickets to Active; passing checks return them to Inactive for review. Preserve
 terminal states and current-head guards. Live mode/bridge proof remains CT-A.
 
-This initial publication includes CI, wakeups and review ingress. Review, handoff
-and cleanup callers are deferred; the ingress alone does not run a review.
-Use the available workflows and report missing functionality when it is needed.
+The generated review event, direct/manual, handoff and cleanup callers use
+explicit named secrets and the same reviewed shared workflow/helper revision.
+Ingress remains secret-free. Follow the review context for provider selection
+and report live execution separately from generated-file verification.
 
 ## Client session skills
 
@@ -73,8 +74,9 @@ project factory out of the unattended hosted worker profile.
 
 Author App: "1000lines-symphony". Reviewer App: "1000lines-cadence".
 Reviewer choice: "claude"; see [review context](.github/symphony/REVIEW.md).
-Provision credentials separately from answers and commands. The selected reviewer
-requires its matching API key even if the other provider's key is present.
+Provision credentials separately from answers and commands. At runtime an OpenAI
+key selects Codex (including when both keys exist), otherwise an Anthropic key
+selects Claude. Neither key fails early; authentication failures never fall back.
 
 Public MVP forks use the accepted existing Cadence App; installation does not
 provide the named Actions secrets. Direct/private targets use the inert

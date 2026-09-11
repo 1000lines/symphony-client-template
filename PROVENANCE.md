@@ -150,7 +150,7 @@ accepted in [100-55](https://linear.app/1000lines/issue/100-55) and
 decisions supersede the historical completeness gates above: integrate the
 available subset and keep deferred reviewer functionality visible.
 
-September 11, 2026 readback resolved template `main` and `alpha` to
+The initial September 11, 2026 readback resolved template `main` and `alpha` to
 `58021a73ac3a6c2141a1217fc88c27e590df8143`, and workflow `main` and `alpha` to
 `77cfb2d1f4e0e488af207096b1785b63ffc0398b`. Neither repository had an `alpha` tag.
 The workflow publication's [mapping](https://github.com/1000lines/symphony-client-workflows/blob/77cfb2d1f4e0e488af207096b1785b63ffc0398b/PROVENANCE.md)
@@ -171,9 +171,17 @@ wakeup mapping and preserves its dedicated package CI instead of the optional
 command caller. There are no active seed-workflow refs in emitted or root
 callers; historical source/tooling references above remain valid.
 
-Eight questions, explicit secret names, client resources and package CI remain
-unchanged. The three missing review/handoff/cleanup callers and provider adapter
-remain deferred under the publication decision. This change does not establish
+The later accepted [100-64 template PR #6](https://github.com/1000lines/symphony-client-template/pull/6)
+advanced template main to `d2dd1dd` and added five review/handoff/cleanup callers.
+Its root Copier metadata records source `e8d6f36`; this migration preserves that
+newer regeneration. Their workflow/helper pins remain
+`ac15fc1567865eb738cd53409c6fddf297e78a09`: the latest workflow main/alpha readback
+is still `77cfb2d1f4e0e488af207096b1785b63ffc0398b`. Those provider interfaces must
+be published before the remaining callers can use literal `@alpha`.
+
+All eight answers, explicit secret names, client resources and package CI are
+preserved from main. PR #6 carries 100-64's newer key-presence provider contract,
+superseding the older selection notes above. This integration does not establish
 reviewer execution or cleanup recovery. After human acceptance, publish only
 accepted main code to template `refs/heads/alpha`, repeat the public render and
 record actual workflow/helper commits from live runs in [SELF-ADOPTION.md](SELF-ADOPTION.md).
