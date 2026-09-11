@@ -22,8 +22,15 @@ configuration, and client skills. Both provider secrets are explicitly forwarded
 `CADENCE_AI_REVIEW_ANTHROPIC_API_KEY` selects Claude. Both selects Codex; neither
 fails early. The reviewer answer is an onboarding preference. See the generated
 [review context](template/.github/symphony/REVIEW.md.jinja) for the exact secret
-mapping and provisioning boundary with 100-62. CI/wakeup callers retain their
-working, pinned seed references.
+mapping and provisioning boundary with 100-62.
+
+CI/wakeup callers in this revision use
+`1000lines/symphony-client-workflows@alpha`, including the trusted wakeup helpers.
+Review/handoff/cleanup callers retain their matching workflow/helper commit pins
+until that implementation is published on workflow alpha. The moving branch is
+intentional; [provenance](PROVENANCE.md#workflow-alpha-integration) records the
+inspected commits, and [self-instantiation](SELF-ADOPTION.md) separates the public
+template render from the migration awaiting publication.
 
 ## Development
 

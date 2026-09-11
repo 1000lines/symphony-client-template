@@ -17,12 +17,13 @@ preserved during regeneration.
 This proves rendering and package CI, not a completed live Cadence review or
 Symphony-authored follow-up. Live integration evidence remains separate from
 these generated files. The initial subset and 100-64's provider/caller changes
-were accepted on September 11, 2026.
+were accepted on September 11, 2026; the callers landed through
+[PR #6](https://github.com/1000lines/symphony-client-template/pull/6).
 
 For this regeneration, Copier 9.18.2 read the recorded nonsecret answers and the
 canonical source URL at the commit above, using the local task checkout as a Git
-mirror. Source changes were committed before rendering. The generated workflow
-and helpers pins both select shared workflows
+mirror. Source changes were committed before rendering. The generated review/handoff/cleanup workflow
+and helper pins both select shared workflows
 `ac15fc1567865eb738cd53409c6fddf297e78a09`. The source/workflow commits are preserved
 in their implementation PRs; no symphony-example files were patched.
 
@@ -54,3 +55,57 @@ Independently added files survive the update. Review the resulting diff and
 resolve any [Copier conflicts](https://copier.readthedocs.io/en/stable/updating/)
 before committing; do not edit the answers file manually. The render tests cover
 both unchanged clients and this selective preservation of adopter files.
+
+## Workflow alpha migration — 100-57
+
+A Git-URL render with Copier 9.18.2 and `--vcs-ref=alpha` resolved the public
+23-file template to `58021a73ac3a6c2141a1217fc88c27e590df8143` on September 11, 2026. Template main subsequently gained the five review/handoff/cleanup callers
+through PR #6, at merge `d2dd1dd`. Its root source was `e8d6f36`; the later
+skill-removal regeneration is recorded above. All eight answers remain,
+including `cadence_reviewer: claude`.
+
+This migration repoints generated command CI and generated/root wakeups to
+`1000lines/symphony-client-workflows@alpha`, with trusted wakeup helpers at the
+same ref. The review/handoff/cleanup callers retain workflow/helper
+`ac15fc1567865eb738cd53409c6fddf297e78a09` pins: workflow main and alpha still
+resolve to `77cfb2d1f4e0e488af207096b1785b63ffc0398b`, which predates that provider
+implementation. Those callers must migrate after it is published on alpha.
+No active caller uses the seed repository.
+
+An isolated render of the combined template verifies the generated root files,
+including PR #6's callers, against the checked-in root. The optional command
+caller remains omitted here. The root's `Client template tests` requirement
+(`.github/workflows/ci.yml`, GitHub Actions App **15368**), command arrays,
+instructions and skills are preserved. The root/render comparison keeps this
+package-CI exception explicit; generic formatting still excludes raw `template/`.
+
+### Validation and remaining live proof
+
+The [100-57 Codex workpad](https://linear.app/1000lines/issue/100-57#comment-520b993c)
+records render commands, local/container results and current-head CI. Published
+rendering and isolated root comparison do not prove trusted listener activation.
+The template alpha branch remains at the earlier accepted publication until the
+migration is accepted on main.
+
+Wakeups explicitly receive `CADENCE_LINEAR_API_TOKEN`; command CI and ingress
+receive no named secrets. Review callers forward `CADENCE_APP_PRIVATE_KEY`,
+`CADENCE_LINEAR_API_TOKEN`, `CADENCE_OPENAI_API_KEY` and
+`CADENCE_AI_REVIEW_ANTHROPIC_API_KEY`; handoff receives App/Linear and cleanup
+receives App only. PR #6 implements 100-64's newer provider contract: OpenAI-only
+or both keys select Codex, Anthropic-only selects Claude, and neither fails early.
+A selected provider's failure does not fall back. The reviewer answer remains an
+onboarding preference. See [review context](.github/symphony/REVIEW.md).
+
+The task-bound Symphony App cannot list Actions secrets or policy (HTTP 403).
+The prior missing-token wakeup error is historical; later successful wakeup runs
+still need readback of their actual routing results. Jeremy owns provisioning
+and policy readback; 100-62 owns guided readiness. No secret-value inspection is
+needed for this migration.
+
+After acceptance and publication, repeat the Git-URL alpha render, migrate the
+remaining callers to published workflow alpha, and use a task-linked development
+PR to record actual workflow/helper commits and live wakeup results. Record a
+current-head Codex review, App-owned advisory queued/running/result check,
+draft-to-ready transition, matching cleanup workflow names, and cancellation/
+recovery runs here. This repository does not yet claim completed live self-use
+through the published pair.

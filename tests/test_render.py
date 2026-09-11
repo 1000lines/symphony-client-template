@@ -23,8 +23,8 @@ REVIEW_CALLERS = {
     '.github/workflows/cadence-linear-rework.yml',
     '.github/workflows/cadence-review-check-cleanup.yml',
 }
-CI_SOURCE = "1000lines/symphony-example"
-CI_REF = "fd383f5760a2ba62ea6f6295bd6dd21cc0cb9e9e"
+CI_SOURCE = "1000lines/symphony-client-workflows"
+CI_REF = "alpha"
 REPLAN = "scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md"
 FACTORY = ".agents/skills/symphony-project-factory"
 SKILLS = {
@@ -147,6 +147,26 @@ class RenderTest(unittest.TestCase):
                 self.assertFalse(manifest["public"])
                 self.assertEqual(manifest["default_events"], [])
                 self.check_skills(output)
+
+    def test_root_client_matches_render_preserving_package_ci(self):
+        saved = yaml.safe_load((PACKAGE / ".copier-answers.yml").read_text())
+        answers = {key: value for key, value in saved.items() if not key.startswith("_")}
+        output = self.render(answers, "root-client")
+        # Metadata records the last render from a committed source. The optional
+        # command caller is replaced by this repository's dedicated package CI.
+        for relative in GENERATED - {CI, ".copier-answers.yml", ".symphony.cfg.json"}:
+            self.assertEqual((PACKAGE / relative).read_bytes(),
+                             (output / relative).read_bytes(), relative)
+        self.assertFalse((PACKAGE / CI).exists())
+        root_config = json.loads((PACKAGE / ".symphony.cfg.json").read_text())
+        rendered_config = json.loads((output / ".symphony.cfg.json").read_text())
+        package_ci = yaml.safe_load((PACKAGE / ".github/workflows/ci.yml").read_text())
+        self.assertEqual(root_config["ci"]["requiredChecks"], [{
+            "name": package_ci["jobs"]["render"]["name"],
+            "workflow": ".github/workflows/ci.yml", "appId": 15368,
+        }])
+        self.assertEqual({key: value for key, value in root_config.items() if key != "ci"},
+                         {key: value for key, value in rendered_config.items() if key != "ci"})
 
     def check_review_callers(self, output):
         for relative in REVIEW_CALLERS:

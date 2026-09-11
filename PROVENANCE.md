@@ -149,3 +149,47 @@ consumer. Later `alpha` migration remains CT-F-owned as described above.
 ## Initial public publication
 
 Imported from `1000lines/symphony-example@e362e5ad76fa8070ef27bf54fec9d6750195466c`. Jeremy directed publication of the available subset on September 11, 2026; prior completeness gates are deferred. Package CI runs tests from the parent directory to avoid recursive fixture copying. No seed files were changed.
+
+## Workflow alpha integration
+
+[100-57](https://linear.app/1000lines/issue/100-57) consumes the publications
+accepted in [100-55](https://linear.app/1000lines/issue/100-55) and
+[100-56](https://linear.app/1000lines/issue/100-56). Their current publication
+decisions supersede the historical completeness gates above: integrate the
+available subset and keep deferred reviewer functionality visible.
+
+The initial September 11, 2026 readback resolved template `main` and `alpha` to
+`58021a73ac3a6c2141a1217fc88c27e590df8143`, and workflow `main` and `alpha` to
+`77cfb2d1f4e0e488af207096b1785b63ffc0398b`. Neither repository had an `alpha` tag.
+The workflow publication's [mapping](https://github.com/1000lines/symphony-client-workflows/blob/77cfb2d1f4e0e488af207096b1785b63ffc0398b/PROVENANCE.md)
+and [passing package CI](https://github.com/1000lines/symphony-client-workflows/actions/runs/34641368861)
+identify the inspected code, not a migrated consumer run.
+
+| Generated caller              | Workflow destination at literal `@alpha`                                             | Onward source and secrets                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `symphony-client-ci.yml`      | `1000lines/symphony-client-workflows/.github/workflows/symphony-client-commands.yml` | Checks out the exact target SHA to run target commands; no named secrets or nested workflow calls.                         |
+| `symphony-client-wakeups.yml` | `1000lines/symphony-client-workflows/.github/workflows/symphony-linear-wakeups.yml`  | Explicit `helpers-repository: 1000lines/symphony-client-workflows`, `helpers-ref: alpha`; only `CADENCE_LINEAR_API_TOKEN`. |
+
+The wakeup workflow checks out those trusted helpers separately from the target
+configuration. Its imported wakeup, Linear, workpad, actor and config-reader
+dependencies exist at the recorded workflow commit. Both supported boundaries
+declare the supplied inputs and secrets; neither makes an onward workflow call.
+Review ingress remains a local, secret-free signal. The root uses the same
+wakeup mapping and preserves its dedicated package CI instead of the optional
+command caller. There are no active seed-workflow refs in emitted or root
+callers; historical source/tooling references above remain valid.
+
+The later accepted [100-64 template PR #6](https://github.com/1000lines/symphony-client-template/pull/6)
+advanced template main to `d2dd1dd` and added five review/handoff/cleanup callers.
+Its root Copier metadata records source `e8d6f36`; this migration preserves that
+newer regeneration. Their workflow/helper pins remain
+`ac15fc1567865eb738cd53409c6fddf297e78a09`: the latest workflow main/alpha readback
+is still `77cfb2d1f4e0e488af207096b1785b63ffc0398b`. Those provider interfaces must
+be published before the remaining callers can use literal `@alpha`.
+
+All eight answers, explicit secret names, client resources and package CI are
+preserved from main. PR #6 carries 100-64's newer key-presence provider contract,
+superseding the older selection notes above. This integration does not establish
+reviewer execution or cleanup recovery. After human acceptance, publish only
+accepted main code to template `refs/heads/alpha`, repeat the public render and
+record actual workflow/helper commits from live runs in [SELF-ADOPTION.md](SELF-ADOPTION.md).
