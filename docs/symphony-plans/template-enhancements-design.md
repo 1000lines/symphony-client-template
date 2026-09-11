@@ -12,20 +12,17 @@ plan-issue: 100-67
 fan-out-issue: 100-68
 ```
 
-Proposed for human review, September 11, 2026; canonical input to
-[100-67](https://linear.app/1000lines/issue/100-67) after acceptance and merge.
-Requirement IDs are outcomes, not tickets or a DAG. The three Active seeds have
-verified blockers 100-66 → 100-67 → 100-68; each successor waits for predecessor
-Done. No planning-seed `mature` before human review/merge; no execution authorized here.
+Proposed September 11, 2026; input to [100-67](https://linear.app/1000lines/issue/100-67) after human acceptance and merge.
+Requirement IDs are outcomes; the Active seeds have verified blockers 100-66 → 100-67 → 100-68.
+Successors wait for predecessor Done; no seed `mature` before human review/merge.
 
 ## Goal and boundaries
 
-Make the public client template easier to adopt, review and maintain by delivering
-the reconciled backlog and [September 11 project brief][brief]. Demonstrate useful
-increments through this repository's own Copier-managed root client. The template
-owns generated assets and guidance; reusable behavior belongs in the workflow
-repository, with thin native callers in clients. `symphony-example` is historical
-evidence and an existing adoption target, not the implementation source for new work.
+Make the public client template easier to adopt, review and maintain through the
+reconciled backlog and [September 11 brief][brief], demonstrating useful increments
+in this repository's Copier-managed root client. Template owns generated assets and
+guidance; shared workflows own reusable behavior, with thin native client callers.
+`symphony-example` supplies historical evidence/adoption, not new implementation.
 
 Exclude unrelated application backlog, shared-host reconstruction, dormant
 controller revival, new orchestration/planning infrastructure, evidence archives,
@@ -35,34 +32,34 @@ cancellation, implementation tickets, workflow edits or fan-out occur in 100-66.
 
 ## Source reads and reconciliation
 
-Snapshot: September 11, 2026, 21:41 UTC. Read live issue/project content, the complete
-64-issue team 100 listing, and candidate/overlap descriptions, comments and relations.
-Exactly four were Backlog. No required source is unavailable: the brief reproduces
-the laptop notes in full. Recheck scope and acceptance before planning.
+Snapshot: September 11, 2026, 22:45 UTC; 65 issues, four Backlog candidates.
+Read live project/issues, candidate comments/relations and the brief's complete notes;
+no required source unavailable. Recheck before planning; replacement PRs supersede originals.
 
-| Input                            | Evidence read                                                                                                                                                | Consequence                                                                                                                                     |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current brief and original notes | [Project content][brief], [100-66](https://linear.app/1000lines/issue/100-66)                                                                                | All five note groups and later factory/GraphQL request are covered below.                                                                       |
-| Template baseline                | [main at 58021a7][template-base]: README, SYMPHONY, SELF-ADOPTION, REVIEW, provenance, questions/answers, factory/GraphQL resources, config, workflows/tests | Published subset has CI/wakeups/ingress; root answers consume `01ccd00`. No generated PR template or review caller.                             |
-| Workflow baseline                | [main at 77cfb2d][workflow-base]: exported workflows, native review/handoff/check/workpad helpers, CI and workflow guidance                                  | Current native handoff parses prose; Human input needed takes a human-review-only branch. Existing check cleanup is not project-folder cleanup. |
-| Historical planning              | [Design][old-design] D1–D9 and [accepted fan-out decisions][old-plan], including alpha/self-use amendments                                                   | Retain ownership and evidence boundaries; newer brief/100-62/64 override old provider choice, seed-only development and update exclusions.      |
-| Historical human feedback        | [Example #6][e6], [#11][e11], [#16][e16], [#32][e32], [#36][e36], [#40][e40], [#48][e48], [#49][e49]: PR bodies, reviews, comments and threads               | All merged. Preserve concise colleague-facing reviews, verified human authority, minimum diagram size and recorded live-proof limits.           |
+| Input                            | Evidence read                                                                                                                                                | Consequence                                                                                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Current brief and original notes | [Project content][brief], [100-66](https://linear.app/1000lines/issue/100-66)                                                                                | All five note groups and later factory/GraphQL request are covered below.                                                                        |
+| Template baseline                | [main at d2dd1dd][template-base]: README, SYMPHONY, SELF-ADOPTION, REVIEW, provenance, questions/answers, factory/GraphQL resources, config, workflows/tests | Provider/review/handoff/check-cleanup callers now merged; root consumes `e8d6f36`, pinning workflow/helpers `ac15fc1`. No generated PR template. |
+| Workflow baseline                | [main at 77cfb2d][workflow-base]: exported workflows, native review/handoff/check/workpad helpers, CI and workflow guidance                                  | Current native handoff parses prose; Human input needed takes a human-review-only branch. Existing check cleanup is not project-folder cleanup.  |
+| Historical planning              | [Design][old-design] D1–D9 and [accepted fan-out decisions][old-plan], including alpha/self-use amendments                                                   | Retain ownership and evidence boundaries; newer brief/100-62/64 override old provider choice, seed-only development and update exclusions.       |
+| Historical human feedback        | [Example #6][e6], [#11][e11], [#16][e16], [#32][e32], [#36][e36], [#40][e40], [#48][e48], [#49][e49]: PR bodies, reviews, comments and threads               | All merged. Preserve concise colleague-facing reviews, verified human authority, minimum diagram size and recorded live-proof limits.            |
 
 “Delivered” denotes the stated source artifact, separately from publication,
 installation and live execution. “Underway” denotes open work, not acceptance;
 “still needed” denotes a gap; exclusion does not authorize ticket closure.
 
-| Candidate / owner                                                                                                 | Observed disposition                                                                                             | Required planning treatment                                                                                                                                                                                     |
-| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [100-44](https://linear.app/1000lines/issue/100-44), Backlog                                                      | Still needed: optional model/effort and real timings; baseline verifier has a single-model allowlist             | Reuse this owner for R3. Preserve intentional fast/low-effort default and key-driven selection; no mandatory Copier question.                                                                                   |
-| [100-60](https://linear.app/1000lines/issue/100-60), Backlog                                                      | Still needed: [#48's COMMENTED Human input needed review][e48] did not wake 100-53; Jeremy recovered it manually | Reuse for R2 routing. Trace the actual delivery, fix template/shared source and prove Copier propagation. Preserve explicit Copier-readiness hold.                                                              |
-| [100-61](https://linear.app/1000lines/issue/100-61), Backlog                                                      | Still needed: [#49][e49] renders Done tickets 100-49/53 grey because checkpoint labels mention pending artifacts | Reuse for R4 and generated PR guidance. Preserve explicit Copier-readiness hold; known Done state wins over label prose.                                                                                        |
-| [100-65](https://linear.app/1000lines/issue/100-65), Backlog in Misc                                              | Still needed: client/provider ingress filename collision on workflow-repository adoption                         | Reuse for R9; preserve Misc/Backlog until explicit human direction to move/activate.                                                                                                                            |
-| [100-57](https://linear.app/1000lines/issue/100-57), Inactive                                                     | Underway: [template #1][t1], draft at `544d439`; Jeremy approved, still unmerged                                 | Existing owner of alpha caller/root migration and real root review/check/ready/cancellation proof. Do not duplicate or call approval a release.                                                                 |
-| [100-62](https://linear.app/1000lines/issue/100-62), Inactive                                                     | Underway: [template #4][t4], draft at `ef04515`, guided setup/probes                                             | Owns provisioning/readiness, not provider implementation. Jeremy's 21:37 UTC comment reports org secrets/variable added: verify effective delivery, not historical empty inventories.                           |
-| [100-63](https://linear.app/1000lines/issue/100-63), Inactive                                                     | Underway: [template #2][t2], draft at `e702cc6`, bundled Karpathy removal and Copier propagation                 | Consume removal; no replacement skill or personal/global removal. Preserve adopter modifications, including selective exclusions for deleted template files.                                                    |
-| [100-64](https://linear.app/1000lines/issue/100-64), Inactive                                                     | Underway: [template #3][t3] at `fcecd50`, [workflow #1][w1] at `ac15fc1`, both draft                             | Owns provider execution, named secret forwarding and review/event/manual/handoff/check-cleanup callers. Reuse interfaces; R1 adds missing structured coordinator boundary, not another provider implementation. |
-| [100-58](https://linear.app/1000lines/issue/100-58) / [100-59](https://linear.app/1000lines/issue/100-59), Active | Existing example-adoption and consumer-census/retirement obligations; no attached PR                             | Preserve live native/Docker/remote, failure/recovery, onboarding and both-consumer evidence. New periodic root checkpoints supplement these owners; R5 does not retire their code.                              |
+| Candidate / owner                                                                                                           | Observed disposition                                                                                                                                    | Required planning treatment                                                                                                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [100-44](https://linear.app/1000lines/issue/100-44), Backlog                                                                | Still needed: optional model/effort and real timings; baseline verifier has a single-model allowlist                                                    | Reuse this owner for R3. Preserve intentional fast/low-effort default and key-driven selection; no mandatory Copier question.                                                                                                       |
+| [100-60](https://linear.app/1000lines/issue/100-60), Backlog                                                                | Still needed: [#48's COMMENTED Human input needed review][e48] did not wake 100-53; Jeremy recovered it manually                                        | Reuse for R2 routing. Trace the actual delivery, fix template/shared source and prove Copier propagation. Preserve explicit Copier-readiness hold.                                                                                  |
+| [100-61](https://linear.app/1000lines/issue/100-61), Backlog                                                                | Still needed: [#49][e49] renders Done tickets 100-49/53 grey because checkpoint labels mention pending artifacts                                        | Reuse for R4 and generated PR guidance. Preserve explicit Copier-readiness hold; known Done state wins over label prose.                                                                                                            |
+| [100-65](https://linear.app/1000lines/issue/100-65), Backlog in Misc                                                        | Still needed: client/provider ingress filename collision on workflow-repository adoption                                                                | Reuse for R9; preserve Misc/Backlog until explicit human direction to move/activate.                                                                                                                                                |
+| [100-57](https://linear.app/1000lines/issue/100-57), Inactive                                                               | Underway: replacement [template #10][t1], draft at `544d439`; original #1 closed unmerged                                                               | Existing owner of alpha caller/root migration and real root review/check/ready/cancellation proof. Do not duplicate or call approval a release.                                                                                     |
+| [100-62](https://linear.app/1000lines/issue/100-62), Inactive                                                               | Underway: replacement [template #8][t4], draft at `ef04515`, guided setup/probes                                                                        | Owns provisioning/readiness, not provider implementation. Jeremy's 21:37 UTC comment reports org secrets/variable added: verify effective delivery, not historical empty inventories.                                               |
+| [100-63](https://linear.app/1000lines/issue/100-63), Inactive                                                               | Underway: replacement [template #9][t2], draft at `e702cc6`, bundled Karpathy removal and Copier propagation                                            | Consume removal; no replacement skill or personal/global removal. Preserve adopter modifications, including selective exclusions for deleted template files.                                                                        |
+| [100-64](https://linear.app/1000lines/issue/100-64), Done                                                                   | Delivered: [template #6][t3] merged at `d2dd1dd`; [workflow #2][w1] at `ac15fc1` still draft                                                            | Reuse provider/caller interfaces. Linear Done does not prove shared-workflow acceptance, release or live execution; retain this owner's outstanding evidence obligations. R1 adds structured coordination, not duplicate providers. |
+| [100-58](https://linear.app/1000lines/issue/100-58), Inactive / [100-59](https://linear.app/1000lines/issue/100-59), Active | Existing adoption/retirement obligations; [example #50](https://github.com/1000lines/symphony-example/pull/50) draft at `39a87e5` records adoption gaps | Preserve live native/Docker/remote, recovery, onboarding and both-consumer evidence. Periodic root checkpoints supplement these owners; R5 does not retire their code.                                                              |
+| [100-69](https://linear.app/1000lines/issue/100-69), Inactive in Misc                                                       | Excluded from new scope: separately commissioned shared-helper/template PR-label reliability; no PR yet                                                 | Retain existing owner and startup/App/replacement/event-order proof. Consume its correction when available; do not create duplicate label tooling or an independent design gate.                                                    |
 
 | Original note                                                           | Reconciled disposition / requirement                                                                                                                                                                                            |
 | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -75,8 +72,6 @@ installation and live execution. “Underway” denotes open work, not acceptanc
 | 5: line limits and 40% less text                                        | R6 sets proportionate budgets without deleting requirements/decisions/acceptance. 100-63 removal is existing work.                                                                                                              |
 
 ## Locked decisions and design contracts
-
-The source mandates and concrete engineering defaults below are proposed for acceptance.
 
 ### R1 — Structured reviewer, deterministic coordinator
 
@@ -122,6 +117,11 @@ Update one App-owned main PR comment by stable marker: disposition, at most thre
 points, head/workpad links and timing footer. Details stay in the Cadence workpad.
 Preserve submitted reviews as event/history records with minimal disposition/link
 bodies. Never delete human comments or treat the main comment as verdict authority.
+
+On review completion, [replace Cadence's 👀][completion-reactions] on the acknowledged
+trigger with 👍 for `approve`, 👎 for every other outcome (including failure).
+Only change Cadence-owned reactions; retries converge to one outcome, and superseded
+runs cannot overwrite newer feedback. Log API failures for retry; preserve human reactions.
 
 | Validated result                                                         | Coordinator action                                                                                                                                                                            |
 | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -246,10 +246,9 @@ State cancellation and PR closure retain Linear/GitHub history; git retains file
 
 ### R6 — Concision
 
-Retain useful requirements, decisions, acceptance and unresolved findings; link
-existing workpads/history instead of copying deliberation into plans. Preserve
-`.gitattributes`: nested project bookkeeping collapses, top-level docs and `.mmd`
-remain visible. Consume 100-63's removal without introducing a replacement skill.
+Keep requirements, decisions, acceptance and unresolved findings; link workpads/history.
+Preserve `.gitattributes`: collapse nested bookkeeping, leaving top-level docs/`.mmd`
+visible. Consume 100-63's removal without a replacement skill.
 
 Prose budgets: PR template ≤60 lines; focused skill or generated SYMPHONY ≤120;
 focused reference ≤160; this design ≤360 formatted lines. Explain useful exceptions
@@ -259,10 +258,9 @@ budgets counting helpers/tests alongside YAML, not only wrapper length.
 
 ### R7 — Periodic self-adoption and real behavior
 
-Plan useful increments with root self-adoption after each: factory/guidance,
-review/routing and cleanup are demonstrable groups, not a ticket sequence.
-Coordinate alpha migration with 100-57, preserve 100-58/59's adoption/retirement
-proof, and reuse evidence rather than competing over the same PR/settings.
+Use root self-adoption checkpoints for useful factory/guidance, review/routing and
+cleanup increments. Coordinate alpha with 100-57; preserve 100-58/59 adoption/retirement
+proof and reuse evidence. These groups do not prescribe ticket order.
 
 After acceptance/publication, resolve both `alpha` refs and update an isolated root
 with Copier 9.18.2. Review collisions, preserving package CI/config and adopter files
@@ -310,37 +308,39 @@ review/handoff per event without accepting arbitrary workflow names.
 ## Acceptance and planning handoff
 
 These are required evidence targets, not observed results of this design PR.
-100-67 maps every row to existing ownership or a bounded new deliverable, with
-file/resource ownership and only necessary hard dependencies; 100-68 alone fans out.
-Use shared Symphony DAG tooling and existing schemas. All task/PR bases are main;
-never commit unmerged predecessor work. Reconcile new human decisions before planning.
+100-67 maps every row to existing ownership or a bounded new deliverable, with file
+ownership and necessary hard dependencies; 100-68 alone fans out. Use shared DAG
+tooling/schemas; all task/PR bases are main, without unmerged predecessor commits.
+Jeremy [expects small discoveries](https://github.com/1000lines/symphony-client-template/pull/7#issuecomment-5641335337) during delivery: this is a baseline, not an exhaustive future-item list.
+Record each in-scope addition's rationale, owner and acceptance checks; amend small
+changes directly through existing replanning rules. Broader boundary/interface changes
+use the replan/fan-out path; retain exclusions and existing ownership. No speculative tickets.
 
-| ID   | Acceptance                                                                                                                                                                                                                               | Owner boundary / prerequisite                                                                                                                  |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| AC1  | Every candidate/note classified with current issue/PR/source evidence; no duplicate 100-57/62/63/64 or removed holds                                                                                                                     | 100-66 design; 100-67 refresh.                                                                                                                 |
-| AC2  | Both providers return R1 data for the same PR/head using unchanged implementation; malformed, stale, missing and inconsistent outputs cannot act; findings/feedback survive                                                              | Shared workflow contract owner consumes accepted 100-64; 100-62 credentials gate live runs only.                                               |
-| AC3  | One main comment updates; current clean draft becomes ready; stale/new-feedback/failure/denial/duplicate cases do not; failed handoff remains explicit                                                                                   | Shared coordinator owner; template root checkpoint with actual PR/review/check/workpad links.                                                  |
-| AC4  | Trace #48; App-authored COMMENTED human-needed and ordinary changes verdict each wake eligible wait; approvals/ordinary bot comments do not; authority/terminal/dedup guards pass                                                        | Existing 100-60, released structured publisher and Copier-readiness hold.                                                                      |
-| AC5  | Optional settings reach provider; effective provider/model/effort and separate actual timings visible; unset settings preserve fast behavior; all four key cases verified                                                                | Existing 100-44 with 100-64 boundary; no new provider implementation.                                                                          |
-| AC6  | Creation and refresh invoke pure renderer; #49 Done regression green; colors/highlight/links/topology retained; undersized diagrams omitted; actual GitHub rendering verified                                                            | Existing 100-61 and generated client; preserve Copier-readiness hold.                                                                          |
-| AC7  | Weekly/manual dry-run has zero mutations; clean/stale boundary, one-open-ticket, incomplete access, unsafe path, fresh activity, partial failure and retry tests pass; controlled stale run closes state/PRs then opens deletion-only PR | Shared cleanup implementation + thin template caller; Jeremy authorizes controlled live target/environment. No real project cleanup by 100-66. |
-| AC8  | Budgets/40% revision preserve all required content, removed skill stays removed, diff-collapse exceptions unchanged                                                                                                                      | Concision owner consumes 100-63; no personal/global changes.                                                                                   |
-| AC9  | Each useful increment consumed from published revisions in root, preserves adopter files/config/CI, passes actual affected behavior and feeds findings back                                                                              | Increment owners coordinate with 100-57; 100-58/59 obligations stay intact.                                                                    |
-| AC10 | Both Linear transports follow identical preflight/staging/readback; real absent-tool factory setup succeeds in generated client; root correction adopted; hosted auth unchanged                                                          | Template factory correction owner; Jeremy supplies authorized human-session test target.                                                       |
-| AC11 | Workflow repo onboards/updates without provider-file loss; renamed ingress passes trust checks, rejects impersonation and causes one downstream delivery                                                                                 | Existing 100-65; explicit hold release and accepted ingress migration required for this adoption only.                                         |
-| AC12 | Reviewed source, published refs, installed client and live outcomes distinguished; passing local checks and exact-head CI; fresh configured review and human acceptance before completion                                                | Every delivery owner; remaining external operations named with exact action/readback.                                                          |
+| ID   | Acceptance                                                                                                                                                                                                                                       | Owner boundary / prerequisite                                                                                                                  |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC1  | Every candidate/note classified with current issue/PR/source evidence; no duplicate 100-57/62/63/64 or removed holds                                                                                                                             | 100-66 design; 100-67 refresh.                                                                                                                 |
+| AC2  | Both providers return R1 data for the same PR/head using unchanged implementation; malformed, stale, missing and inconsistent outputs cannot act; findings/feedback survive                                                                      | Shared workflow contract owner consumes accepted 100-64; 100-62 credentials gate live runs only.                                               |
+| AC3  | One main comment updates; clean draft readies; stale/new-feedback/failure/denial/duplicate cases do not. Completion replaces Cadence's 👀 with 👍 on approve, 👎 otherwise; retry/supersession preserves human reactions; errors remain explicit | Shared coordinator owner; root checkpoint with real trigger-reaction, PR/review/check/workpad evidence.                                        |
+| AC4  | Trace #48; App-authored COMMENTED human-needed and ordinary changes verdict each wake eligible wait; approvals/ordinary bot comments do not; authority/terminal/dedup guards pass                                                                | Existing 100-60, released structured publisher and Copier-readiness hold.                                                                      |
+| AC5  | Optional settings reach provider; effective provider/model/effort and separate actual timings visible; unset settings preserve fast behavior; all four key cases verified                                                                        | Existing 100-44 with 100-64 boundary; no new provider implementation.                                                                          |
+| AC6  | Creation and refresh invoke pure renderer; #49 Done regression green; colors/highlight/links/topology retained; undersized diagrams omitted; actual GitHub rendering verified                                                                    | Existing 100-61 and generated client; preserve Copier-readiness hold.                                                                          |
+| AC7  | Weekly/manual dry-run has zero mutations; clean/stale boundary, one-open-ticket, incomplete access, unsafe path, fresh activity, partial failure and retry tests pass; controlled stale run closes state/PRs then opens deletion-only PR         | Shared cleanup implementation + thin template caller; Jeremy authorizes controlled live target/environment. No real project cleanup by 100-66. |
+| AC8  | Budgets/40% revision preserve all required content, removed skill stays removed, diff-collapse exceptions unchanged                                                                                                                              | Concision owner consumes 100-63; no personal/global changes.                                                                                   |
+| AC9  | Each useful increment consumed from published revisions in root, preserves adopter files/config/CI, passes actual affected behavior and feeds findings back                                                                                      | Increment owners coordinate with 100-57; 100-58/59 obligations stay intact.                                                                    |
+| AC10 | Both Linear transports follow identical preflight/staging/readback; real absent-tool factory setup succeeds in generated client; root correction adopted; hosted auth unchanged                                                                  | Template factory correction owner; Jeremy supplies authorized human-session test target.                                                       |
+| AC11 | Workflow repo onboards/updates without provider-file loss; renamed ingress passes trust checks, rejects impersonation and causes one downstream delivery                                                                                         | Existing 100-65; explicit hold release and accepted ingress migration required for this adoption only.                                         |
+| AC12 | Reviewed source, published refs, installed client and live outcomes distinguished; passing local checks and exact-head CI; fresh configured review and human acceptance before completion                                                        | Every delivery owner; remaining external operations named with exact action/readback.                                                          |
 
-Material open decisions: none required to plan. R1/R4/R5/R6 offer explicit defaults
-for human review. IDs, CI names, model compatibility, App grants and secret delivery
-are implementation/admin lookups; missing access gates only dependent operations.
-Unknowns never count as observed values or passing evidence.
+No material open planning decisions. R1/R4/R5/R6 defaults await human review.
+IDs, CI/model compatibility, grants and secrets are execution inputs, not evidence;
+missing access gates only dependent operations.
 
-100-66 validates formatting, whitespace, references/coverage and published-head
-template CI (`Client template tests`, `.github/workflows/ci.yml`, App 15368).
-Local pass skips Docker; no provider, cleanup, adoption or live workflow claim.
+100-66 validates Markdown/coverage and published-head template CI (`Client template tests`,
+`.github/workflows/ci.yml`, App 15368). Local pass skips Docker; no live behavior claim.
 
 [brief]: https://linear.app/1000lines/project/symphony-client-template-enhancements-c24c56d5ad02
-[template-base]: https://github.com/1000lines/symphony-client-template/tree/58021a73ac3a6c2141a1217fc88c27e590df8143
+[completion-reactions]: https://github.com/1000lines/symphony-client-template/pull/7#issuecomment-5641457560
+[template-base]: https://github.com/1000lines/symphony-client-template/tree/d2dd1ddb62bba92b6637355a705335cec89c7b43
 [workflow-base]: https://github.com/1000lines/symphony-client-workflows/tree/77cfb2d1f4e0e488af207096b1785b63ffc0398b
 [old-design]: https://github.com/1000lines/symphony-example/blob/e362e5ad76fa8070ef27bf54fec9d6750195466c/docs/symphony-plans/client-template-design.md
 [old-plan]: https://github.com/1000lines/symphony-example/blob/e362e5ad76fa8070ef27bf54fec9d6750195466c/docs/symphony-plans/fan-out-plan-100-39-client-template.md
@@ -352,9 +352,9 @@ Local pass skips Docker; no provider, cleanup, adoption or live workflow claim.
 [e40]: https://github.com/1000lines/symphony-example/pull/40
 [e48]: https://github.com/1000lines/symphony-example/pull/48
 [e49]: https://github.com/1000lines/symphony-example/pull/49
-[t1]: https://github.com/1000lines/symphony-client-template/pull/1
-[t2]: https://github.com/1000lines/symphony-client-template/pull/2
-[t3]: https://github.com/1000lines/symphony-client-template/pull/3
-[t4]: https://github.com/1000lines/symphony-client-template/pull/4
-[w1]: https://github.com/1000lines/symphony-client-workflows/pull/1
+[t1]: https://github.com/1000lines/symphony-client-template/pull/10
+[t2]: https://github.com/1000lines/symphony-client-template/pull/9
+[t3]: https://github.com/1000lines/symphony-client-template/pull/6
+[t4]: https://github.com/1000lines/symphony-client-template/pull/8
+[w1]: https://github.com/1000lines/symphony-client-workflows/pull/2
 [environments]: https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments
