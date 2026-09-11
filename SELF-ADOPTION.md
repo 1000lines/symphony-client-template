@@ -1,9 +1,9 @@
 # Template self-instantiation
 
-The repository root was updated by Copier 9.18.2 from provider-caller revision
-`e8d6f3654ed06bed8d948cd0f268a1b994189d1c` to
-`7c3aecbadbe229a8dc39a0f72af366675c6bc615`, removing the bundled Karpathy skill
-while retaining those callers. `.copier-answers.yml` records the real source
+The repository root was updated by Copier 9.18.2 from removal revision
+`7c3aecbadbe229a8dc39a0f72af366675c6bc615` to
+`792ef00b289c8eb89fb872bb0ecdcbe9c9c9cec3`, retaining the Karpathy removal and
+main's accepted alpha caller migration. `.copier-answers.yml` records the real source
 URL, commit and nonsecret answers. Template source remains under
 `template/`; root client files are excluded by `_subdirectory: template`.
 
@@ -32,21 +32,22 @@ in their implementation PRs; no symphony-example files were patched.
 From a clean, committed client checkout, update using the removal commit:
 
 ```sh
-copier update --defaults --vcs-ref=7c3aecbadbe229a8dc39a0f72af366675c6bc615
+copier update --defaults --vcs-ref=792ef00b289c8eb89fb872bb0ecdcbe9c9c9cec3
 ```
 
 The root update used Git's `insteadOf` transport setting to resolve the recorded
 public URL to the local source commit, so both commits can be reviewed in one PR.
-Copier removed the generated skill and references and wrote the answers. The
-root's required CI check, provider callers and omitted command caller survived
-without exclusions or conflict resolution; no answers were edited manually.
+Copier removed the generated skill and references in the earlier update; this
+refresh advanced only the recorded source. The root's required CI check,
+provider/alpha callers and omitted command caller survived without exclusions or
+conflict resolution; no answers were edited manually.
 
 Review adopter changes to the removed files before updating. Copier 9.18.2
 deletes removed template paths even when locally modified. Preserve each
 reviewed adopter-owned file with Copier's `--exclude` option, for example:
 
 ```sh
-copier update --defaults --vcs-ref=7c3aecbadbe229a8dc39a0f72af366675c6bc615 \
+copier update --defaults --vcs-ref=792ef00b289c8eb89fb872bb0ecdcbe9c9c9cec3 \
   --exclude .agents/skills/karpathy-guidelines/SKILL.md
 ```
 
