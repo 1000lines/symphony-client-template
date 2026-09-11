@@ -16,10 +16,14 @@ Answer the repository, branch, Linear team, App slugs, reviewer and build/test
 questions. Review the generated diff before applying it to an existing repo.
 Keep secrets out of answers and preserve existing application files.
 
-The current package includes CI/wakeup callers, review ingress, configuration,
-and client skills. The review/handoff/cleanup callers and Codex provider wiring
-are deferred. Selecting a reviewer records the choice; it does not install those
-missing callers. CI/wakeup callers retain their working, pinned seed references.
+The package includes CI/wakeup, review event/manual, handoff and cleanup callers,
+configuration, and client skills. Both provider secrets are explicitly forwarded:
+`CADENCE_OPENAI_API_KEY` selects Codex, otherwise
+`CADENCE_AI_REVIEW_ANTHROPIC_API_KEY` selects Claude. Both selects Codex; neither
+fails early. The reviewer answer is an onboarding preference. See the generated
+[review context](template/.github/symphony/REVIEW.md.jinja) for the exact secret
+mapping and provisioning boundary with 100-62. CI/wakeup callers retain their
+working, pinned seed references.
 
 ## Development
 
