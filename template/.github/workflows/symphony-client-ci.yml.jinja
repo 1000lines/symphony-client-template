@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   commands:
-    uses: 1000lines/symphony-example/.github/workflows/symphony-client-commands.yml@fd383f5760a2ba62ea6f6295bd6dd21cc0cb9e9e
+    uses: 1000lines/symphony-client-workflows/.github/workflows/symphony-client-commands.yml@alpha
     with:
       tested-ref: ${{ github.event.pull_request.head.sha || github.sha }}
       commands: >-
