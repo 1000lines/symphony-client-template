@@ -18,18 +18,20 @@ without removing the human decisions.
 
 Coding and review agents already participate in parts of this flow, but they
 are rarely immersed in the whole journey. They arrive for one task or one diff,
-without the project context, decisions, and feedback that shaped it. 1000lines
-uses project context, ticket state, and agent workpads to carry the conversation
-across planning, implementation, review, and revision.
+without the project context, decisions, and feedback that shaped it. Our agents
+are there for the journey. Cadence stays with the human across the project's PR
+conversation, carrying review context from one decision to the next. Symphony
+does the coding: it turns ready work into branches and pull requests, then
+revises them in response to the conversation.
 
 You define the project in Linear, then respond to requirements, design, plans,
 and working software through GitHub pull requests. Your comments change what
 happens next; approval and merge move the project forward.
 
-Symphony carries the conversation between those human decisions. It coordinates
-agents, context, handoffs, and execution state across Linear and GitHub. Cadence
-adds a fast, independent AI review. The Symphony UI lets you watch the work
-without having to operate it ticket by ticket.
+1000lines provides those two roles. Cadence accompanies the human through the
+review journey; Symphony implements the work. Ticket state and workpads carry
+context and handoffs across Linear and GitHub. The Symphony UI lets you watch
+the work without having to operate it ticket by ticket.
 
 ## Architecture
 
@@ -62,18 +64,20 @@ flowchart LR
   ORCHESTRATOR <--> TICKETS
   ORCHESTRATOR <--> WORKPADS
   MONITOR -.-> ORCHESTRATOR
-  ORCHESTRATOR -->|Author work| CODE
+  ORCHESTRATOR -->|Symphony codes| CODE
   CODE --> PR
-  PR --> CADENCE
-  CADENCE --> PR
+  PR -->|Cadence reviews| CADENCE
+  CADENCE -->|Journey context| WORKPADS
+  CADENCE -->|Review on the PR page| PR
   PR -->|Feedback and merge signals| ORCHESTRATOR
 ```
 
 The human works through the Linear project definition and GitHub pull requests.
 Individual Linear ticket state and workpads support automation and
 troubleshooting; they are not the participant's day-to-day control surface.
-Symphony authors the work, Cadence reviews it, and the participant owns approval
-and merge decisions. The Symphony UI is the monitoring surface.
+Symphony does the coding, Cadence takes the review journey with the human, and
+the participant owns approval and merge decisions. The Symphony UI is the
+monitoring surface.
 
 Create a separate log in this folder for every repository worked on. Name it
 `OWNER--REPO.md`, using the working repository's owner and name, and start from
