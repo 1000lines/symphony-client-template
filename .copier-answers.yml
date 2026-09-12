@@ -3,7 +3,7 @@ _commit: 0b666c5
 _src_path: https://github.com/1000lines/symphony-client-template.git
 build_command: python3 -m compileall -q tests
 cadence_app_slug: 1000lines-cadence
-cadence_reviewer: claude
+cadence_reviewer: codex
 default_branch: main
 linear_team_key: '100'
 repo_slug: 1000lines/symphony-client-template
