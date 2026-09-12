@@ -99,7 +99,8 @@ jobs:
             ["git", "-C", str(self.source), *args], text=True, stderr=subprocess.STDOUT
         )
 
-    def render(self, answers, name="output", ref="HEAD", expect_error=False):
+    def render(self, answers, name="output", ref="HEAD", expect_error=False,
+               error_question="cadence_reviewer"):
         data_file = self.root / f"{name}-answers.yml"
         data_file.write_text(yaml.safe_dump(answers), encoding="utf-8")
         output = self.root / name
@@ -112,7 +113,7 @@ jobs:
         self.assertEqual(self.git("status", "--porcelain"), "")
         if expect_error:
             self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertIn("cadence_reviewer", result.stdout + result.stderr)
+            self.assertIn(error_question, result.stdout + result.stderr)
             self.assertFalse((output / ".copier-answers.yml").exists())
         else:
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -201,6 +202,15 @@ jobs:
                 if reviewer is not None:
                     data["cadence_reviewer"] = reviewer
                 self.render(data, f"invalid-{index}", expect_error=True)
+
+    def test_app_identities_reject_duplicate_bot_suffixes_and_invalid_slugs(self):
+        answers = {"repo_slug": "example/widget", "cadence_reviewer": "codex",
+                   "build_command": "make build", "test_command": "make test"}
+        for key in ("symphony_app_slug", "cadence_app_slug"):
+            for index, value in enumerate(("app[bot][bot]", "owner/app", "app with spaces")):
+                with self.subTest(question=key, value=value):
+                    self.render(dict(answers, **{key: value}), f"invalid-{key}-{index}",
+                                expect_error=True, error_question=key)
 
 
 if __name__ == "__main__":

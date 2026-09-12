@@ -12,9 +12,26 @@ python -m pip install copier==9.18.2
 copier copy --vcs-ref=main https://github.com/1000lines/symphony-client-template.git ./my-client
 ```
 
-Answer the repository, branch, Linear team, App slugs, reviewer and build/test
+Answer the repository, branch, Linear team, App identities, reviewer and build/test
 questions. Review the generated diff before applying it to an existing repo.
 Keep secrets out of answers and preserve existing application files.
+
+Copy and update print a prerequisites checklist and ordered setup commands using
+the chosen repository and branch. The editable suggestions are `main`, Linear
+team `100`, author `1000lines-symphony[bot]` and reviewer
+`jeremycarroll-cadence[bot]`. Either an App slug or its bot login is accepted:
+manifests use the slug, while Actions identities add `[bot]` exactly once.
+Existing answers stay in use on update, including the eight existing answer keys.
+
+These are suggestions for the operator to replace with their own identities.
+The supplied 1000lines inventory has App ID `4866513`, reviewer
+`1000lines-cadence[bot]`, author `1000lines-symphony[bot]` and Claude model
+`claude-opus-5`; the reviewer suggestion intentionally differs. All eight reference
+settings had public-repository access on September 11, 2026. Their presence does
+not grant another adopter access: use repository settings for personal owners,
+or organization settings with target access and an eligible plan. Organization
+settings are unavailable to private repositories on GitHub Free; repository
+settings are the alternative ([GitHub scope guidance](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets)).
 
 Register or reuse the reviewer App first with the generated
 [App setup command](template/.github/symphony/APP-SETUP.md). Separate Cadence and
