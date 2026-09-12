@@ -17,15 +17,30 @@ default_branch:
 
 linear_team_key:
   type: str
+  default: "100"
   help: Linear team key shared by the repository's projects.
 
 symphony_app_slug:
   type: str
-  help: GitHub App slug for the Symphony author.
+  default: "1000lines-symphony[bot]"
+  help: >-
+    Symphony author App slug or bot login (editable suggestion).
+    1000lines-symphony is the slug; 1000lines-symphony[bot] is its login.
+  validator: >-
+    [% if not (symphony_app_slug | regex_search('^[A-Za-z0-9][A-Za-z0-9-]*(\[bot\])?$')) %]
+    Use an App slug or its login with exactly one [bot] suffix.
+    [% endif %]
 
 cadence_app_slug:
   type: str
-  help: GitHub App slug for the Cadence reviewer.
+  default: "jeremycarroll-cadence[bot]"
+  help: >-
+    Cadence reviewer App slug or bot login (editable suggestion; use your own App).
+    jeremycarroll-cadence is the slug; jeremycarroll-cadence[bot] is its login.
+  validator: >-
+    [% if not (cadence_app_slug | regex_search('^[A-Za-z0-9][A-Za-z0-9-]*(\[bot\])?$')) %]
+    Use an App slug or its login with exactly one [bot] suffix.
+    [% endif %]
 
 cadence_reviewer:
   type: str
@@ -43,3 +58,143 @@ test_command:
   type: str
   multiline: true
   help: Repository test command; supply commands without credentials.
+
+_message_before_copy: |
+  Before copying the Symphony/Cadence template
+
+  Have Git, Node 20+ and an operator GitHub CLI login available for setup.
+  Create your own Cadence App under your personal account or organization and
+  install it on the target repository; reuse an existing suitable App if available.
+  Its App ID, PEM private key and slug[bot] login supply the App settings below.
+  Configure a separate Symphony author App; its signing key stays on the host.
+  Obtain Linear and AI provider credentials separately from their own accounts.
+
+  Required Actions settings (repository scope or an organization grant):
+  - CADENCE_APP_ID (variable): your Cadence App's numeric ID, not installation ID.
+  - CADENCE_APP_PRIVATE_KEY (secret): that Cadence App's PEM private key.
+  - CADENCE_REVIEWER (variable): your Cadence App's actual slug[bot] login.
+  - SYMPHONY_BOT_USER (variable): your configured Symphony author bot login.
+  - CADENCE_LINEAR_API_TOKEN (secret): your Linear workspace/team token.
+  Provider-conditional settings:
+  - CADENCE_OPENAI_API_KEY (secret): OpenAI account key for Codex reviews.
+  - CADENCE_AI_REVIEW_ANTHROPIC_API_KEY (secret): Anthropic account key for Claude reviews.
+  - CADENCE_CLAUDE_MODEL (variable): claude-opus-5, required only for Claude.
+  At least one provider key is required. OpenAI wins when both are present,
+  regardless of the reviewer preference; authentication failure does not fall back.
+
+  The App identity suggestions are editable, not credentials or Apps to copy.
+  Keep credential values out of Copier answers, generated files and messages.
+  Setup is performed by an authorized operator; do not expand the hosted bot's permissions.
+  After copying, follow .github/symphony/APP-SETUP.md and
+  .agents/skills/cadence-onboarding/SKILL.md for registration and readiness.
+
+_message_after_copy: |
+  Generated Symphony/Cadence files for [[ repo_slug ]].
+
+  Next steps, from the generated checkout:
+  1. Review the diff and preserve application files/CI. Create the GitHub repository
+     if needed, commit and push the generated callers to [[ default_branch ]].
+     For a new repository, after a local commit (choose --public or --private):
+       gh repo create '[[ repo_slug ]]' --source . --remote origin --push --private
+  2. Register/install separate Cadence and Symphony Apps on [[ repo_slug ]].
+     Follow .github/symphony/APP-SETUP.md, using .github/symphony/setup-app.mjs
+     and the cadence-app-manifest.json / symphony-app-manifest.json presets.
+     App slugs: [[ cadence_app_slug.removesuffix('[bot]') ]] (Cadence), [[ symphony_app_slug.removesuffix('[bot]') ]] (Symphony).
+     Use actual GitHub registration readback if a suggested name was unavailable.
+     The App ID/key/login come from your Cadence App; Linear/provider keys are separate.
+  3. Configure missing Actions settings as an authorized operator; reuse working settings.
+     Required repository-scope examples (replace YOUR_CADENCE_APP_ID with readback):
+       gh variable set CADENCE_APP_ID --repo '[[ repo_slug ]]' --body YOUR_CADENCE_APP_ID
+       gh variable set CADENCE_REVIEWER --repo '[[ repo_slug ]]' --body '[[ cadence_app_slug.removesuffix('[bot]') ]][bot]'
+       gh variable set SYMPHONY_BOT_USER --repo '[[ repo_slug ]]' --body '[[ symphony_app_slug.removesuffix('[bot]') ]][bot]'
+       gh secret set CADENCE_APP_PRIVATE_KEY --repo '[[ repo_slug ]]' < /secure/cadence.pem
+       gh secret set CADENCE_LINEAR_API_TOKEN --repo '[[ repo_slug ]]'
+     Set at least one provider key via the hidden prompt (OpenAI wins if both exist):
+       gh secret set CADENCE_OPENAI_API_KEY --repo '[[ repo_slug ]]'
+       gh secret set CADENCE_AI_REVIEW_ANTHROPIC_API_KEY --repo '[[ repo_slug ]]'
+     For Claude only:
+       gh variable set CADENCE_CLAUDE_MODEL --repo '[[ repo_slug ]]' --body claude-opus-5
+     Organization alternative for new settings, granting the target repository:
+       gh secret set CADENCE_LINEAR_API_TOKEN --org ORG --visibility selected --repos REPO
+       gh variable set CADENCE_APP_ID --org ORG --visibility selected --repos REPO --body YOUR_CADENCE_APP_ID
+     Substitute ORG/REPO with [[ repo_slug ]]; preserve other grants on existing settings.
+     Personal-account repositories use repository settings; personal-account-wide
+     Actions settings are not organization settings. Org inheritance requires target
+     access and an eligible plan: GitHub Free private repos cannot use org settings.
+     Public-only visibility does not cover private repos; repository overrides win.
+     Never put credential values in Copier answers, generated files or messages.
+  4. Follow .agents/skills/cadence-onboarding/SKILL.md to enable Actions and configure
+     cadence-controller for only [[ default_branch ]], without shadowing environment settings.
+     Once the callers are installed on that default branch, run the readiness probe:
+       gh workflow run symphony-client-setup.yml --repo '[[ repo_slug ]]' --ref '[[ default_branch ]]'
+       gh run list --workflow symphony-client-setup.yml --repo '[[ repo_slug ]]'
+     Inspect both setup jobs. A passing probe is separate from live provider review,
+     App-owned review/check publication and Linear handoff; finish the onboarding guide.
+
+_message_before_update: |
+  Before updating the Symphony/Cadence template
+
+  Review the updated template's settings checklist, including requirements missing
+  from your current installation. This revision adds guidance, not a new credential.
+  Existing answers remain the defaults on update; the new suggestions do not replace them.
+  Reuse your installed Apps and working settings without rotating secrets.
+  If needed, create your own Cadence App under your personal account or organization
+  and install it on the target repository. Its App ID, PEM key and bot login provide
+  the App settings; Linear and AI provider credentials are obtained separately.
+
+  Required Actions settings (repository scope or an organization grant):
+  - CADENCE_APP_ID (variable): your Cadence App's numeric ID, not installation ID.
+  - CADENCE_APP_PRIVATE_KEY (secret): that Cadence App's PEM private key.
+  - CADENCE_REVIEWER (variable): your Cadence App's actual slug[bot] login.
+  - SYMPHONY_BOT_USER (variable): your configured Symphony author bot login.
+  - CADENCE_LINEAR_API_TOKEN (secret): your Linear workspace/team token.
+  Provider-conditional settings:
+  - CADENCE_OPENAI_API_KEY (secret): OpenAI account key for Codex reviews.
+  - CADENCE_AI_REVIEW_ANTHROPIC_API_KEY (secret): Anthropic account key for Claude reviews.
+  - CADENCE_CLAUDE_MODEL (variable): claude-opus-5, required only for Claude.
+  At least one provider key is required. OpenAI wins when both are present,
+  regardless of the reviewer preference; authentication failure does not fall back.
+
+  Keep credential values out of Copier answers, generated files and messages.
+  Setup is performed by an authorized operator; do not expand the hosted bot's permissions.
+  Read .github/symphony/APP-SETUP.md and .agents/skills/cadence-onboarding/SKILL.md.
+
+_message_after_update: |
+  Updated Symphony/Cadence files for [[ repo_slug ]].
+
+  Existing-adopter checklist, from the updated checkout:
+  1. Review the diff, resolve any Copier conflicts and preserve application files/CI.
+     Commit and push the reviewed callers to the default branch [[ default_branch ]].
+  2. Verify the existing Cadence/Symphony installations on [[ repo_slug ]] and accept
+     any required grant changes. Reuse identities and keys; register only missing Apps.
+     Follow .github/symphony/APP-SETUP.md and its .github/symphony/setup-app.mjs helper.
+     App slugs: [[ cadence_app_slug.removesuffix('[bot]') ]] (Cadence), [[ symphony_app_slug.removesuffix('[bot]') ]] (Symphony).
+     Check actual App ID/key/login readback; Linear/provider credentials are separate.
+  3. Check effective Actions settings; configure only missing settings and grants.
+     Required repository-scope examples (replace YOUR_CADENCE_APP_ID with readback):
+       gh variable set CADENCE_APP_ID --repo '[[ repo_slug ]]' --body YOUR_CADENCE_APP_ID
+       gh variable set CADENCE_REVIEWER --repo '[[ repo_slug ]]' --body '[[ cadence_app_slug.removesuffix('[bot]') ]][bot]'
+       gh variable set SYMPHONY_BOT_USER --repo '[[ repo_slug ]]' --body '[[ symphony_app_slug.removesuffix('[bot]') ]][bot]'
+       gh secret set CADENCE_APP_PRIVATE_KEY --repo '[[ repo_slug ]]' < /secure/cadence.pem
+       gh secret set CADENCE_LINEAR_API_TOKEN --repo '[[ repo_slug ]]'
+     Set at least one provider key via the hidden prompt (OpenAI wins if both exist):
+       gh secret set CADENCE_OPENAI_API_KEY --repo '[[ repo_slug ]]'
+       gh secret set CADENCE_AI_REVIEW_ANTHROPIC_API_KEY --repo '[[ repo_slug ]]'
+     For Claude only:
+       gh variable set CADENCE_CLAUDE_MODEL --repo '[[ repo_slug ]]' --body claude-opus-5
+     Organization alternative for new settings, granting the target repository:
+       gh secret set CADENCE_LINEAR_API_TOKEN --org ORG --visibility selected --repos REPO
+       gh variable set CADENCE_APP_ID --org ORG --visibility selected --repos REPO --body YOUR_CADENCE_APP_ID
+     Substitute ORG/REPO with [[ repo_slug ]]; preserve other grants on existing settings.
+     Personal-account repositories use repository settings; personal-account-wide
+     Actions settings are not organization settings. Org inheritance requires target
+     access and an eligible plan: GitHub Free private repos cannot use org settings.
+     Public-only visibility does not cover private repos; repository overrides win.
+     Never put credential values in Copier answers, generated files or messages.
+  4. Recheck .agents/skills/cadence-onboarding/SKILL.md: Actions/caller access and
+     cadence-controller admission for only [[ default_branch ]], with no environment shadowing.
+     Once the updated callers are on that default branch, rerun the readiness probe:
+       gh workflow run symphony-client-setup.yml --repo '[[ repo_slug ]]' --ref '[[ default_branch ]]'
+       gh run list --workflow symphony-client-setup.yml --repo '[[ repo_slug ]]'
+     Inspect both setup jobs, then verify live provider review, App-owned review/check
+     and Linear handoff as described in the guide. Generated files alone are not readiness.

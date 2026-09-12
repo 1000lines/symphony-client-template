@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -263,7 +264,153 @@ class RenderTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(self.git(self.source, "status", "--porcelain"), "")
+        self.copy_messages = result.stdout + result.stderr
         return output
+
+    def check_lifecycle_messages(self, text, action, answers):
+        before, after = {
+            "copy": ("Before copying", "Generated Symphony/Cadence files for"),
+            "update": ("Before updating", "Updated Symphony/Cadence files for"),
+        }[action]
+        self.assertEqual(text.count(before), 1)
+        self.assertEqual(text.count(after), 1)
+        before_text, after_text = text.split(after)
+        self.assertIn(answers["repo_slug"], after_text)
+        settings = {
+            "CADENCE_APP_ID", "CADENCE_APP_PRIVATE_KEY", "CADENCE_REVIEWER",
+            "SYMPHONY_BOT_USER", "CADENCE_LINEAR_API_TOKEN", "CADENCE_OPENAI_API_KEY",
+            "CADENCE_AI_REVIEW_ANTHROPIC_API_KEY", "CADENCE_CLAUDE_MODEL",
+        }
+        for message in (before_text, after_text):
+            for setting in settings:
+                self.assertIn(setting, message)
+            self.assertIn("OpenAI wins", message)
+            self.assertIn("at least one provider key", message.lower())
+            self.assertIn(".github/symphony/APP-SETUP.md", message)
+            self.assertIn(".agents/skills/cadence-onboarding/SKILL.md", message)
+            self.assertNotIn("[bot][bot]", message)
+            self.assertNotIn("[[", message)
+            self.assertNotIn("project_name", message)
+            self.assertNotIn("PYPI", message.upper())
+            self.assertNotIn("CODECOV", message.upper())
+        self.assertIn("required only for Claude", before_text)
+        self.assertIn("For Claude only:", after_text)
+        self.assertIn("Personal-account repositories use repository settings", after_text)
+        self.assertIn("GitHub Free private repos cannot use org settings", after_text)
+        self.assertIn("Public-only visibility does not cover private repos", after_text)
+        self.assertIn("preserve other grants", after_text)
+        self.assertIn(".github/symphony/setup-app.mjs", after_text)
+        self.assertIn("live provider review", after_text)
+        self.assertLess(after_text.index("1."), after_text.index("2."))
+        self.assertLess(after_text.index("2."), after_text.index("3."))
+        self.assertLess(after_text.index("3."), after_text.index("4."))
+        commands = [shlex.split(line.strip()) for line in after_text.splitlines()
+                    if line.strip().startswith("gh ")]
+        repository_commands = [cmd for cmd in commands if "--repo" in cmd]
+        for cmd in repository_commands:
+            self.assertEqual(cmd[cmd.index("--repo") + 1], answers["repo_slug"])
+        setting_commands = {cmd[3]: cmd for cmd in repository_commands
+                            if cmd[1] in ("secret", "variable")}
+        self.assertEqual(set(setting_commands), settings)
+        for setting, key in (("CADENCE_REVIEWER", "cadence_app_slug"),
+                             ("SYMPHONY_BOT_USER", "symphony_app_slug")):
+            cmd = setting_commands[setting]
+            self.assertEqual(cmd[cmd.index("--body") + 1],
+                             answers[key].removesuffix("[bot]") + "[bot]")
+        for cmd in setting_commands.values():
+            if cmd[1] == "secret":
+                self.assertNotIn("--body", cmd)
+        for kind in ("secret", "variable"):
+            org = next(cmd for cmd in commands if cmd[1] == kind and "--org" in cmd)
+            self.assertEqual(org[org.index("--visibility") + 1], "selected")
+            self.assertIn("--repos", org)
+        probe = next(cmd for cmd in commands if cmd[1:3] == ["workflow", "run"])
+        self.assertEqual(probe[3], "symphony-client-setup.yml")
+        self.assertEqual(probe[probe.index("--ref") + 1], answers["default_branch"])
+
+    def check_bot_identities(self, output, answers):
+        self.check_ingress(output, answers)
+        for role in ("symphony", "cadence"):
+            slug = answers[f"{role}_app_slug"].removesuffix("[bot]")
+            manifest = json.loads((output / f".github/symphony/{role}-app-manifest.json").read_text())
+            self.assertEqual(manifest["name"], slug)
+            self.assertIn(json.dumps(slug), (output / "SYMPHONY.md").read_text())
+        for relative in GENERATED - {".copier-answers.yml"}:
+            self.assertNotIn("[bot][bot]", (output / relative).read_text(), relative)
+
+    def test_lifecycle_copy_with_editable_defaults_and_bot_logins(self):
+        minimal = {key: value for key, value in self.answers().items() if key not in
+                   {"default_branch", "linear_team_key", "symphony_app_slug", "cadence_app_slug"}}
+        defaults = dict(minimal, default_branch="main", linear_team_key="100",
+                        symphony_app_slug="1000lines-symphony[bot]",
+                        cadence_app_slug="jeremycarroll-cadence[bot]")
+        custom = dict(self.answers(1), symphony_app_slug="custom-author[bot]",
+                      cadence_app_slug="custom-reviewer[bot]")
+        for index, (data, expected) in enumerate(((minimal, defaults), (custom, custom))):
+            with self.subTest(answers=expected):
+                output = self.render(data, f"lifecycle-copy-{index}")
+                self.check_lifecycle_messages(self.copy_messages, "copy", expected)
+                self.assertNotIn("Before updating", self.copy_messages)
+                self.check_bot_identities(output, expected)
+                saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+                self.assertEqual({key: saved[key] for key in expected}, expected)
+                self.assertEqual(set(saved), set(expected) | {"_src_path", "_commit"})
+
+    def test_lifecycle_update_from_prior_template_preserves_answers(self):
+        paths = ["copier.yml", "template/SYMPHONY.md.jinja",
+                 f"template/{INGRESS}.jinja",
+                 "template/.github/symphony/cadence-app-manifest.json.jinja",
+                 "template/.github/symphony/symphony-app-manifest.json.jinja"]
+        current = {path: (self.source / path).read_text() for path in paths}
+        # A self-contained previous revision, usable in shallow CI checkouts.
+        old = yaml.safe_load(current["copier.yml"])
+        for key in list(old):
+            if key.startswith("_message_"):
+                del old[key]
+        for key in ("linear_team_key", "cadence_app_slug", "symphony_app_slug"):
+            old[key].pop("default", None)
+            old[key].pop("validator", None)
+        (self.source / "copier.yml").write_text(yaml.safe_dump(old))
+        for path in paths[1:]:
+            (self.source / path).write_text(current[path].replace(".removesuffix('[bot]')", ""))
+        self.git(self.source, "add", ".")
+        self.git(self.source, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                 "-c", "commit.gpgsign=false", "commit", "-m", "Prior lifecycle fixture")
+        self.git(self.source, "branch", "-f", "alpha", "HEAD")
+        answers = [dict(self.answers(1), cadence_app_slug="1000lines-cadence",
+                        symphony_app_slug="1000lines-symphony"),
+                   dict(self.answers(1), cadence_app_slug="custom-reviewer[bot]",
+                        symphony_app_slug="custom-author[bot]")]
+        clients = []
+        for index, data in enumerate(answers):
+            output = self.render(data, f"lifecycle-update-{index}")
+            (output / "application.txt").write_text("Preserve the adopter's application\n")
+            self.git(output, "init", "--initial-branch=main")
+            self.git(output, "add", ".")
+            self.git(output, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                     "-c", "commit.gpgsign=false", "commit", "-m", "Existing adopter")
+            clients.append(output)
+        for path, content in current.items():
+            (self.source / path).write_text(content)
+        self.git(self.source, "add", ".")
+        self.git(self.source, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                 "-c", "commit.gpgsign=false", "commit", "-m", "Add lifecycle guidance")
+        self.git(self.source, "branch", "-f", "alpha", "HEAD")
+        for output, expected in zip(clients, answers):
+            with self.subTest(client=output.name):
+                result = subprocess.run([sys.executable, "-m", "copier", "update", "--defaults",
+                                         "--vcs-ref=alpha"], cwd=output, stdin=subprocess.DEVNULL,
+                                        capture_output=True, text=True, timeout=30)
+                text = result.stdout + result.stderr
+                self.assertEqual(result.returncode, 0, text)
+                self.check_lifecycle_messages(text, "update", expected)
+                self.assertNotIn("Before copying", text)
+                self.check_bot_identities(output, expected)
+                saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+                self.assertEqual({key: saved[key] for key in expected}, expected)
+                self.assertEqual(set(saved), set(expected) | {"_src_path", "_commit"})
+                self.assertEqual((output / "application.txt").read_text(),
+                                 "Preserve the adopter's application\n")
 
     def test_real_tree_matrix(self):
         for index in range(2):
@@ -466,8 +613,8 @@ class RenderTest(unittest.TestCase):
         # The only expression edits replace the two seed login defaults.
         source = (PACKAGE / "template" / (INGRESS + ".jinja")).read_text()
         for key in ("symphony_app_slug", "cadence_app_slug"):
-            expression = "[[ (" + key + " ~ '[bot]') | replace(\"'\", \"''\") ]]"
-            source = source.replace(expression, answers[key] + "[bot]")
+            expression = "[[ (" + key + ".removesuffix('[bot]') ~ '[bot]') | replace(\"'\", \"''\") ]]"
+            source = source.replace(expression, answers[key].removesuffix("[bot]") + "[bot]")
         self.assertEqual(text, source)
         self.assertEqual(re.findall(r"\$\{\{.*?\}\}", text, re.S),
                          re.findall(r"\$\{\{.*?\}\}", source, re.S))
