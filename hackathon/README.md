@@ -90,6 +90,20 @@ from the three participant projects.
 The [workflow fix](https://github.com/1000lines/symphony-client-workflows/pull/16) reconciles Linear when the last linked PR
 closes. The two open testing PRs do not establish a completed test campaign.
 
+The same day's Symphony repository work also included **five merged PRs without
+that label**:
+
+| Repository | Merged work |
+| --- | --- |
+| `1000lines/symphony-client-template` | [Hackathon onboarding #24](https://github.com/1000lines/symphony-client-template/pull/24), [repository-only files #25](https://github.com/1000lines/symphony-client-template/pull/25), [Linear/GitHub setup #26](https://github.com/1000lines/symphony-client-template/pull/26) |
+| `1000lines/symphony-client-workflows` | [Skip closed review events and trace Linear reconciliation #17](https://github.com/1000lines/symphony-client-workflows/pull/17) |
+| `1000lines/symphony-example` | [Expand project colours from 9 to 24 #68](https://github.com/1000lines/symphony-example/pull/68) |
+
+These additions bring the report to **31 PRs: 22 merged and 9 open** across six
+repositories, using the labelled inventory's state snapshot above. This report's
+own PR is excluded. The work includes fixes to the workflow while participants
+were using it, not just changes to their applications.
+
 ### Defects and interventions
 
 Consolidated from the linked logs; unconfirmed root causes remain attributed to them.
