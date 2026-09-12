@@ -218,6 +218,25 @@ separate during the event. The logs will be consolidated at the end of the day.
 
 ## 2. Choose where the repository will live
 
+### Required for either bring-your-own path: install Symphony
+
+Install the
+[`1000lines-symphony` GitHub App](https://github.com/apps/1000lines-symphony/installations/new)
+on the target repository:
+
+1. Open the installation link and choose the personal account or organization
+   that owns the repository.
+2. Choose **Only select repositories** and select the target repository.
+3. Review the permissions, then choose **Install**. The App reads Actions and
+   checks and writes contents, workflows, issues, and pull requests so Symphony
+   can create branches and PRs and respond to feedback.
+4. If GitHub offers **Request** instead of **Install**, ask an organization owner
+   to approve it. If approval cannot happen during the event, use the fork path.
+
+You do not receive or configure this App's private key. Its signing key stays on
+the hosted Symphony worker. The Cadence review App is installed separately using
+one of the next two paths.
+
 ### Fast bring-your-own path: HackCadence
 
 Keep the repository in its current account or organization and install the
@@ -337,13 +356,23 @@ working on:
 
 ```sh
 git clone https://github.com/1000lines/symphony-example.git /absolute/path/to/symphony-example
+```
+
+Use the real absolute path on your machine. Start Codex from the participant
+repository and tell it:
+
+```text
+Use /absolute/path/to/symphony-example as SYMPHONY_TOOLING_ROOT for this session.
+```
+
+Alternatively, export the value in the shell before starting Codex:
+
+```sh
 export SYMPHONY_TOOLING_ROOT=/absolute/path/to/symphony-example
 ```
 
-Use the real absolute path on your machine. Keep the export in the same shell
-that will start Codex so the session inherits it. `SYMPHONY_TOOLING_ROOT` points
-to shared Symphony planning and proof tooling; it must not point to the
-participant repository.
+`SYMPHONY_TOOLING_ROOT` points to shared Symphony planning and proof tooling; it
+must not point to the participant repository.
 
 ## 5. Create and start the Linear project
 
