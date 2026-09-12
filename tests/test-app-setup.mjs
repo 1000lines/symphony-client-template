@@ -155,6 +155,17 @@ test('readback rejects pending grants, suspension, identity errors and wrong rep
   assert.throws(() => validateReadback(state(), app, installation, { permissions: { contents: 'read' } }, repositories), /Missing/);
 });
 
+test('Symphony readback requires author grants and private-repository status access', () => {
+  const authorState = state();
+  authorState.config.role = 'symphony';
+  authorState.config.manifest = manifest('symphony');
+  const authorInstallation = { ...installation, permissions: permissions.symphony };
+  const token = { permissions: permissions.symphony };
+  assert.equal(validateReadback(authorState, app, authorInstallation, token, repositories).role, 'symphony');
+  assert.throws(() => validateReadback(authorState, app, { ...authorInstallation,
+    permissions: { ...permissions.symphony, statuses: undefined } }, token, repositories), /statuses:read/);
+});
+
 test('App JWT verification narrows tokens, reads repositories and revokes even on failure', async () => {
   const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
   const pem = privateKey.export({ type: 'pkcs8', format: 'pem' });
@@ -182,4 +193,30 @@ test('App JWT verification narrows tokens, reads repositories and revokes even o
     assert.equal(calls.at(-1).path, 'installation/token');
     assert.equal(calls.at(-1).options.method, 'DELETE');
   }
+});
+
+test('multiple target repositories are verified across installation readback pages', async () => {
+  const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+  const selected = Array.from({ length: 101 }, (_, i) => ({ id: i + 1, full_name: `example/repo-${i}` }));
+  const multiple = state();
+  multiple.config.repositories = selected.map(repo => repo.full_name);
+  const pages = [];
+  const result = await verify(multiple, privateKey, async (path, options = {}) => {
+    if (path === 'apps/example-symphony') return other;
+    if (path === 'app') return app;
+    if (path.startsWith('users/')) return { login: 'example-cadence[bot]', type: 'Bot', id: 50 };
+    if (path.endsWith('/installation')) return installation;
+    if (path.endsWith('/access_tokens')) {
+      assert.equal(options.body.repositories.length, 101);
+      return { token: 'fixture-token', permissions: permissions.cadence };
+    }
+    if (path.startsWith('installation/repositories')) {
+      pages.push(path);
+      return { repositories: path.endsWith('page=1') ? selected.slice(0, 100) : selected.slice(100) };
+    }
+    if (path === 'installation/token') return null;
+    assert.fail('Unexpected fixture request');
+  });
+  assert.equal(pages.length, 2);
+  assert.equal(result.repositories.length, 101);
 });
