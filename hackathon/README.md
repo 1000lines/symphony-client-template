@@ -239,16 +239,23 @@ one of the next two paths.
 
 ### Fast bring-your-own path: HackCadence
 
-Keep the repository in its current account or organization and install the
-temporary HackCadence GitHub App on only that repository. You need repository
-admin access. If GitHub offers **Request** instead of **Install**, ask an
-organization owner to approve the installation. If that cannot happen during
-the event, use the fork path.
+Keep the repository in its current account or organization and
+[`install HackCadence`](https://github.com/apps/hackcadence/installations/new)
+on only that repository:
+
+1. Open the installation link and choose the personal account or organization
+   that owns the repository.
+2. Choose **Only select repositories** and select the target repository.
+3. Review the grants, then choose **Install**. You need repository admin access.
+4. If GitHub offers **Request** instead of **Install**, ask an organization owner
+   to approve it. If approval cannot happen during the event, use the fork path.
+
+Installing the App and configuring its Actions settings are separate steps; do
+both for the same target repository.
 
 Jeremy will invite you to a private event-credentials repository containing the
-HackCadence installation link and temporary settings. Configure these GitHub
-Actions settings at repository scope, or through an organization grant that
-includes the repository:
+temporary private key. Configure these GitHub Actions settings at repository
+scope, or through an organization grant that includes the repository:
 
 | Setting | Kind | Value |
 | --- | --- | --- |
@@ -348,6 +355,19 @@ available checks, and add the changes to this setup PR.
 Review and merge the setup PR only when its CI behavior is understood and the
 integration is ready. The generated files must be on the default branch before
 continuing.
+
+Before creating the Linear project, run the generated **Symphony Client Setup**
+workflow from the repository's Actions page, or use:
+
+```sh
+gh workflow run symphony-client-setup.yml --repo OWNER/REPO --ref DEFAULT_BRANCH
+```
+
+Inspect both **Check repository-visible settings** and **Verify job-visible
+credentials**. Both jobs must pass. This probe catches a missing App
+installation, a repository omitted from the installation, an incorrect App ID
+or private key, and missing Linear or provider credentials before the first
+live Cadence review. Fix the named input before retrying the workflow.
 
 ## 4. Set the shared tooling checkout
 
