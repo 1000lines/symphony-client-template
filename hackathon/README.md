@@ -306,9 +306,29 @@ Answer the prompts as follows:
 | Build command | The repository's build command |
 | Test command | The repository's test command |
 
-Review the generated changes, then either commit them directly to the default
-branch or merge them through a setup pull request. The generated files must be
-on the default branch before continuing.
+Review the generated changes and open the first setup pull request. Its CI will
+probably need work: Copier adds Symphony CI files, but it cannot infer how the
+repository's existing CI is structured or which checks it produces.
+
+From the repository root, open Codex or Claude and ask it to connect the new
+Symphony CI from Copier to the existing CI. Have it inspect both systems,
+preserve the working application workflows, align the build and test commands,
+and configure Symphony to recognize the real checks produced for the current PR
+head. Add that integration to the same setup PR and let its CI run again.
+
+A useful prompt is:
+
+```text
+Inspect this repository's existing CI and the Symphony CI/configuration added by
+Copier. Connect them so the existing application checks still run and Symphony
+can recognize the required current-head CI results. Preserve existing workflows,
+update the generated Symphony configuration and callers where needed, run the
+available checks, and add the changes to this setup PR.
+```
+
+Review and merge the setup PR only when its CI behavior is understood and the
+integration is ready. The generated files must be on the default branch before
+continuing.
 
 ## 4. Create and start the Linear project
 
