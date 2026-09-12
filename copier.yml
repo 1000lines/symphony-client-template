@@ -62,10 +62,17 @@ test_command:
 _message_before_copy: |
   Before copying the Symphony/Cadence template
 
-  Have Git, Node 20+ and an operator GitHub CLI login available for setup.
+  Have Git and an operator GitHub CLI login available for setup.
+  Node 20+ is only needed for the optional local setup-app.mjs helper;
+  Copier and the gh commands below do not require Node. Browser setup is also available.
   Create your own Cadence App under your personal account or organization and
   install it on the target repository; reuse an existing suitable App if available.
   Its App ID, PEM private key and slug[bot] login supply the App settings below.
+  Cadence repository permissions: Metadata, Contents, Actions = read;
+  Pull requests, Issues, Checks = read & write. Other permissions = no access.
+  Cadence uses the App for authentication; GitHub Actions runs the reviews.
+  OAuth callbacks/client secrets and webhooks/event subscriptions are unused.
+  Keep webhooks disabled; retain the PEM private key and install the App on each target repo.
   Configure a separate Symphony author App; its signing key stays on the host.
   Obtain Linear and AI provider credentials separately from their own accounts.
 
@@ -97,8 +104,14 @@ _message_after_copy: |
      For a new repository, after a local commit (choose --public or --private):
        gh repo create '[[ repo_slug ]]' --source . --remote origin --push --private
   2. Register/install separate Cadence and Symphony Apps on [[ repo_slug ]].
-     Follow .github/symphony/APP-SETUP.md, using .github/symphony/setup-app.mjs
-     and the cadence-app-manifest.json / symphony-app-manifest.json presets.
+     Follow .github/symphony/APP-SETUP.md for browser setup or the optional
+     .github/symphony/setup-app.mjs helper with the cadence-app-manifest.json /
+     symphony-app-manifest.json presets. Node 20+ is only needed for the optional helper.
+     Cadence repository permissions: Metadata, Contents, Actions = read;
+     Pull requests, Issues, Checks = read & write. Other permissions = no access.
+     Cadence uses the App for authentication; GitHub Actions runs the reviews.
+     OAuth callbacks/client secrets and webhooks/event subscriptions are unused.
+     Keep webhooks disabled; retain the PEM private key and install the App on each target repo.
      App slugs: [[ cadence_app_slug.removesuffix('[bot]') ]] (Cadence), [[ symphony_app_slug.removesuffix('[bot]') ]] (Symphony).
      Use actual GitHub registration readback if a suggested name was unavailable.
      The App ID/key/login come from your Cadence App; Linear/provider keys are separate.
@@ -135,12 +148,19 @@ _message_before_update: |
   Before updating the Symphony/Cadence template
 
   Review the updated template's settings checklist, including requirements missing
-  from your current installation. This revision adds guidance, not a new credential.
-  Existing answers remain the defaults on update; the new suggestions do not replace them.
+  from your current installation.
+  Existing answers remain the defaults on update; suggestions do not replace them.
+  Node 20+ is only needed for the optional local setup-app.mjs helper;
+  Copier and the gh commands below do not require Node. Browser setup is also available.
   Reuse your installed Apps and working settings without rotating secrets.
   If needed, create your own Cadence App under your personal account or organization
   and install it on the target repository. Its App ID, PEM key and bot login provide
   the App settings; Linear and AI provider credentials are obtained separately.
+  Cadence repository permissions: Metadata, Contents, Actions = read;
+  Pull requests, Issues, Checks = read & write. Other permissions = no access.
+  Cadence uses the App for authentication; GitHub Actions runs the reviews.
+  OAuth callbacks/client secrets and webhooks/event subscriptions are unused.
+  Keep webhooks disabled; retain the PEM private key and install the App on each target repo.
 
   Required Actions settings (repository scope or an organization grant):
   - CADENCE_APP_ID (variable): your Cadence App's numeric ID, not installation ID.
@@ -167,7 +187,13 @@ _message_after_update: |
      Commit and push the reviewed callers to the default branch [[ default_branch ]].
   2. Verify the existing Cadence/Symphony installations on [[ repo_slug ]] and accept
      any required grant changes. Reuse identities and keys; register only missing Apps.
-     Follow .github/symphony/APP-SETUP.md and its .github/symphony/setup-app.mjs helper.
+     Follow .github/symphony/APP-SETUP.md for browser setup or the optional
+     .github/symphony/setup-app.mjs helper. Node 20+ is only needed for the optional helper.
+     Cadence repository permissions: Metadata, Contents, Actions = read;
+     Pull requests, Issues, Checks = read & write. Other permissions = no access.
+     Cadence uses the App for authentication; GitHub Actions runs the reviews.
+     OAuth callbacks/client secrets and webhooks/event subscriptions are unused.
+     Keep webhooks disabled; retain the PEM private key and install the App on each target repo.
      App slugs: [[ cadence_app_slug.removesuffix('[bot]') ]] (Cadence), [[ symphony_app_slug.removesuffix('[bot]') ]] (Symphony).
      Check actual App ID/key/login readback; Linear/provider credentials are separate.
   3. Check effective Actions settings; configure only missing settings and grants.
