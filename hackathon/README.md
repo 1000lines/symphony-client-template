@@ -5,6 +5,36 @@ few paragraphs of notes are enough; Markdown documents and other existing
 project material are useful. Plan to spend two or three hours in the room. You
 will review the proposed work and the resulting pull requests.
 
+## Goal for the day
+
+The alpha release took an agent software-development workflow that worked in one
+repository and turned it into a reusable template. Today we test the claim at
+the heart of that work: **reuse it, then reuse it again**. We will install the
+same system in repositories we did not design it for and use it on real projects
+their owners want to move forward.
+
+This is an agent experience inside the places where software engineering already
+happens. The human defines the project in Linear and holds the engineering
+conversation on GitHub pull requests. Symphony does the coding, Cadence takes
+the review journey with the human, and the dashboard provides monitoring. Linear
+and GitHub shape how the agents plan, communicate, respond to feedback, and act;
+they are not wrappers around a separate chat window.
+
+By the end of the day, we want to show:
+
+- a complete path from a Linear project definition to Symphony-authored code,
+  Cadence review, human feedback, revision, approval, and merge;
+- repeated installation and execution across several participant repositories;
+- real development completed on those repositories, not a staged demonstration;
+- per-repository evidence of what worked and a concrete defect list wherever the
+  reusable workflow failed or needed intervention.
+
+A successful run demonstrates useful, controllable agents native to Linear and
+GitHub. A failed run is still a deliverable when its log identifies where the
+template, integration, orchestration, or recovery path broke. Together, those
+runs test functionality, theme fit, technical integration, reliability, and
+usefulness under real conditions.
+
 ## What it does
 
 **Software engineering is and has always been a conversation between engineers;
