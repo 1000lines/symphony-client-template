@@ -41,7 +41,11 @@ SKILLS = {
     REPLAN,
     "docs/engineering/symphony/replanning.md",
 }
-GENERATED = SKILLS | REVIEW_CALLERS | {
+PR_FILES = {
+    "scripts/symphony/render-pr-progress.mjs", "scripts/symphony/fetch-pr-progress.mjs",
+    ".github/pull_request_template.md", "docs/engineering/symphony/pull-requests.md",
+}
+GENERATED = SKILLS | REVIEW_CALLERS | PR_FILES | {
     INGRESS, ".symphony.cfg.json", ".gitattributes", "SYMPHONY.md",
     ".github/symphony/REVIEW.md", ".github/symphony/cadence-app-manifest.json",
     ".github/symphony/symphony-app-manifest.json", ".github/symphony/setup-app.mjs",
@@ -267,6 +271,21 @@ class RenderTest(unittest.TestCase):
                 output = self.render(answers, f"output-{index}")
                 files = file_set(output)
                 self.assertEqual(files, GENERATED)
+                # Exercise the actual Copier-installed renderer without live credentials.
+                snapshot = self.root / "progress.json"
+                snapshot.write_text(json.dumps({
+                    "graph": {"direction": "LR", "nodes": [
+                        {"id": "A", "label": "Done checkpoint; artifact pending"},
+                        {"id": "B", "label": "Done checkpoint; proof pending"},
+                        {"id": "C", "label": "Current work"}],
+                        "edges": [{"from": "A", "to": "C"}, {"from": "B", "to": "C"}]},
+                    "states": {"A": "Done", "B": "Done", "C": "Active"},
+                    "prs": {}, "currentNode": "C", "snapshotTime": "2026-09-12T03:00:00Z",
+                }))
+                progress = subprocess.check_output(["node", str(output / "scripts/symphony/render-pr-progress.mjs"),
+                                                    str(snapshot)], text=True, timeout=15)
+                self.assertEqual(progress.count(":::completed"), 2)
+                self.assertIn("style C stroke:#8250df,stroke-width:4px", progress)
                 for relative in files:
                     content = (output / relative).read_text()
                     self.assertNotIn("ROOT-ONLY-SENTINEL", content, relative)
@@ -491,6 +510,8 @@ class RenderTest(unittest.TestCase):
         # fixture self-contained so updates also run in shallow CI checkouts.
         added = ".github/workflows/symphony-client-setup.yml"
         (self.source / "template" / (added + ".jinja")).unlink()
+        for relative in PR_FILES:
+            (self.source / "template" / relative).unlink()
         for relative in (skill, examples):
             path = self.source / "template" / relative
             path.parent.mkdir(parents=True, exist_ok=True)
