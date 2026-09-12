@@ -1,5 +1,13 @@
 # Template self-instantiation
 
+## Shared workflows follow main
+
+The template and root client now use `main` for all Symphony-owned reusable
+workflows and helper checkouts. This explicitly supersedes the SHA/alpha
+publication policy recorded in the historical refresh notes below. Existing
+Copier answers record source commit `06ed6afb8cfedc34978065c350a38d2af363bb5b`;
+root assets match that render, with the existing config/CI exclusions.
+
 ## Main refresh — September 12, 2026
 
 The root client is now updated with Copier 9.18.2 from template main at
