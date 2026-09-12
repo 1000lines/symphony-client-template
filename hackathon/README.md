@@ -16,6 +16,12 @@ and onto the web, on the pull request page, where the conversation became
 durable and asynchronous. 1000lines brings agents into that same conversation
 without removing the human decisions.
 
+Coding and review agents already participate in parts of this flow, but they
+are rarely immersed in the whole journey. They arrive for one task or one diff,
+without the project context, decisions, and feedback that shaped it. 1000lines
+uses project context, ticket state, and agent workpads to carry the conversation
+across planning, implementation, review, and revision.
+
 You define the project in Linear, then respond to requirements, design, plans,
 and working software through GitHub pull requests. Your comments change what
 happens next; approval and merge move the project forward.
