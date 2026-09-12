@@ -7,7 +7,7 @@ Authority: [accepted R1–R9 / AC1–AC12](template-enhancements-design.md), mer
 This is a proposal for human review. Only 100-68 may execute accepted fan-out;
 100-67 creates no implementation tickets, release, deployment or cleanup.
 
-**17 outcomes: 11 new tickets and six reused tickets; ten dependency rounds.**
+**18 outcomes: 11 new tickets and seven reused tickets; ten dependency rounds.**
 Three checkpoints publish reviewed increments, update the root through Copier,
 review the generated diff and exercise delivered behavior. Finalization follows.
 Line estimates below count additions/deletions across code, YAML, prose and tests;
@@ -25,6 +25,7 @@ remaining bounded remit, not a request to rewrite delivered work.
 | P    | TE-P: isolate assessment and wire trusted publication     | 550 / 400      | hard       |
 | C    | TE-C: compact communication, readiness and reactions      | 450 / 200      | hard       |
 | N    | Existing 100-60: structured non-approval reactivation     | 300 / 150      | hard       |
+| S    | Existing 100-98: one editable status comment              | 400 / 20       | hard       |
 | T    | Existing 100-44: optional settings and measured timings   | 350 / 120      | hard       |
 | B    | TE-B: publish/adopt review and prove both providers       | 200 / 200      | hard       |
 | Q    | TE-Q: acquire and classify cleanup candidates             | 750 / 0        | hard       |
@@ -59,7 +60,7 @@ or Google Docs access is needed.
 | Historical design/fan-out                                                                                | Example `docs/symphony-plans/client-template-design.md` and `fan-out-plan-100-39-client-template.md`: retain existing ownership and moving-alpha decisions. New accepted design supersedes old no-update/provider-selection restrictions.                                                     |
 | Shared planning/proof                                                                                    | `$SYMPHONY_TOOLING_ROOT/docs/symphony-plans/{README,fan-out-plan-schema,fan-out-criteria}.md`, `tools/symphony-dag/`, proof-of-work, PR and Cadence acceptance guides read. Target has only its project design under this directory; generic guides remain shared. No schema/criteria change. |
 
-R1/R2 map to V/P/C/N/B; R3 to T/B and existing O/100-64; R4 to D/G/A;
+R1/R2 map to V/P/C/S/N/B; R3 to T/B and existing O/100-64; R4 to D/G/A;
 R5 to Q/X/L/W; R6 to K/G/D/F; R7 to A/B/W; R8 to G/A; R9 to I/W.
 Thus every original note and AC has an owner. Credential values, App grants,
 compatible model/effort values and observed workflow IDs are execution inputs;
@@ -98,7 +99,7 @@ render inventory and affected assertions in the same PR as their generated files
 A/B/W adopt successively; only their assigned generated root paths may change.
 K/O order remaining reconciliation/acceptance of shared SYMPHONY/tests, not
 retroactive changes to their open PRs. G→N/T supplies recorded-root validation for
-source-only caller/guidance edits; C→T hands off shared review files. B→L also
+source-only caller/guidance edits; S→T hands off status/footer presentation; C→B retains redesigned completion publication. B→L also
 keeps cleanup additions out of the earlier published review baseline. A/B/W
 serialize publication refs and root proof resources. Every edge is a hard artifact
 or ownership handoff; no transitive edge is duplicated. Fan-in uses direct relations.
@@ -117,6 +118,7 @@ flowchart LR
   P["100-76 — Round 2: Isolate assessment and wire trusted publication"]
   C["100-77 — Round 3: Complete concise review communication and reactions"]
   N["100-60 — Round 4: Reactivate from structured non-approval reviews"]
+  S["100-98 — Round 1: One editable Cadence status comment"]
   T["100-44 — Round 4: Expose optional review settings and measured timings"]
   B["100-78 — Round 6: Publish and self-adopt review; prove both providers"]
   Q["100-79 — Round 1: Acquire and classify project cleanup candidates"]
@@ -133,7 +135,8 @@ flowchart LR
   P --> C
   P --> N
   G --> N
-  C --> T
+  S --> T
+  C --> B
   G --> T
   A --> B
   T --> B
@@ -175,6 +178,28 @@ defaults:
   edge_semantics: hard_artifact_and_ownership_handoff
   mutation_policy: stage_Backlog_verify_relations_then_activate_preserve_holds
 nodes:
+  - id: S
+    existing_issue: 100-98
+    issue_id: 499843f4-8971-4c09-abd3-7efd1d9035d7
+    title: "One editable Cadence status comment"
+    type: existing_task
+    difficulty: hard
+    initial_state: Active
+    labels: []
+    branch:
+      {
+        ref: "symphony/misc/100-98/cadence-comment",
+        base: main,
+        birth: existing,
+      }
+    pr:
+      {
+        url: "https://github.com/1000lines/symphony-client-workflows/pull/10",
+        create: on_branch_birth,
+        base: main,
+        draft: true,
+        labels: [symphony, blue],
+      }
   - id: K
     existing_issue: 100-63
     issue_id: 2216a540-0707-4770-8d38-99514e9a7246
@@ -532,7 +557,8 @@ edges:
   - { from: P, to: C }
   - { from: P, to: N }
   - { from: G, to: N }
-  - { from: C, to: T }
+  - { from: S, to: T }
+  - { from: C, to: B }
   - { from: G, to: T }
   - { from: A, to: B }
   - { from: T, to: B }
@@ -546,6 +572,15 @@ edges:
 ```
 
 ## Decisions
+
+September 12 amendment commissioned by [100-98](https://linear.app/1000lines/issue/100-98):
+S extracts status-comment presentation without waiting for P/100-76 or C/100-77.
+S→T replaces the presentation-only C→T handoff. C→B preserves B's existing
+requirement for P/C's redesigned publication, readiness and reactions after
+removing the indirect C→T→B path. All other edges and holds remain unchanged.
+Jeremy [authorized comment-write permission](https://github.com/1000lines/symphony-client-workflows/pull/10#issuecomment-5643144372)
+using the existing App grant. This supersedes 100-98's token-permission restriction
+only for comment writers, with no App installation grant change.
 
 | Decision                                                  | Rationale and enforcing owner                                                                                                                                                                                                                                                                         |
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -623,6 +658,13 @@ seams; any introduced seam needs existing `integration_pattern` and
 
 ## Items
 
+### S — 100-98: one editable Cadence status comment
+
+- **scope:** concise App-owned queued/reviewing/completed/failed status comment on the existing publication path; independent of P/C. Preserve formal reviews/checks and the structured Linear workpad.
+- **owned_files:** W trigger/run/cleanup workflows, status-comment helper/tests and review guide; T generated review context and this small plan amendment. Branch/PR base is main in both repositories; Misc PR labels are symphony/blue, assignee Jeremy Carroll.
+- **dependencies:** none. Reuse current provider/run measurements; broader settings remain T. S hands its comment/footer to T, while C keeps P's redesigned publication and completion reactions.
+- **acceptance_checks / validation:** stable marker and verified App authorship; bounded assessment and evidence links; observed measurements only; same-comment retry/failure/stale guards; W checks, T Copier render/update and one live App-comment readback. Keep implementation PRs for human review; do not patch symphony-example or advance alpha.
+
 ### K — 100-63: consume accepted skill removal
 
 - **scope / owned_files:** existing T #9 owns removal of `template/.agents/skills/karpathy-guidelines/`, corresponding root skill files, template/root factory skill and SYMPHONY, `tests/test_render.py`, `PROVENANCE.md`, `SELF-ADOPTION.md`, `.copier-answers.yml`. Reconcile its accepted final diff, not a replacement ticket.
@@ -683,11 +725,11 @@ preserving its guards and live-proof requirements. No topology or dependency cha
 
 ### C — TE-C: concise communication, readiness and reactions
 
-- **scope:** R2/AC3: one main comment, short reviews, fresh draft-to-ready and completion acknowledgement.
+- **scope:** R2/AC3: integrate S/100-98 presentation with P's redesigned publication, short reviews, fresh draft-to-ready and completion acknowledgement; do not rebuild standalone presentation.
 - **owned_files:** W `.github/workflows/cadence-ai-review-trigger.yml`, `.github/workflows/scripts/cadence-review-publish.mjs`, its test, `.github/workflows/scripts/cadence-review-check.mjs`, its test, `.github/workflows/scripts/cadence-review-request-receipt.mjs`, its test. P hands these mutation surfaces to C.
 - **owned_external_resources:** own PR and mocked reaction/comment APIs; B owns live root triggers. **dependencies:** P accepted publication.
 - **acceptance_checks:** stable App-owned main-comment marker, ≤three points/head/workpad links, minimal submitted review record; details remain in Linear. Approval readies via repository workflow identity only for current head/no newer accepted feedback. Replace Cadence-owned eyes on the acknowledged trigger with thumbs-up for approval, thumbs-down for every other completion/failure; preserve human reactions. Retry converges, superseded runs cannot overwrite newer feedback, API failures remain explicit/retryable.
-- **validation:** W, owned publish/check/receipt tests including stale/new feedback, denial, failure, duplicate and reaction ownership/supersession. **delivery_notes / exclusions:** no new feedback ledger or routing logic; T gets trigger/check/footer next, B owns real completion-reaction proof.
+- **validation:** W, owned publish/check/receipt tests including stale/new feedback, denial, failure, duplicate and reaction ownership/supersession. **delivery_notes / exclusions:** no new feedback ledger or routing logic; S supplies T's independent status/footer; B consumes C's redesigned completion/reaction behavior and owns live proof.
 
 ### N — 100-60: route structured non-approvals
 
@@ -701,7 +743,7 @@ preserving its guards and live-proof requirements. No topology or dependency cha
 
 - **scope:** R3/AC5 on accepted providers, preserving fast low-effort defaults and key-driven selection.
 - **owned_files:** W `.github/workflows/cadence-ai-review-trigger.yml`, `.github/workflows/scripts/verify-cadence-ai-review.cjs`, `.github/workflows/scripts/cadence-review-check.mjs`, its test, `.github/workflows/scripts/cadence-provider-settings.test.mjs`, `docs/engineering/review/cadence-ai-review.md`; T `template/.github/symphony/REVIEW.md.jinja`, `tests/test_provider_settings.py`.
-- **owned_external_resources:** own Misc PRs; optional model/effort variable names are documented, B/Jeremy owns live changes to root settings. **dependencies:** C hands trigger/check/footer after communication implementation; G supplies recorded-source render validation for independent source changes. N uses disjoint routing files.
+- **owned_external_resources:** own Misc PRs; optional model/effort variable names are documented, B/Jeremy owns live changes to root settings. **dependencies:** S/100-98 hands the existing-path status/footer after presentation implementation; G supplies recorded-source render validation for independent source changes. N uses disjoint routing files.
 - **acceptance_checks:** remove single-model allowlist, validate documented compatible values through actual provider interface; unsupported effort errors or explicit unavailable result, never fabricated effective values. OpenAI-only/both→Codex, Anthropic-only→Claude, neither early error; no auth fallback. Record requested/effective settings, accepted-request→provider-start queue time and provider-start→finish execution time from real timestamps in check/footer.
 - **validation:** W + T, owned settings/check tests including absent/unsupported values and all four key cases. **exclusions:** mandatory Copier questions, new merge gate/provider implementation; B performs real setting changes and both-provider proof.
 
@@ -710,7 +752,7 @@ preserving its guards and live-proof requirements. No topology or dependency cha
 - **scope:** R7 checkpoint for AC2–AC5/AC9/AC12, consuming P/C/N/T with A's already adopted guidance.
 - **owned_files:** T generated/root review/manual/event/handoff/check-cleanup callers, corresponding `template/.github/workflows/` caller ref mappings only, `.github/symphony/REVIEW.md`, `.copier-answers.yml`, `tests/test_render.py`, `SELF-ADOPTION.md`, `PROVENANCE.md`, `README.md`; W `PROVENANCE.md` publication record only. Expand caller inventory from accepted 100-64 before edits.
 - **owned_external_resources:** both repositories' alpha branches after A and existing 100-64/Jeremy handoff; one dedicated root proof PR/linked issue and its review/comment/check/reaction records. Jeremy alone supplies effective provider settings/keys for test runs; record no values. L receives the render-test handoff; I then W receive the client migration/proof handoff.
-- **dependencies:** A root baseline and D's render-test handoff; T final review/communication interface; N compatible structured routing, all merged. Do not release a publisher without its consumer.
+- **dependencies:** A root baseline and D's render-test handoff; C redesigned publication/readiness/reactions; T final review/settings interface; N compatible structured routing, all merged. Do not release a publisher without its consumer.
 - **acceptance_checks:** publish human-accepted refs, repeat isolated Copier update and diff review, migrate remaining SHA-pinned callers/helpers to reviewed published alpha together. Land trusted root callers before proof. On the **same PR and head**, run both providers with unchanged implementation, using the accepted key-availability selection contract. Record actual workflow/helper/template refs, provider output/verdict, App advisory queued/running/result, draft→ready, reaction replacement and non-approval→Active readback. Exercise stale/new-feedback/failure/denial/duplicate guards, matching check-cleanup listener and cancellation/recovery; reuse valid 100-57/58/64 artifacts only at applicable refs.
 - **validation:** T + W for touched files; current-head CI in each PR, published render/update; actual workflow/run/attempt/review/check/Linear links. **exclusions:** credentials as code, source-only proof, closing prior operational owners. Missing grants produce precise Jeremy action/readback, not claimed success.
 
@@ -793,8 +835,11 @@ is valid before mapping/readback. Use these same edges in `.mmd` and manifest.
 - issueId: "${TE-P}"
   relatedIssueId: dc5d7ff5-7807-41ab-b90c-5fedd92f6b21
   type: blocks
-- issueId: "${TE-C}"
+- issueId: 499843f4-8971-4c09-abd3-7efd1d9035d7
   relatedIssueId: 8d2326f1-7053-4767-8b78-c48ec087cae0
+  type: blocks
+- issueId: "${TE-C}"
+  relatedIssueId: "${TE-B}"
   type: blocks
 - issueId: "${TE-A}"
   relatedIssueId: "${TE-B}"
@@ -841,10 +886,10 @@ plus retained existing issue labels; new PRs require symphony/cyan. Verify each
 existing project's color before its PRs, preserving unrelated labels.
 
 Generate 11 new tickets temporarily in Backlog, copy full item/contract text,
-capture IDs, create/read back exactly the 19 direct relations, verify the complete
+capture IDs, create/read back exactly the 20 direct relations, verify the complete
 DAG, then set new tickets Active unless explicitly held. No Blocked/Do Not Use.
 On partial failure keep staged tickets unactivated; resume with recorded IDs.
-Update the six existing tickets only with reviewed ownership/dependency/proof
+Update the seven existing tickets only with reviewed ownership/dependency/proof
 handoffs; no duplicates, unauthorized moves or inferred hold release.
 
 Use shared `parseProjectPlan`, `parseProjectGraph` and `buildDagLinearPayload`

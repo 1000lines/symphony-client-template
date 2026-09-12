@@ -12,9 +12,9 @@ permissions:
 
 jobs:
   handoff:
-    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-linear-rework.yml@fceb60cac02bcbe8ad7011ffacf6344cccd93418
+    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-linear-rework.yml@ddc9eb0f2a1a24643b6350db9003ed27089548a6
     with:
-      helpers-ref: fceb60cac02bcbe8ad7011ffacf6344cccd93418
+      helpers-ref: ddc9eb0f2a1a24643b6350db9003ed27089548a6
     secrets:
       CADENCE_APP_PRIVATE_KEY: ${{ secrets.CADENCE_APP_PRIVATE_KEY }}
       CADENCE_LINEAR_API_TOKEN: ${{ secrets.CADENCE_LINEAR_API_TOKEN }}

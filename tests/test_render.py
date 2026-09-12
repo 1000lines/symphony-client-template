@@ -25,6 +25,7 @@ REVIEW_CALLERS = {
 }
 CI_SOURCE = "1000lines/symphony-client-workflows"
 CI_REF = "alpha"
+REVIEW_REF = "ddc9eb0f2a1a24643b6350db9003ed27089548a6"
 REPLAN = "scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md"
 FACTORY = ".agents/skills/symphony-project-factory"
 SKILLS = {
@@ -390,7 +391,7 @@ class RenderTest(unittest.TestCase):
             })
             source, ref = job["uses"].split("@")
             self.assertEqual(source, "1000lines/symphony-client-workflows/" + relative)
-            self.assertRegex(ref, r"^[a-f0-9]{40}$")
+            self.assertEqual(ref, REVIEW_REF)
             self.assertEqual(job["with"]["helpers-ref"], ref)
             self.assertLessEqual(set(job), {"uses", "with", "secrets", "if"})
             self.assertNotIn("inherit", (output / relative).read_text())
