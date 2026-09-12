@@ -7,6 +7,11 @@
 Copier template for connecting a repository to Symphony. Only `template/` is
 rendered into client repositories; root tests and documentation stay here.
 
+At the AI Tinkerers hackathon, the workflow ran in three participant repositories,
+producing merged Memray feature code, a first Venn cleanup, and an ESLint plan.
+Read the [hackathon TL;DR](hackathon/TLDR.md) for the outcomes, the review and
+integration failures, and what remained unfinished.
+
 ## Use
 
 Install Python 3.12 and Copier, then render into a scratch directory:
