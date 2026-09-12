@@ -1,5 +1,9 @@
 # Symphony client template
 
+> **AI Tinkerers hackathon participants:** Start with the
+> [hackathon onboarding guide](hackathon/README.md) for the repository paths,
+> App installation, setup checks, project workflow, and judging goals.
+
 Copier template for connecting a repository to Symphony. Only `template/` is
 rendered into client repositories; root tests and documentation stay here.
 
