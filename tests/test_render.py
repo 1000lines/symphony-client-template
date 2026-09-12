@@ -63,7 +63,8 @@ def file_set(directory):
 
 # Package-owned files are not generated client output (SELF-ADOPTION.md).
 # Keep this separate from GENERATED: current source can add/remove client paths
-# before the next root adoption. Everything else in the root must be accounted for.
+# before the next root adoption. Unrelated top-level package trees are ignored;
+# paths inside a recorded client-owned tree remain exact.
 PACKAGE_FILES = {
     ".gitignore", ".prettierignore", "LICENSE", "PROVENANCE.md", "README.md",
     "SELF-ADOPTION.md", "copier.yml", ".github/workflows/ci.yml",
@@ -125,7 +126,10 @@ class RecordedRootTest(unittest.TestCase):
     def check_root(self, root):
         output = self.output
         self.assertEqual(file_set(output), self.inventory)
-        actual = {p for p in file_set(root) if p not in PACKAGE_FILES and not p.startswith(PACKAGE_TREES)}
+        client_roots = {p.partition("/")[0] for p in self.inventory}
+        actual = {p for p in file_set(root)
+                  if p.partition("/")[0] in client_roots
+                  and p not in PACKAGE_FILES and not p.startswith(PACKAGE_TREES)}
         self.assertEqual(actual, self.inventory - {CI})
         self.assertEqual(yaml.safe_load((root / ".copier-answers.yml").read_text()), self.saved)
         for relative in self.inventory - {CI, ".copier-answers.yml", ".symphony.cfg.json"}:
@@ -151,6 +155,9 @@ class RecordedRootTest(unittest.TestCase):
         added = ".github/future-source-only.md"
         path = self.root / "template" / added
         path.write_text("Future source increment\n")
+        package_note = self.root / "future-package-notes" / "README.md"
+        package_note.parent.mkdir()
+        package_note.write_text("Repository-only notes\n")
         # A downstream task updates this explicit current inventory in the same PR.
         current_inventory = GENERATED | {added}
         data = self.directory / "future.yml"
