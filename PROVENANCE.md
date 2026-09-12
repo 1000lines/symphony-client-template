@@ -193,3 +193,15 @@ superseding the older selection notes above. This integration does not establish
 reviewer execution or cleanup recovery. After human acceptance, publish only
 accepted main code to template `refs/heads/alpha`, repeat the public render and
 record actual workflow/helper commits from live runs in [SELF-ADOPTION.md](SELF-ADOPTION.md).
+
+## 100-98 status-comment revision
+
+The generated review, handoff and recovery callers and `helpers-ref` now pin
+shared workflows commit `ddc9eb0f2a1a24643b6350db9003ed27089548a6`, proposed in
+[workflows PR #10](https://github.com/1000lines/symphony-client-workflows/pull/10).
+This adds one editable Cadence status/result comment and a measured footer.
+Accept that implementation before adopting these caller changes through Copier.
+No alpha branch is advanced here. The root retains its recorded older Copier
+source until a reviewed self-adoption; current-source render/update tests and
+recorded-root tests remain separate. No live review execution is claimed by
+these source changes.
