@@ -216,7 +216,29 @@ separate during the event. The logs will be consolidated at the end of the day.
    or an issue.
 4. Save the raw key locally at `~/.linear-token`.
 
-## 2. Choose where the repository will live
+## 2. Connect Linear to a bring-your-own repository
+
+If you are keeping the repository in its current account or organization,
+Linear's GitHub integration must include that GitHub owner. Otherwise, merging
+a linked pull request will not move its Linear ticket to Done. Participants
+using the `1000lines` fork path can skip this section because that owner is
+already connected.
+
+1. Open [Linear's GitHub integration settings](https://linear.app/settings/integrations/github).
+2. Add or connect the GitHub owner that owns the target repository. For
+   `jeremycarroll/pytest-memray`, connect **jeremycarroll**.
+3. Install Linear's GitHub App for that owner and grant it access to the target
+   repository. For this test, include **pytest-memray**.
+4. In Linear's GitHub workflow settings for team **100**, confirm that the
+   **PR merged** target state is **Done**.
+5. Test the connection with a new pull request whose title or branch name
+   contains a team-100 issue identifier such as `100-NNN`. Merge the pull
+   request, then confirm that Linear moves the matching ticket to Done.
+
+Closing a pull request without merging it does not exercise the **PR merged**
+workflow and should not be expected to move the ticket to Done.
+
+## 3. Choose where the repository will live
 
 ### Required for either bring-your-own path: install Symphony
 
@@ -304,7 +326,7 @@ fork remains world-readable after the event, so you can copy its work later. At
 4 p.m., its automation credentials will be disabled and your write access will
 be removed.
 
-## 3. Copy the Symphony/Cadence files
+## 4. Copy the Symphony/Cadence files
 
 Check out the working repository and enter its root directory. The tested Copier
 installation is Homebrew:
@@ -369,7 +391,7 @@ installation, a repository omitted from the installation, an incorrect App ID
 or private key, and missing Linear or provider credentials before the first
 live Cadence review. Fix the named input before retrying the workflow.
 
-## 4. Set the shared tooling checkout
+## 5. Set the shared tooling checkout
 
 Clone `symphony-example` as a separate checkout outside the repository you are
 working on:
@@ -394,7 +416,7 @@ export SYMPHONY_TOOLING_ROOT=/absolute/path/to/symphony-example
 `SYMPHONY_TOOLING_ROOT` points to shared Symphony planning and proof tooling; it
 must not point to the participant repository.
 
-## 5. Create and start the Linear project
+## 6. Create and start the Linear project
 
 Start Codex from the repository root. Have a conversation about the project:
 explain the problem, share your notes and Markdown documents, and answer its
@@ -417,7 +439,7 @@ activity does not appear, especially the creation of tickets in Linear, ask
 Jeremy for help. Individual ticket state is mainly for troubleshooting; do not
 manage the project ticket by ticket when the automation is progressing normally.
 
-## 6. Review the work
+## 7. Review the work
 
 When Symphony finishes a ticket, review its pull request. Cadence will normally
 add an advisory review at low effort for faster event turnaround. Cadence's
