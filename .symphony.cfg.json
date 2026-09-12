@@ -25,6 +25,11 @@
         "node",
         "--test",
         "tests/test-credentials.mjs"
+      ],
+      [
+        "node",
+        "--test",
+        "tests/test-app-setup.mjs"
       ]
     ]
   },

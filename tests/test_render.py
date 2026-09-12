@@ -44,6 +44,8 @@ SKILLS = {
 GENERATED = SKILLS | REVIEW_CALLERS | {
     INGRESS, ".symphony.cfg.json", ".gitattributes", "SYMPHONY.md",
     ".github/symphony/REVIEW.md", ".github/symphony/cadence-app-manifest.json",
+    ".github/symphony/symphony-app-manifest.json", ".github/symphony/setup-app.mjs",
+    ".github/symphony/APP-SETUP.md",
     ".copier-answers.yml", CI, WAKEUPS, ".github/workflows/symphony-client-setup.yml",
 }
 
@@ -125,8 +127,9 @@ class RecordedRootTest(unittest.TestCase):
         self.assertFalse((root / CI).exists())
         root_config = json.loads((root / ".symphony.cfg.json").read_text())
         rendered_config = json.loads((output / ".symphony.cfg.json").read_text())
-        # This package also validates the generated credential helper with Node.
+        # This package also validates the generated credential and App setup helpers with Node.
         rendered_config["commands"]["test"].append(["node", "--test", "tests/test-credentials.mjs"])
+        rendered_config["commands"]["test"].append(["node", "--test", "tests/test-app-setup.mjs"])
         package_ci = yaml.safe_load((root / ".github/workflows/ci.yml").read_text())
         self.assertEqual(root_config["ci"]["requiredChecks"], [{
             "name": package_ci["jobs"]["render"]["name"],
@@ -306,6 +309,13 @@ class RenderTest(unittest.TestCase):
                 })
                 self.assertFalse(manifest["public"])
                 self.assertEqual(manifest["default_events"], [])
+                author_manifest = json.loads((output / ".github/symphony/symphony-app-manifest.json").read_text())
+                self.assertEqual(author_manifest["name"], answers["symphony_app_slug"])
+                self.assertEqual(author_manifest["default_permissions"], {
+                    "metadata": "read", "contents": "write", "actions": "read",
+                    "pull_requests": "write", "issues": "write", "checks": "read",
+                    "statuses": "read", "workflows": "write",
+                })
                 self.check_skills(output)
 
     def test_repeat_onboarding_is_clean_and_keeps_credentials_out_of_answers(self):
