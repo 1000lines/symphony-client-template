@@ -50,6 +50,166 @@ GENERATED = SKILLS | REVIEW_CALLERS | {
 }
 
 
+def file_set(directory):
+    return {p.relative_to(directory).as_posix() for p in directory.rglob("*")
+            if p.is_file() and ".git" not in p.relative_to(directory).parts}
+
+
+# Package-owned files are not generated client output (SELF-ADOPTION.md).
+# Keep this separate from GENERATED: current source can add/remove client paths
+# before the next root adoption. Everything else in the root must be accounted for.
+PACKAGE_FILES = {
+    ".gitignore", ".prettierignore", "LICENSE", "PROVENANCE.md", "README.md",
+    "SELF-ADOPTION.md", "copier.yml", ".github/workflows/ci.yml",
+}
+PACKAGE_TREES = ("template/", "tests/", "docs/symphony-plans/")
+
+
+def recorded_inventory(source, revision):
+    if not re.fullmatch(r"[a-f0-9]{7,40}", revision):
+        raise ValueError("Recorded source must be a committed hexadecimal revision")
+    paths = subprocess.check_output(
+        ["git", "-C", str(source), "ls-tree", "-r", "--name-only", revision, "--", "template"],
+        text=True, stderr=subprocess.PIPE).splitlines()
+    if not paths:
+        raise ValueError("Recorded source has no template")
+    # Inventory comes from the committed source tree, never the render under test.
+    inventory = {path.removeprefix("template/").removesuffix(".jinja") for path in paths}
+    inventory.remove("[[ _copier_conf.answers_file ]]")
+    inventory.add(".copier-answers.yml")
+    if any("[[" in path or "[%" in path for path in inventory):
+        raise ValueError("Unaccounted recorded template path expression")
+    return inventory
+
+
+class RecordedRootTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory(prefix=".recorded-root-", dir=Path.cwd())
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.directory = Path(cls.temporary.name).resolve()
+        cls.saved = yaml.safe_load((PACKAGE / ".copier-answers.yml").read_text())
+        if cls.saved["_src_path"] != "https://github.com/1000lines/symphony-client-template.git":
+            raise ValueError("Unexpected recorded template source URL")
+        # Full local checkouts can supply the immutable object without network.
+        # Shallow CI checks out only the PR head: acquire history in a separate
+        # clone from the recorded URL, never substitute current source or skip.
+        available = subprocess.run(["git", "-C", str(PACKAGE), "cat-file", "-e",
+                                    cls.saved["_commit"] + "^{commit}"], capture_output=True)
+        cls.source = PACKAGE
+        if available.returncode:
+            cls.source = cls.directory / "recorded-source"
+            subprocess.run(["git", "clone", "--quiet", "--no-checkout", "--",
+                            cls.saved["_src_path"], str(cls.source)], check=True,
+                           capture_output=True, timeout=60)
+        cls.inventory = recorded_inventory(cls.source, cls.saved["_commit"])
+        data = cls.directory / "answers.yml"
+        data.write_text(yaml.safe_dump({k: v for k, v in cls.saved.items() if not k.startswith("_")}))
+        cls.output = cls.directory / "render"
+        subprocess.run([sys.executable, "-m", "copier", "copy", "--defaults",
+                        "--vcs-ref=" + cls.saved["_commit"], "--data-file", str(data),
+                        str(cls.source), str(cls.output)], check=True, capture_output=True, timeout=60)
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(dir=self.directory)
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name) / "client"
+        shutil.copytree(PACKAGE, self.root, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+
+    def check_root(self, root):
+        output = self.output
+        self.assertEqual(file_set(output), self.inventory)
+        actual = {p for p in file_set(root) if p not in PACKAGE_FILES and not p.startswith(PACKAGE_TREES)}
+        self.assertEqual(actual, self.inventory - {CI})
+        self.assertEqual(yaml.safe_load((root / ".copier-answers.yml").read_text()), self.saved)
+        for relative in self.inventory - {CI, ".copier-answers.yml", ".symphony.cfg.json"}:
+            self.assertEqual((root / relative).read_bytes(), (output / relative).read_bytes(), relative)
+        self.assertFalse((root / CI).exists())
+        root_config = json.loads((root / ".symphony.cfg.json").read_text())
+        rendered_config = json.loads((output / ".symphony.cfg.json").read_text())
+        # This package also validates the generated credential and App setup helpers with Node.
+        rendered_config["commands"]["test"].append(["node", "--test", "tests/test-credentials.mjs"])
+        rendered_config["commands"]["test"].append(["node", "--test", "tests/test-app-setup.mjs"])
+        package_ci = yaml.safe_load((root / ".github/workflows/ci.yml").read_text())
+        self.assertEqual(root_config["ci"]["requiredChecks"], [{
+            "name": package_ci["jobs"]["render"]["name"],
+            "workflow": ".github/workflows/ci.yml", "appId": 15368,
+        }])
+        self.assertEqual({key: value for key, value in root_config.items() if key != "ci"},
+                         {key: value for key, value in rendered_config.items() if key != "ci"})
+
+    def test_root_matches_its_recorded_source(self):
+        self.check_root(self.root)
+
+    def test_source_only_addition_does_not_require_root_adoption(self):
+        added = ".github/future-source-only.md"
+        path = self.root / "template" / added
+        path.write_text("Future source increment\n")
+        # A downstream task updates this explicit current inventory in the same PR.
+        current_inventory = GENERATED | {added}
+        data = self.directory / "future.yml"
+        data.write_text(yaml.safe_dump({k: v for k, v in self.saved.items() if not k.startswith("_")}))
+        subprocess.run(["git", "init", "--initial-branch=main", str(self.root)], check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(self.root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(self.root), "-c", "user.name=Fixture", "-c",
+                        "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false",
+                        "commit", "-m", "Source-only increment"], check=True, capture_output=True)
+        output = self.root.parent / "fresh"
+        subprocess.run([sys.executable, "-m", "copier", "copy", "--defaults", "--vcs-ref=HEAD",
+                        "--data-file", str(data), str(self.root), str(output)],
+                       check=True, capture_output=True, timeout=30)
+        self.assertEqual(file_set(output), current_inventory)
+        self.assertNotIn(added, self.inventory)
+        self.check_root(self.root)
+        for change in ("unexpected", "missing"):
+            with self.subTest(change=change):
+                if change == "unexpected":
+                    (output / "extra.txt").write_text("Unexpected output\n")
+                else:
+                    (output / "extra.txt").unlink()
+                    (output / added).unlink()
+                with self.assertRaises(AssertionError):
+                    self.assertEqual(file_set(output), current_inventory)
+
+    def test_root_byte_membership_and_config_drift_fail(self):
+        for change in ("bytes", "missing", "unexpected", "config", "ci", "answers"):
+            with self.subTest(change=change):
+                path = self.root / "SYMPHONY.md"
+                original = path.read_bytes()
+                other = None
+                if change == "bytes":
+                    path.write_text("Altered recorded bytes\n")
+                elif change == "missing":
+                    path.unlink()
+                elif change == "unexpected":
+                    other = self.root / ".agents/unexpected.md"
+                    other.write_text("Unexpected generated root output\n")
+                else:
+                    path = self.root / {"config": ".symphony.cfg.json", "ci": CI,
+                                        "answers": ".copier-answers.yml"}[change]
+                    original = path.read_bytes() if path.exists() else None
+                    if change == "config":
+                        config = json.loads(path.read_text())
+                        config["ci"]["requiredChecks"] = []
+                        path.write_text(json.dumps(config))
+                    else:
+                        path.write_text("invalid: true\n")
+                with self.assertRaises(AssertionError):
+                    self.check_root(self.root)
+                if original is None:
+                    path.unlink()
+                else:
+                    path.write_bytes(original)
+                if other:
+                    other.unlink()
+
+    def test_unavailable_or_moving_recorded_source_fails(self):
+        with self.assertRaises(subprocess.CalledProcessError):
+            recorded_inventory(self.source, "0" * 40)
+        with self.assertRaises(ValueError):
+            recorded_inventory(self.source, "main")
+
+
 class RenderTest(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory(prefix=".client-render-", dir=Path.cwd())
@@ -105,8 +265,7 @@ class RenderTest(unittest.TestCase):
             answers = self.answers(index)
             with self.subTest(repo=answers["repo_slug"]):
                 output = self.render(answers, f"output-{index}")
-                files = {p.relative_to(output).as_posix() for p in output.rglob("*")
-                         if p.is_file()}
+                files = file_set(output)
                 self.assertEqual(files, GENERATED)
                 for relative in files:
                     content = (output / relative).read_text()
@@ -197,29 +356,6 @@ class RenderTest(unittest.TestCase):
             self.assertEqual(mint[f"permission-{grant}"], "write")
         self.assertNotIn("codex-action", str(workflow))
         self.assertNotIn("claude-code-action", str(workflow))
-
-    def test_root_client_matches_render_preserving_package_ci(self):
-        saved = yaml.safe_load((PACKAGE / ".copier-answers.yml").read_text())
-        answers = {key: value for key, value in saved.items() if not key.startswith("_")}
-        output = self.render(answers, "root-client")
-        # Metadata records the last render from a committed source. The optional
-        # command caller is replaced by this repository's dedicated package CI.
-        for relative in GENERATED - {CI, ".copier-answers.yml", ".symphony.cfg.json"}:
-            self.assertEqual((PACKAGE / relative).read_bytes(),
-                             (output / relative).read_bytes(), relative)
-        self.assertFalse((PACKAGE / CI).exists())
-        root_config = json.loads((PACKAGE / ".symphony.cfg.json").read_text())
-        rendered_config = json.loads((output / ".symphony.cfg.json").read_text())
-        # This package also validates the generated credential helper with Node.
-        rendered_config["commands"]["test"].append(["node", "--test", "tests/test-credentials.mjs"])
-        rendered_config["commands"]["test"].append(["node", "--test", "tests/test-app-setup.mjs"])
-        package_ci = yaml.safe_load((PACKAGE / ".github/workflows/ci.yml").read_text())
-        self.assertEqual(root_config["ci"]["requiredChecks"], [{
-            "name": package_ci["jobs"]["render"]["name"],
-            "workflow": ".github/workflows/ci.yml", "appId": 15368,
-        }])
-        self.assertEqual({key: value for key, value in root_config.items() if key != "ci"},
-                         {key: value for key, value in rendered_config.items() if key != "ci"})
 
     def check_review_callers(self, output):
         for relative in REVIEW_CALLERS:
@@ -353,6 +489,8 @@ class RenderTest(unittest.TestCase):
             '  push:\n    branches: [[ [default_branch] | to_json ]]\n  schedule:\n    - cron: "7,22,37,52 * * * *"\n', ''))
         # A prior template revision with the removed distribution. Keep the
         # fixture self-contained so updates also run in shallow CI checkouts.
+        added = ".github/workflows/symphony-client-setup.yml"
+        (self.source / "template" / (added + ".jinja")).unlink()
         for relative in (skill, examples):
             path = self.source / "template" / relative
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -367,6 +505,8 @@ class RenderTest(unittest.TestCase):
         self.git(self.source, "branch", "-f", "alpha", "HEAD")
         clients = [self.render(self.answers(), name) for name in ("unchanged", "adopter")]
         preserved = {
+            ".symphony.cfg.json": '{"adopter": "config"}\n',
+            ".github/workflows/ci.yml": "name: Adopter CI\n",
             skill: "Adopter's modified coding guidelines\n",
             ".agents/skills/karpathy-guidelines/LOCAL.md": "Adopter's added notes\n",
             ".agents/skills/adopter/SKILL.md": "Independent adopter skill\n",
@@ -389,17 +529,23 @@ class RenderTest(unittest.TestCase):
                  "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false",
                  "commit", "-m", "Remove bundled skill")
         self.git(self.source, "branch", "-f", "alpha", "HEAD")
+        fresh = self.render(self.answers(), "current-fresh")
         for output in clients:
             with self.subTest(client=output.name):
                 # Copier 9.18.2 deletes removed template paths even when locally
                 # modified. Exclude the reviewed adopter-owned file explicitly.
-                options = ["--exclude", skill] if output.name == "adopter" else []
+                options = ["--exclude", skill, "--exclude", ".symphony.cfg.json"] if output.name == "adopter" else []
                 result = subprocess.run(
                     [sys.executable, "-m", "copier", "update", "--defaults",
                      "--vcs-ref=alpha", *options], cwd=output, stdin=subprocess.DEVNULL,
                     capture_output=True, text=True, timeout=30,
                 )
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertEqual(file_set(output), GENERATED | (set(preserved) if output.name == "adopter" else set()))
+                self.assertEqual((output / added).read_bytes(),
+                                 (PACKAGE / "template" / (added + ".jinja")).read_bytes())
+                for relative in GENERATED - {".copier-answers.yml"} - (set(preserved) if output.name == "adopter" else set()):
+                    self.assertEqual((output / relative).read_bytes(), (fresh / relative).read_bytes(), relative)
                 self.assertFalse((output / examples).exists())
                 self.check_ci_callers(output, self.answers())
                 for relative in ("SYMPHONY.md", f"{FACTORY}/SKILL.md"):
