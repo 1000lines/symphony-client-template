@@ -238,6 +238,13 @@ already connected.
 Closing a pull request without merging it does not exercise the **PR merged**
 workflow and should not be expected to move the ticket to Done.
 
+> **Known defect:** For a bring-your-own repository, a merged pull request may
+> still fail to move its linked team-100 ticket to Done even when the Linear
+> GitHub App has repository access and the **PR merged** target is configured as
+> **Done**. If this happens, move the ticket to Done manually, record the failure
+> in the repository's hackathon log, and continue the run. Do not create an
+> additional pull request solely to retest the integration.
+
 ## 3. Choose where the repository will live
 
 ### Required for either bring-your-own path: install Symphony
