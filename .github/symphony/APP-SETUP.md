@@ -133,10 +133,10 @@ a reviewed change to the preset and its operation rationale.
 
 ## Credentials and live proof
 
-Continue with [100-62's provisioning/readiness guide](https://github.com/1000lines/symphony-client-template/pull/8)
-and [the installed review contract](REVIEW.md). If its guide or
-`symphony-client-setup.yml` is absent from the installed revision, setup remains
-pending; do not copy unmerged code. Set repository/org Actions variables
+Continue with [100-62's provisioning/readiness guide](../../.agents/skills/cadence-onboarding/SKILL.md)
+and [the installed review contract](REVIEW.md). Verify the installed
+`symphony-client-setup.yml` probe from the default branch, then the live callers.
+Set repository/org Actions variables
 `CADENCE_APP_ID`, `CADENCE_REVIEWER=SLUG[bot]`, `SYMPHONY_BOT_USER=OTHER-SLUG[bot]`.
 Installation ID is readback evidence, not a required Actions variable.
 
