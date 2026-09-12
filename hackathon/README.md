@@ -43,6 +43,19 @@ times, leave context for one another in hidden documents in the repository.
 Those channels let later agents continue the journey instead of starting each
 task from an isolated prompt.
 
+Some coding agents do not participate in a conversation at all. They suck up the
+air with a huge diff, ignore the niceties of the pull request medium, and are
+hard to correct. A different response is to set guardrails and a direction, then
+get out of the agent's way. That gives the agent room to run, but delays the
+moment when a human discovers that it ran in the wrong direction.
+
+1000lines uses a dependency graph of small tasks to keep the work correctable
+while it is moving. The graph exposes the shape and order of the work; focused
+pull requests create natural points for the conversation to change it. Projects
+are cheap enough that a half-finished project going in the wrong direction does
+not have to be rescued. Keep what you learned, discard the project, and start a
+better one.
+
 ## Architecture
 
 ```mermaid
@@ -51,6 +64,7 @@ flowchart LR
 
   subgraph LINEAR[Linear]
     PROJECT[Project definition]
+    DAG[Correctable DAG plan]
     AGENTLINEAR[Cadence and Symphony<br/>ticket state and workpads]
   end
 
@@ -70,7 +84,8 @@ flowchart LR
   HUMAN <-->|Review conversation| PR
   HUMAN -.->|Watch| MONITOR
 
-  PROJECT --> ORCHESTRATOR
+  PROJECT --> DAG
+  DAG <--> ORCHESTRATOR
   ORCHESTRATOR <--> AGENTLINEAR
   CADENCE <--> AGENTLINEAR
   MONITOR -.-> ORCHESTRATOR
