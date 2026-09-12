@@ -77,8 +77,11 @@ Actions summary record the issue, identity source, actor, PR/head/base, run URL,
 resolution instruction and confirmed mutation or skip. A durable receipt per
 repository/PR head suppresses repeated notifications even after the short event
 history rotates or the base advances again. A new head is eligible again.
-The CI bridge defers conflicted or unknown PRs to this path so successful checks
-cannot park a conflict that needs resolution. Symphony resolves the conflict.
+The CI bridge defers conflicted PRs to this path so successful checks cannot
+park a conflict that needs resolution. Unknown mergeability during CI handling
+puts waiting issues in `Unhappy` with `wake:15m`; the existing Symphony timer
+rechecks the PR and CI even without another GitHub event. Symphony resolves
+the conflict.
 
 To verify live delivery after publication, use a disposable task-linked Symphony
 PR whose issue is Inactive, advance its base with a conflicting edit, and retain
