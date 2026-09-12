@@ -42,3 +42,22 @@ provisioning and readiness verification.
 Keep reviewer implementation in the shared workflows. App/Linear credentials
 and optional provider keys must be explicitly mapped at each review boundary.
 The author and reviewer remain distinct; human acceptance owns merge and Done.
+
+## Current Cadence status
+
+The pinned shared status-comment revision lets Cadence edit one App-owned
+PR comment as reviews queue, run, complete or fail. It shows the current verdict,
+a brief assessment and up to three findings, with links to the head, run and
+formal review. Detailed history remains in reviews, runs and the Linear workpad.
+
+The footer uses observed model/token usage when the provider exposes it and
+measured review duration. Requested models are labeled separately; unavailable
+measurements are omitted. Codex's pinned Action currently supplies no structured
+observed model or token counts. Elapsed provider-step time can include setup.
+
+Admission, review start, completion and recovery request the existing Cadence
+App's PR-write grant for comment edits; no new App installation grant or secret
+is needed. Keep the generated caller and helper revision matched. When adopting this template revision, apply the caller changes through Copier
+and verify one
+live App-authored comment is edited across reviews. Generated-file validation does not establish live deployment; the root client
+may still use its separately recorded older template source.
