@@ -13,9 +13,10 @@ are generated client files. The repository-specific config and package CI were
 preserved during regeneration.
 
 This proves rendering and package CI, not a completed live Cadence review or
-Symphony-authored follow-up. Those remain downstream integration work. The initial
-subset was accepted on September 11, 2026; 100-64's template callers were accepted
-into main through [PR #6](https://github.com/1000lines/symphony-client-template/pull/6).
+Symphony-authored follow-up. Live integration evidence remains separate from
+these generated files. The initial subset and 100-64's provider/caller changes
+were accepted on September 11, 2026; the callers landed through
+[PR #6](https://github.com/1000lines/symphony-client-template/pull/6).
 
 For this regeneration, Copier 9.18.2 read the recorded nonsecret answers and the
 canonical source URL at the commit above, using the local task checkout as a Git
@@ -24,13 +25,44 @@ and helper pins both select shared workflows
 `ac15fc1567865eb738cd53409c6fddf297e78a09`. The source/workflow commits are preserved
 in their implementation PRs; no symphony-example files were patched.
 
+## Removing the skill from an existing client
+
+From a clean, committed client checkout, update using the removal commit:
+
+```sh
+copier update --defaults --vcs-ref=792ef00b289c8eb89fb872bb0ecdcbe9c9c9cec3
+```
+
+The earlier skill-removal root update used Git's `insteadOf` transport setting to resolve the recorded
+public URL to the local source commit, so both commits can be reviewed in one PR.
+Copier removed the generated skill and references in the earlier update; this
+removal refresh advanced only the recorded source. The root's required CI check,
+provider/alpha callers and omitted command caller survived without exclusions or
+conflict resolution; no answers were edited manually.
+
+Review adopter changes to the removed files before updating. Copier 9.18.2
+deletes removed template paths even when locally modified. Preserve each
+reviewed adopter-owned file with Copier's `--exclude` option, for example:
+
+```sh
+copier update --defaults --vcs-ref=792ef00b289c8eb89fb872bb0ecdcbe9c9c9cec3 \
+  --exclude .agents/skills/karpathy-guidelines/SKILL.md
+```
+
+Add a separate exclusion for `EXAMPLES.md` if it has adopter changes to retain.
+Independently added files survive the update. Review the resulting diff and
+resolve any [Copier conflicts](https://copier.readthedocs.io/en/stable/updating/)
+before committing; do not edit the answers file manually. The render tests cover
+both unchanged clients and this selective preservation of adopter files.
+
 ## Workflow alpha migration — 100-57
 
 A Git-URL render with Copier 9.18.2 and `--vcs-ref=alpha` resolved the public
 23-file template to `58021a73ac3a6c2141a1217fc88c27e590df8143` on September 11, 2026. Template main subsequently gained the five review/handoff/cleanup callers
-through PR #6, at merge `d2dd1dd`. The root retains those callers and all eight answers, including
-`cadence_reviewer: claude`; the 100-62 regeneration above adds onboarding.
-The earlier alpha-render metadata does not replace that newer regeneration.
+through PR #6, at merge `d2dd1dd`. Its root source was `e8d6f36`; later
+regenerations retain those callers and all eight answers, including
+`cadence_reviewer: claude`. The current source recorded above combines the
+accepted skill removal and alpha migration with 100-62's onboarding guidance.
 
 This migration repoints generated command CI and generated/root wakeups to
 `1000lines/symphony-client-workflows@alpha`, with trusted wakeup helpers at the
