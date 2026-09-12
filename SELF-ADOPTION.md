@@ -155,3 +155,27 @@ The [100-62 workpad](https://linear.app/1000lines/issue/100-62) records current-
 CI, environment/admin limits and the remaining actual setup/review/check/Linear
 handoff evidence. Install the reviewed revision on the default branch before
 running its setup workflow; do not widen admission to run PR-controlled code.
+
+## Merge conflict wakeups — 100-85
+
+Copier 9.18.2 rendered source `702e69c` with the recorded answers, preserving the
+public source URL through a local Git transport mapping. The generated wakeup
+caller, `SYMPHONY.md` and Copier metadata were refreshed; package CI/config
+customizations were preserved. Tests cover two repository/default-branch/team
+combinations, root parity and updating the prior caller with the new push and
+schedule triggers.
+
+Validation used Python 3.12.14 in
+`python@sha256:cd7c412d000912f29075a1b8803e43cb2f38bb67f104019df526df5ceaf30569`
+with only the issue workspace mounted and the workspace UID/GID. The host's
+Python 3.9 cannot run this pinned Copier environment. Shared bridge candidate
+`b43879f5233375fef65a8b1363399228114d58fd` has fixture proof of a base-advance
+conflict waking an unchanged PR head, unknown-mergeability recovery and duplicate
+suppression. This render still references the shared `alpha` publication.
+
+Jeremy Carroll must accept and publish the shared change to `alpha` before
+activating this caller on client default branches. Then retain an actual
+base-push/recovery Actions run and its confirmed Cadence workpad transition for a
+task-linked conflicted PR. Render and mocked API evidence do not establish that
+live acceptance result. See the [issue workpad](https://linear.app/1000lines/issue/100-85)
+for current PR heads, CI and publication status.
