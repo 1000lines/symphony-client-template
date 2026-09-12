@@ -208,10 +208,14 @@ these source changes.
 
 ## 100-99 copy-then-hide revision
 
-All five template review/handoff/cleanup callers and helpers pin central
-`1000lines/symphony-client-workflows@1bba696e1bf73076e12b597f48291b16932ceb47`.
+The copy-then-hide implementation was merged in
+[workflows PR #11](https://github.com/1000lines/symphony-client-workflows/pull/11)
+at `1bba696e1bf73076e12b597f48291b16932ceb47`.
 Jeremy's current [100-99 decision](https://linear.app/1000lines/issue/100-99)
 preserves formal reviews and adds native Hide → Duplicate after verified copying.
-The check/Linear event flow and named-secret mappings are unchanged. Accept the
-shared implementation before adopting the matched refs through Copier; retain
-actual Cadence App hide/readback evidence separately from generated-file tests.
+His later [PR #19 instruction](https://github.com/1000lines/symphony-client-template/pull/19#issuecomment-5643914717)
+supersedes this PR's immutable caller/helper pins: all shared workflow callers
+and helpers use `main`, as adopted in template PR #22. The check/Linear event
+flow and named-secret mappings are unchanged. Propagate the review guidance
+through Copier after this template change is accepted; retain actual Cadence
+App hide/readback evidence separately from generated-file tests.

@@ -24,8 +24,8 @@ REVIEW_CALLERS = {
     '.github/workflows/cadence-review-check-cleanup.yml',
 }
 CI_SOURCE = "1000lines/symphony-client-workflows"
-CI_REF = "alpha"
-REVIEW_REF = "1bba696e1bf73076e12b597f48291b16932ceb47"
+CI_REF = "main"
+REVIEW_REF = "main"
 REPLAN = "scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md"
 FACTORY = ".agents/skills/symphony-project-factory"
 SKILLS = {

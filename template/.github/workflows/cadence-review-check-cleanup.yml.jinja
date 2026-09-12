@@ -12,8 +12,8 @@ permissions:
 
 jobs:
   cleanup:
-    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-review-check-cleanup.yml@1bba696e1bf73076e12b597f48291b16932ceb47
+    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-review-check-cleanup.yml@main
     with:
-      helpers-ref: 1bba696e1bf73076e12b597f48291b16932ceb47
+      helpers-ref: main
     secrets:
       CADENCE_APP_PRIVATE_KEY: ${{ secrets.CADENCE_APP_PRIVATE_KEY }}
