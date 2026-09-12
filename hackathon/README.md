@@ -56,6 +56,55 @@ are cheap enough that a half-finished project going in the wrong direction does
 not have to be rescued. Keep what you learned, discard the project, and start a
 better one.
 
+### A real replan
+
+The template-enhancement
+[`fan-out-plan-100-67-template-enhancements.mmd`](../docs/symphony-plans/fan-out-plan-100-67-template-enhancements.mmd)
+has four recorded versions across the repository's branch history. Two changes
+substantially altered its structure. This diagram shows only the lanes that
+changed:
+
+```mermaid
+flowchart TB
+  subgraph FIRST["Initial plan · dfbc564"]
+    direction LR
+    D1["D · Generate diagrams"] --> G1["G · Align guidance"] --> A1["A · Publish guidance"]
+    X1["X · Execute cleanup"] --> L1["L · Add cleanup caller"] --> W1["W · Final adoption"]
+    B1["B · Publish review"] --> I1["I · Migrate ingress"] --> W1
+  end
+
+  subgraph SECOND["Replan · e6573b1"]
+    direction LR
+    G2["G · Establish root validation"] --> D2["D · Generate diagrams"] --> A2["A · Publish guidance"]
+    X2["X · Execute cleanup"] --> L2["L · Add cleanup caller"]
+    B2["B · Publish review"] --> L2 --> I2["I · Migrate ingress"] --> W2["W · Final adoption"]
+  end
+
+  subgraph THIRD["Later discovery · ffa1ef6"]
+    direction LR
+    P3["P · Review publication"] --> C3["C · Review communication"] --> B3["B · Publish review"]
+    S3["S · Existing status comment"] --> T3["T · Settings and timings"] --> B3
+  end
+
+  FIRST -->|Ownership and validation clarified| SECOND
+  SECOND -->|New work discovered while executing| THIRD
+```
+
+The [first plan](https://github.com/1000lines/symphony-client-template/commit/dfbc564988876f3b39d76c3a0376eae6ce08782a)
+assumed diagrams could precede guidance alignment and that cleanup and review
+publication could remain mostly parallel. Eight minutes later, the
+[first replan](https://github.com/1000lines/symphony-client-template/commit/e6573b1839f434bba16247598b8c40df5ecca16a)
+recorded two discoveries: root validation had to exist before generating files,
+so `D → G` became `G → D`; and shared inventory ownership required review
+publication, cleanup, and ingress migration to run in order. The longest path
+grew from eight rounds to ten rather than hiding those dependencies.
+
+Later, an existing status-comment task became relevant. The
+[second structural amendment](https://github.com/1000lines/symphony-client-template/commit/ffa1ef6e19a529a3272d71393c04183118c37b24)
+added it as `S` and split presentation from the broader communication task:
+`C → T` became `S → T`, while `C → B` preserved the review-publication handoff.
+The project kept moving while the graph recorded what the team had learned.
+
 ## Architecture
 
 ```mermaid
