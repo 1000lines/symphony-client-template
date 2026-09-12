@@ -1,7 +1,7 @@
 # Symphony client
 
-Repository: [[ repo_slug | to_json ]]. Default branch: [[ default_branch | to_json ]].
-Linear team: [[ linear_team_key | to_json ]]. Each issue supplies its own project;
+Repository: [[repo_slug | to_json]]. Default branch: [[default_branch | to_json]].
+Linear team: [[linear_team_key | to_json]]. Each issue supplies its own project;
 this repository can serve multiple projects.
 
 Read the target's README, AGENTS.md and CLAUDE.md when present. Use the build and
@@ -49,8 +49,11 @@ Load these skills from this generated client in the human-operated session:
 - [Project factory](.agents/skills/symphony-project-factory/SKILL.md), retaining
   its `templates/` directory; invoke only when a human requests project setup.
 - [Linear GraphQL](.agents/skills/linear-graphql/SKILL.md), retaining
-  `agents/openai.yaml` and `scripts/linear-graphql.mjs`. Factory operations require
-  the injected `linear_graphql` tool; the fallback script does not replace it.
+  `agents/openai.yaml` and `scripts/linear-graphql.mjs`. Prefer injected
+  `linear_graphql`; when absent in a human-operated factory session, use the
+  authenticated script with the same identity/preflight/staging/readback guards.
+  Auth failure stops dependent writes without switching identity or transport;
+  hosted workers retain injected auth. Already-authorized writes need no extra confirmation.
 - [Replan](scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md), loaded
   explicitly from this nested location with the client
   [replanning guide](docs/engineering/symphony/replanning.md) and factory templates.
@@ -77,8 +80,8 @@ validates repository-visible and protected-job credentials without running an AI
 review. Verify the installed caller jobs and a real review/check/Linear handoff
 before reporting onboarding complete.
 
-Author App: [[ symphony_app_slug | to_json ]]. Reviewer App: [[ cadence_app_slug | to_json ]].
-Reviewer choice: [[ cadence_reviewer | to_json ]]; see [review context](.github/symphony/REVIEW.md).
+Author App: [[symphony_app_slug | to_json]]. Reviewer App: [[cadence_app_slug | to_json]].
+Reviewer choice: [[cadence_reviewer | to_json]]; see [review context](.github/symphony/REVIEW.md).
 Provision credentials separately from answers and commands. At runtime an OpenAI
 key selects Codex (including when both keys exist), otherwise an Anthropic key
 selects Claude. Neither key fails early; authentication failures never fall back.
