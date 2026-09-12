@@ -25,7 +25,7 @@ REVIEW_CALLERS = {
 }
 CI_SOURCE = "1000lines/symphony-client-workflows"
 CI_REF = "alpha"
-REVIEW_REF = "05451a7c520e295c415012cf468ec24e6460bb48"
+REVIEW_REF = "1bba696e1bf73076e12b597f48291b16932ceb47"
 REPLAN = "scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md"
 FACTORY = ".agents/skills/symphony-project-factory"
 SKILLS = {
@@ -381,7 +381,9 @@ class RenderTest(unittest.TestCase):
         for relative in REVIEW_CALLERS:
             workflow = yaml.safe_load((output / relative).read_text())
             job, = workflow["jobs"].values()
-            secrets = {"CADENCE_APP_PRIVATE_KEY", "CADENCE_LINEAR_API_TOKEN"}
+            secrets = {"CADENCE_APP_PRIVATE_KEY"}
+            if not relative.endswith("cadence-review-check-cleanup.yml"):
+                secrets.add("CADENCE_LINEAR_API_TOKEN")
             if "cadence-ai-review" in relative:
                 secrets.update({"CADENCE_OPENAI_API_KEY", "CADENCE_AI_REVIEW_ANTHROPIC_API_KEY"})
             self.assertEqual(job["secrets"], {

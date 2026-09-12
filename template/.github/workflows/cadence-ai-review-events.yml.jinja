@@ -13,9 +13,9 @@ permissions:
 
 jobs:
   review:
-    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-ai-review-events.yml@05451a7c520e295c415012cf468ec24e6460bb48
+    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-ai-review-events.yml@1bba696e1bf73076e12b597f48291b16932ceb47
     with:
-      helpers-ref: 05451a7c520e295c415012cf468ec24e6460bb48
+      helpers-ref: 1bba696e1bf73076e12b597f48291b16932ceb47
     secrets:
       CADENCE_APP_PRIVATE_KEY: ${{ secrets.CADENCE_APP_PRIVATE_KEY }}
       CADENCE_OPENAI_API_KEY: ${{ secrets.CADENCE_OPENAI_API_KEY }}
