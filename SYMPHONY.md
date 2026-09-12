@@ -42,6 +42,53 @@ explicit named secrets and the same reviewed shared workflow/helper revision.
 Ingress remains secret-free. Follow the review context for provider selection
 and report live execution separately from generated-file verification.
 
+## Merge conflict wakeups
+
+`Symphony Client Wakeups` checks labeled, same-repository open PRs on
+`pull_request_target` events and on pushes to the configured default branch.
+A push checks PRs targeting that branch; it does not require a PR head update.
+The recovery schedule runs at minutes 7, 22, 37 and 52 UTC and checks all open
+Symphony PRs, including other base branches. Unknown mergeability is deferred
+to the next run. GitHub schedules can be delayed or disabled after repository
+inactivity; this is recovery, not a guaranteed 15-minute deadline.
+
+Setup requires:
+
+- Install the generated caller on the repository's default branch and keep
+  Actions and its schedule enabled. Publish the accepted shared conflict bridge
+  on `symphony-client-workflows@alpha` before enabling these triggers in clients.
+- Map only `CADENCE_LINEAR_API_TOKEN` to the reusable workflow. Its owner needs
+  access to read issue/team/project metadata, write the Cadence workpad and
+  update issue state in the configured Linear team. The bridge records the
+  authenticated owner; it does not require a particular account display name.
+- Allow the caller's read permissions for contents, pull requests, checks,
+  statuses and Actions. Conflict detection needs no PR write credential, App
+  signing key or review-provider secret. Helpers execute from the caller's fixed
+  trusted shared repository/ref; target configuration is read from the default
+  branch, and PR code is never checked out or executed.
+- Keep `.symphony.cfg.json`'s Linear team, the PR title prefix or branch ticket,
+  project metadata and `symphony`/project-color labels consistent. Ambiguous or
+  mismatched associations fail closed. Terminal issues and closed/merged PRs
+  remain unchanged; active workers are left alone for a later recovery check.
+
+A confirmed conflict wakes a waiting issue through the existing Active
+transition (legacy Rework when Active is unavailable). The Cadence workpad and
+Actions summary record the issue, identity source, actor, PR/head/base, run URL,
+resolution instruction and confirmed mutation or skip. A durable receipt per
+repository/PR head suppresses repeated notifications even after the short event
+history rotates or the base advances again. A new head is eligible again.
+The CI bridge defers conflicted PRs to this path so successful checks cannot
+park a conflict that needs resolution. Unknown mergeability during CI handling
+puts waiting issues in `Unhappy` with `wake:15m`; the existing Symphony timer
+rechecks the PR and CI even without another GitHub event. Symphony resolves
+the conflict.
+
+To verify live delivery after publication, use a disposable task-linked Symphony
+PR whose issue is Inactive, advance its base with a conflicting edit, and retain
+the base-push or recovery run URL and matching Cadence workpad transition to
+Active. Recheck the unchanged head to confirm a duplicate skip. Record these
+separately from render/API-fixture tests; those tests do not prove live delivery.
+
 ## Client session skills
 
 Load these skills from this generated client in the human-operated session:
