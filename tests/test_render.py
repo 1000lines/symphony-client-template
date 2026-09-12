@@ -42,6 +42,8 @@ SKILLS = {
 GENERATED = SKILLS | REVIEW_CALLERS | {
     INGRESS, ".symphony.cfg.json", ".gitattributes", "SYMPHONY.md",
     ".github/symphony/REVIEW.md", ".github/symphony/cadence-app-manifest.json",
+    ".github/symphony/symphony-app-manifest.json", ".github/symphony/setup-app.mjs",
+    ".github/symphony/APP-SETUP.md",
     ".copier-answers.yml", CI, WAKEUPS,
 }
 
@@ -146,6 +148,13 @@ class RenderTest(unittest.TestCase):
                 })
                 self.assertFalse(manifest["public"])
                 self.assertEqual(manifest["default_events"], [])
+                author_manifest = json.loads((output / ".github/symphony/symphony-app-manifest.json").read_text())
+                self.assertEqual(author_manifest["name"], answers["symphony_app_slug"])
+                self.assertEqual(author_manifest["default_permissions"], {
+                    "metadata": "read", "contents": "write", "actions": "read",
+                    "pull_requests": "write", "issues": "write", "checks": "read",
+                    "statuses": "read", "workflows": "write",
+                })
                 self.check_skills(output)
 
     def test_root_client_matches_render_preserving_package_ci(self):

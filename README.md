@@ -16,6 +16,11 @@ Answer the repository, branch, Linear team, App slugs, reviewer and build/test
 questions. Review the generated diff before applying it to an existing repo.
 Keep secrets out of answers and preserve existing application files.
 
+Register or reuse the reviewer App first with the generated
+[App setup command](template/.github/symphony/APP-SETUP.md). Separate Cadence and
+Symphony JSON presets cover browser registration, secure key handoff and effective
+installation readback. Registration still requires GitHub's browser approval.
+
 The package includes CI/wakeup, review event/manual, handoff and cleanup callers,
 configuration, and client skills. Both provider secrets are explicitly forwarded:
 `CADENCE_OPENAI_API_KEY` selects Codex, otherwise
@@ -41,6 +46,9 @@ python -m pip install -r tests/requirements.txt
 cd ..
 python -m unittest discover -s symphony-client-template/tests -v
 ```
+
+Run the App setup fixtures with `node --test tests/test-app-setup.mjs` from this
+checkout (Node 20+). These fixtures do not register or install a live App.
 
 [Client guidance](template/SYMPHONY.md.jinja), [source provenance](PROVENANCE.md),
 and [license](LICENSE).
