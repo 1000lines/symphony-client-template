@@ -235,7 +235,7 @@ includes the repository:
 | --- | --- | --- |
 | `CADENCE_APP_ID` | Variable | `4921338` |
 | `CADENCE_APP_PRIVATE_KEY` | Secret | The temporary HackCadence PEM |
-| `CADENCE_REVIEWER` | Variable | HackCadence's actual `slug[bot]` login |
+| `CADENCE_REVIEWER` | Variable | `hackcadence[bot]` |
 | `SYMPHONY_BOT_USER` | Variable | `1000lines-symphony[bot]` |
 | `CADENCE_LINEAR_API_TOKEN` | Secret | Your Linear API key |
 | `CADENCE_OPENAI_API_KEY` | Secret | Your OpenAI API key for Codex review |
@@ -301,7 +301,7 @@ Answer the prompts as follows:
 | Default branch | The repository's default branch, usually `main` |
 | Linear team key | `100` |
 | Symphony App slug | `1000lines-symphony` |
-| Cadence App slug | The installed Cadence App's actual slug; ask Jeremy if using the fork path |
+| Cadence App slug | `hackcadence` for HackCadence; otherwise the installed App's actual slug |
 | Reviewer | `claude` or `codex`; current execution chooses from the configured provider keys |
 | Build command | The repository's build command |
 | Test command | The repository's test command |
