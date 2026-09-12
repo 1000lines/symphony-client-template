@@ -233,7 +233,7 @@ includes the repository:
 
 | Setting | Kind | Value |
 | --- | --- | --- |
-| `CADENCE_APP_ID` | Variable | HackCadence's numeric App ID |
+| `CADENCE_APP_ID` | Variable | `4921338` |
 | `CADENCE_APP_PRIVATE_KEY` | Secret | The temporary HackCadence PEM |
 | `CADENCE_REVIEWER` | Variable | HackCadence's actual `slug[bot]` login |
 | `SYMPHONY_BOT_USER` | Variable | `1000lines-symphony[bot]` |
