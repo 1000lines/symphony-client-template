@@ -20,6 +20,11 @@
         "bash",
         "-lc",
         "package_dir=\"$PWD\"\npython3 -m venv ../.symphony-template-venv\n../.symphony-template-venv/bin/python -m pip install -r tests/requirements.txt\ncd ..\n./.symphony-template-venv/bin/python -m unittest discover -s \"$package_dir/tests\" -v"
+      ],
+      [
+        "node",
+        "--test",
+        "tests/test-credentials.mjs"
       ]
     ]
   },

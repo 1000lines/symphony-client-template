@@ -29,13 +29,15 @@ Handoff and cleanup receive only their own named secrets; ingress receives none.
 Store secrets at repository scope or in organization secrets selected for this
 repository. Keep `cadence-controller` restricted to the repository's default
 branch and free of shadowing environment secrets. Configure `CADENCE_APP_ID`,
-`SYMPHONY_BOT_USER` and `CADENCE_REVIEWER` as repository Actions variables.
+`SYMPHONY_BOT_USER` and `CADENCE_REVIEWER` as repository Actions variables or
+organization variables granted to this repository.
 
 The shared workflow and helper revision must match. After the reviewed workflow
 release, propagate caller updates through Copier, inspect the generated diff,
 and verify a real App-authored PR review/check and Linear handoff. Generated
-files and fixture tests do not establish live readiness. Guided provisioning
-and readiness verification belong to [100-62](https://linear.app/1000lines/issue/100-62).
+files and fixture tests do not establish live readiness. Use the
+[onboarding skill](../../.agents/skills/cadence-onboarding/SKILL.md) for secure
+provisioning and readiness verification.
 
 Keep reviewer implementation in the shared workflows. App/Linear credentials
 and optional provider keys must be explicitly mapped at each review boundary.

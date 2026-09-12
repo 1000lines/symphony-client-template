@@ -16,6 +16,13 @@ Answer the repository, branch, Linear team, App slugs, reviewer and build/test
 questions. Review the generated diff before applying it to an existing repo.
 Keep secrets out of answers and preserve existing application files.
 
+After generation or update, use the generated
+[Cadence onboarding skill](template/.agents/skills/cadence-onboarding/SKILL.md).
+It covers every Cadence secret and identity/model variable, secure repository or
+organization provisioning, and the native `Symphony Client Setup` probe. Record
+files generated, credentials configured and live review verified separately;
+secret presence and a successful probe do not establish live review readiness.
+
 The package includes CI/wakeup, review event/manual, handoff and cleanup callers,
 configuration, and client skills. Both provider secrets are explicitly forwarded:
 `CADENCE_OPENAI_API_KEY` selects Codex, otherwise

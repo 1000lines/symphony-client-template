@@ -1,16 +1,15 @@
 # Template self-instantiation
 
-The repository root was updated by Copier 9.18.2 from removal revision
-`7c3aecbadbe229a8dc39a0f72af366675c6bc615` to
-`792ef00b289c8eb89fb872bb0ecdcbe9c9c9cec3`, retaining the Karpathy removal and
-main's accepted alpha caller migration. `.copier-answers.yml` records the real source
-URL, commit and nonsecret answers. Template source remains under
+The repository root was updated by Copier 9.18.2 to the combined template at
+commit `755aada426b969882208361db060c7d4b22f4959`, integrating main through
+`e7a9be382c062f141727c9a9129aef384aea8efb`. `.copier-answers.yml` records
+the real source URL, commit and nonsecret answers. Template source remains under
 `template/`; root client files are excluded by `_subdirectory: template`.
 
 The optional generated command CI caller is omitted here because the package's
 own `Client template tests` workflow already validates the rendered output.
 The root config registers that observed GitHub Actions check. Root review
-event/manual/trigger, handoff, cleanup, ingress, wakeups, instructions and skills
+event/manual/trigger, handoff, cleanup, ingress, wakeups, setup, instructions and skills
 are generated client files. The repository-specific config and package CI were
 preserved during regeneration.
 
@@ -20,9 +19,12 @@ these generated files. The initial subset and 100-64's provider/caller changes
 were accepted on September 11, 2026; the callers landed through
 [PR #6](https://github.com/1000lines/symphony-client-template/pull/6).
 
-For this regeneration, Copier 9.18.2 read the recorded nonsecret answers and the
-canonical source URL at the commit above, using the local task checkout as a Git
-mirror. Source changes were committed before rendering. The generated review/handoff/cleanup workflow
+For this refresh, `copier update --defaults` read the recorded nonsecret answers
+and canonical source URL at the commit above, using the local task checkout as
+a Git mirror. The package-specific `.symphony.cfg.json` and omitted
+`.github/workflows/symphony-client-ci.yml` were explicitly excluded. The update
+changed only the recorded source: merged generated files already matched the
+combined template. Source changes were committed before rendering. The generated review/handoff/cleanup workflow
 and helper pins both select shared workflows
 `ac15fc1567865eb738cd53409c6fddf297e78a09`. The source/workflow commits are preserved
 in their implementation PRs; no symphony-example files were patched.
@@ -35,10 +37,10 @@ From a clean, committed client checkout, update using the removal commit:
 copier update --defaults --vcs-ref=792ef00b289c8eb89fb872bb0ecdcbe9c9c9cec3
 ```
 
-The root update used Git's `insteadOf` transport setting to resolve the recorded
+The earlier skill-removal root update used Git's `insteadOf` transport setting to resolve the recorded
 public URL to the local source commit, so both commits can be reviewed in one PR.
 Copier removed the generated skill and references in the earlier update; this
-refresh advanced only the recorded source. The root's required CI check,
+removal refresh advanced only the recorded source. The root's required CI check,
 provider/alpha callers and omitted command caller survived without exclusions or
 conflict resolution; no answers were edited manually.
 
@@ -61,9 +63,10 @@ both unchanged clients and this selective preservation of adopter files.
 
 A Git-URL render with Copier 9.18.2 and `--vcs-ref=alpha` resolved the public
 23-file template to `58021a73ac3a6c2141a1217fc88c27e590df8143` on September 11, 2026. Template main subsequently gained the five review/handoff/cleanup callers
-through PR #6, at merge `d2dd1dd`. Its root source was `e8d6f36`; the later
-skill-removal regeneration is recorded above. All eight answers remain,
-including `cadence_reviewer: claude`.
+through PR #6, at merge `d2dd1dd`. Its root source was `e8d6f36`; later
+regenerations retain those callers and all eight answers, including
+`cadence_reviewer: claude`. The current source recorded above combines the
+accepted skill removal and alpha migration with 100-62's onboarding guidance.
 
 This migration repoints generated command CI and generated/root wakeups to
 `1000lines/symphony-client-workflows@alpha`, with trusted wakeup helpers at the
@@ -110,3 +113,26 @@ current-head Codex review, App-owned advisory queued/running/result check,
 draft-to-ready transition, matching cleanup workflow names, and cancellation/
 recovery runs here. This repository does not yet claim completed live self-use
 through the published pair.
+
+## Credential onboarding — 100-62
+
+The update above retains the onboarding skill and `symphony-client-setup.yml`
+alongside the accepted skill removal, package config/CI and existing caller pins.
+The probe checks default-branch-only environment policy before App/provider work;
+repository-visible and protected-job settings are checked separately. Fresh and
+repeat Copier fixtures verify that application files, answers and callers survive.
+
+Jeremy's [organization settings screenshots](https://github.com/1000lines/symphony-client-template/pull/8#issuecomment-5641590252)
+show the four documented secrets plus `CADENCE_APP_ID=4866513`,
+`CADENCE_REVIEWER=1000lines-cadence[bot]`, and
+`SYMPHONY_BOT_USER=1000lines-symphony[bot]`. These are this adopter's identity
+settings, not defaults for new Apps. The generated guide covers every shown name,
+repository/organization alternatives and the conditional model variables.
+Screenshots establish names and nonsecret values; full visibility, effective
+repository grants and environment shadowing still require operator/job readback.
+
+This source update does not configure GitHub settings or verify a live onboarding.
+The [100-62 workpad](https://linear.app/1000lines/issue/100-62) records current-head
+CI, environment/admin limits and the remaining actual setup/review/check/Linear
+handoff evidence. Install the reviewed revision on the default branch before
+running its setup workflow; do not widen admission to run PR-controlled code.
