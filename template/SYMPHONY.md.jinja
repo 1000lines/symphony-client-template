@@ -70,6 +70,13 @@ project factory out of the unattended hosted worker profile.
 
 ## Review and App setup
 
+Start with the [Cadence onboarding skill](.agents/skills/cadence-onboarding/SKILL.md)
+for exact credential names/scopes, App installation and grants, environment
+admission and readiness evidence. Its native `Symphony Client Setup` probe
+validates repository-visible and protected-job credentials without running an AI
+review. Verify the installed caller jobs and a real review/check/Linear handoff
+before reporting onboarding complete.
+
 Author App: [[ symphony_app_slug | to_json ]]. Reviewer App: [[ cadence_app_slug | to_json ]].
 Reviewer choice: [[ cadence_reviewer | to_json ]]; see [review context](.github/symphony/REVIEW.md).
 Provision credentials separately from answers and commands. At runtime an OpenAI
@@ -82,8 +89,8 @@ provide the named Actions secrets. Direct/private targets use the inert
 [GitHub manifest registration flow](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest).
 It requests repository read access and PR/issue/check write access, with no
 webhook receiver or subscribed events; native GitHub Actions provide delivery.
-The owner verifies the created App's grants/IDs and provisions secrets through
-CT-O. Rendering is not App registration or credential provisioning.
+The owner verifies the created App's grants/IDs and provisions credentials using
+the onboarding skill. Rendering is not App registration or credential provisioning.
 
 ## Source and license
 

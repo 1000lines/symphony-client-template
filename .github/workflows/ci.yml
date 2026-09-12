@@ -32,12 +32,14 @@ jobs:
           cache-dependency-path: tests/requirements.txt
       - name: Install pinned test requirements
         run: python -m pip install -r tests/requirements.txt
-      - name: Set up Node for App setup fixtures
+      - name: Set up Node for setup tests
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "20.20.0"
       - name: Test App manifest setup and readback
         run: node --test tests/test-app-setup.mjs
+      - name: Validate credential probe failures and provider selection
+        run: node --test tests/test-credentials.mjs
       - name: Render fixtures and inspect generated files
         working-directory: ${{ github.workspace }}/..
         run: python -m unittest discover -s "$GITHUB_WORKSPACE/tests"
