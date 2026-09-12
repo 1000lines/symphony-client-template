@@ -9,7 +9,7 @@ Install Python 3.12 and Copier, then render into a scratch directory:
 
 ```sh
 python -m pip install copier==9.18.2
-copier copy --vcs-ref=alpha https://github.com/1000lines/symphony-client-template.git ./my-client
+copier copy --vcs-ref=main https://github.com/1000lines/symphony-client-template.git ./my-client
 ```
 
 Answer the repository, branch, Linear team, App slugs, reviewer and build/test
@@ -41,14 +41,11 @@ fails early. The reviewer answer is an onboarding preference. See the generated
 [review context](template/.github/symphony/REVIEW.md.jinja) for the exact secret
 mapping and provisioning boundary with 100-62.
 
-CI/wakeup callers in this revision use
-`1000lines/symphony-client-workflows@alpha`, including the trusted wakeup helpers.
-Review/handoff/cleanup callers pin the matching status-comment workflow/helper
-revision proposed in [100-98](https://linear.app/1000lines/issue/100-98). Accept
-the shared implementation before adopting this template revision. The moving branch is
-intentional; [provenance](PROVENANCE.md#workflow-alpha-integration) records the
-inspected commits, and [self-instantiation](SELF-ADOPTION.md) separates the public
-template render from the migration awaiting publication.
+All generated CI, wakeup, review, handoff and cleanup callers use
+`1000lines/symphony-client-workflows@main`, with `helpers-ref: main` wherever
+helpers are checked out. Merged shared-workflow changes reach clients on their
+next run without a template pin update. Client workflow definitions still update
+through Copier. Third-party Actions retain their existing version pins.
 
 ## Development
 
