@@ -16,9 +16,12 @@ their owners want to move forward.
 This is an agent experience inside the places where software engineering already
 happens. The human defines the project in Linear and holds the engineering
 conversation on GitHub pull requests. Symphony does the coding, Cadence takes
-the review journey with the human, and the dashboard provides monitoring. Linear
-and GitHub shape how the agents plan, communicate, respond to feedback, and act;
-they are not wrappers around a separate chat window.
+the review journey with the human, and the dashboard provides monitoring. The
+plan appears on the pull request page as a Mermaid dependency graph: a picture
+the human can question, an artifact both agents can discuss, and an execution
+plan Symphony can follow. Linear and GitHub shape how the agents plan,
+communicate, respond to feedback, and act; they are not wrappers around a
+separate chat window.
 
 By the end of the day, we want to show:
 
