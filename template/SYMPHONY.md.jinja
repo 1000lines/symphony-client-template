@@ -99,7 +99,7 @@ names/scopes, App installation/grants and environment admission. `Symphony Clien
 checks repository/protected-job credentials without AI review; complete onboarding
 requires installed callers and a real review/check/Linear handoff.
 
-Author App: [[symphony_app_slug | to_json]]. Reviewer App: [[cadence_app_slug | to_json]].
+Author App: [[symphony_app_slug.removesuffix('[bot]') | to_json]]. Reviewer App: [[cadence_app_slug.removesuffix('[bot]') | to_json]].
 Reviewer choice: [[cadence_reviewer | to_json]]; see [review context](.github/symphony/REVIEW.md).
 Provision credentials separately from answers and commands. At runtime an OpenAI
 key selects Codex (including when both keys exist), otherwise an Anthropic key

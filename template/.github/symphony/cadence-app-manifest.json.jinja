@@ -1,5 +1,5 @@
 {
-  "name": [[ cadence_app_slug | to_json ]],
+  "name": [[ cadence_app_slug.removesuffix('[bot]') | to_json ]],
   "url": [[ ("https://github.com/" ~ repo_slug) | to_json ]],
   "description": "Cadence review and feedback for this repository",
   "public": false,
