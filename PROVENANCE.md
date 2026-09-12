@@ -205,3 +205,16 @@ No alpha branch is advanced here. The root retains its recorded older Copier
 source until a reviewed self-adoption; current-source render/update tests and
 recorded-root tests remain separate. No live review execution is claimed by
 these source changes.
+
+## 100-99 single review message
+
+The five template review/handoff/cleanup callers and their helpers pin
+`1000lines/symphony-client-workflows@05451a7c520e295c415012cf468ec24e6460bb48`.
+[100-99](https://linear.app/1000lines/issue/100-99) supersedes 100-98's duplicate
+formal-review messaging. Cleanup also forwards the existing Linear token for
+completion handoff recovery. The implementation is central; this package only
+changes caller refs, secret forwarding and adopter guidance.
+
+Accept the shared implementation before activating this template in a client.
+Copier propagation and live review/check/Linear execution are separate evidence;
+these template files alone do not claim deployment.

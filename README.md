@@ -43,8 +43,8 @@ mapping and provisioning boundary with 100-62.
 
 CI/wakeup callers in this revision use
 `1000lines/symphony-client-workflows@alpha`, including the trusted wakeup helpers.
-Review/handoff/cleanup callers pin the matching status-comment workflow/helper
-revision proposed in [100-98](https://linear.app/1000lines/issue/100-98). Accept
+Review/handoff/cleanup callers pin the matching single-assessment workflow/helper
+revision proposed in [100-99](https://linear.app/1000lines/issue/100-99). Accept
 the shared implementation before adopting this template revision. The moving branch is
 intentional; [provenance](PROVENANCE.md#workflow-alpha-integration) records the
 inspected commits, and [self-instantiation](SELF-ADOPTION.md) separates the public
