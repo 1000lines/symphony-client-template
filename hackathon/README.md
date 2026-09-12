@@ -187,7 +187,7 @@ flowchart LR
   ORCHESTRATOR <--> AGENTLINEAR
   CADENCE <--> AGENTLINEAR
   MONITOR -.-> ORCHESTRATOR
-  ORCHESTRATOR <--> HIDDEN
+  ORCHESTRATOR <-->|Agent to future agent| HIDDEN
   ORCHESTRATOR -->|Symphony codes| CODE
   CODE --> PR
   ORCHESTRATOR -->|Replies and revisions| PR
