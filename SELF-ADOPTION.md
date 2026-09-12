@@ -5,7 +5,7 @@
 The template and root client now use `main` for all Symphony-owned reusable
 workflows and helper checkouts. This explicitly supersedes the SHA/alpha
 publication policy recorded in the historical refresh notes below. Existing
-Copier answers record source commit `06ed6afb8cfedc34978065c350a38d2af363bb5b`;
+Copier answers record source commit `84c83698fe2e66e066d307ac674727274e61acb2`;
 root assets match that render, with the existing config/CI exclusions.
 
 ## Main refresh — September 12, 2026
