@@ -40,6 +40,196 @@ template, integration, orchestration, or recovery path broke. Together, those
 runs test functionality, theme fit, technical integration, reliability, and
 usefulness under real conditions.
 
+## What we achieved
+
+The claim under test was reuse: extract a workflow from one repository, then install
+and run it in repositories it was not designed for. We installed it in three
+participant repositories. Memray reached merged feature code, documentation,
+validation and upstream-submission preparation; Venn reached a merged design,
+plan, fan-out and first cleanup implementation; ESLint reached merged requirements
+and a rule-inventory plan. Those are different stopping points, not three completed
+projects. The logs below are earlier snapshots; the GitHub inventory records later
+progress without rewriting them.
+
+### Results by repository
+
+- **jeremycarroll/pytest-memray:** Copier, Symphony and HackCadence installed; the human reconciled 13 existing CI checks.
+  Symphony produced the full-capture feature, tests, docs and delivery artifacts; PRs #2–#11 merged.
+  The log records Cadence review, Jeremy's feedback, Symphony revisions, and Jeremy's approvals/merges, including the delivery replan.
+  It stopped at upstream-submission preparation: #11's body still records certification/submission as pending. [Repository log](jeremycarroll--pytest-memray.md).
+- **jeremycarroll/venn-search-rs:** Copier, Symphony and HackCadence installed alongside six existing Rust CI checks; Jeremy corrected onboarding and merged it.
+  Symphony produced a 631-line design, then a plan, ticket fan-out and recovered cleanup; PRs #17–#20 merged, #21–#27 remained open at the inventory snapshot.
+  Jeremy approved and merged the design before Cadence finished; the log records no verdict on #16 or #17. The later cleanup merge is #20.
+  It reached implementation, beyond the log's design-only stopping point, but not completion of the cleanup project. [Repository log](jeremycarroll--venn-search-rs.md).
+- **1000lines/eslint:** Copier and the organisation's Symphony/Cadence configuration installed via setup PR #1; the human repaired CI and formatting.
+  The log records 39 successful setup checks. Later Symphony PRs #2 and #3 merged requirements and the rule-inventory plan, merged by Jeremy.
+  PR #3 reports 292 rules inventoried, 37 candidates and six proposed first-wave lanes; it changes planning artifacts, not rule implementations.
+  It reached an accepted plan, not six completed lanes or the roughly forty-lane project. [Repository log](1000lines--eslint.md).
+
+Memray supplies the logged path from Linear definition through Symphony-authored
+code, Cadence review, human feedback, revision, approval and merge. Its Mermaid
+plan was reviewed and extended from three nodes/two edges to five nodes/four
+edges after Jeremy changed the delivery requirement. That is evidence of a human
+changing the execution plan, not of execution discovering a difficult dependency.
+Venn and ESLint subsequently merged their own plans. Installation and execution
+were repeated in all three repositories; completed application changes landed in
+Memray and Venn. The evidence does not establish the full review journey in all
+three. Jeremy's end-of-day assessment was that most of the workflow worked, with
+failures concentrated in review delivery, comment cleanup and state transitions.
+
+### PR inventory beyond the log snapshots
+
+GitHub read at **2026-09-12 22:55 UTC**: 26 distinct PRs carrying the
+`symphony` label and opened or closed on September 12, 2026 in America/Los_Angeles
+(07:00 UTC September 12 through 06:59:59 UTC September 13), across `jeremycarroll`
+and `1000lines`: **17 merged, 9 open, 0 closed without merge**.
+This counts labels visible at read time, not historical label membership. It
+includes workflow development and a test fixture repository; those are not extra
+participant-project completions. Setup PRs without that label are outside this
+count. Each link below is the PR evidence for its title and state.
+
+| Repository | PR | Work | State at read |
+| --- | --- | --- | --- |
+| `1000lines/eslint` | [#2](https://github.com/1000lines/eslint/pull/2) | [100-118]: docs: define TypeScript syntax-awareness requirements | Merged |
+| `1000lines/eslint` | [#3](https://github.com/1000lines/eslint/pull/3) | [100-119]: docs: plan TypeScript-aware rule delivery | Merged |
+| `1000lines/symphony-client-workflows` | [#16](https://github.com/1000lines/symphony-client-workflows/pull/16) | [100-109]: reconcile Linear status when the last PR closes | Merged |
+| `1000lines/symphony-client-workflows` | [#18](https://github.com/1000lines/symphony-client-workflows/pull/18) | [100-116]: Prepare dedicated workflow test repository and fixtures | Open |
+| `1000lines/test-repo-1` | [#1](https://github.com/1000lines/test-repo-1/pull/1) | [100-116]: Correct installed test repository target and CI | Open |
+| `jeremycarroll/pytest-memray` | [#2](https://github.com/jeremycarroll/pytest-memray/pull/2) | [100-101]: document full-capture requirements and design | Merged |
+| `jeremycarroll/pytest-memray` | [#3](https://github.com/jeremycarroll/pytest-memray/pull/3) | [100-102]: plan full captures implementation and upstream handoff | Merged |
+| `jeremycarroll/pytest-memray` | [#4](https://github.com/jeremycarroll/pytest-memray/pull/4) | [100-103]: record full-captures ticket fan-out | Merged |
+| `jeremycarroll/pytest-memray` | [#5](https://github.com/jeremycarroll/pytest-memray/pull/5) | [100-105]: document full captures and downstream reporting | Merged |
+| `jeremycarroll/pytest-memray` | [#6](https://github.com/jeremycarroll/pytest-memray/pull/6) | [100-104]: add full allocation captures with regression coverage | Merged |
+| `jeremycarroll/pytest-memray` | [#7](https://github.com/jeremycarroll/pytest-memray/pull/7) | [100-106]: Validate full captures and track upstream delivery | Merged |
+| `jeremycarroll/pytest-memray` | [#8](https://github.com/jeremycarroll/pytest-memray/pull/8) | [100-107]: Plan clean contribution branch and upstream submission | Merged |
+| `jeremycarroll/pytest-memray` | [#9](https://github.com/jeremycarroll/pytest-memray/pull/9) | [100-108]: Apply the accepted delivery ticket fan-out | Merged |
+| `jeremycarroll/pytest-memray` | [#10](https://github.com/jeremycarroll/pytest-memray/pull/10) | [100-113]: Prepare concise full-captures upstream PR | Merged |
+| `jeremycarroll/pytest-memray` | [#11](https://github.com/jeremycarroll/pytest-memray/pull/11) | [100-114]: Prepare certified full-capture upstream submission | Merged |
+| `jeremycarroll/venn-search-rs` | [#17](https://github.com/jeremycarroll/venn-search-rs/pull/17) | [100-110]: Define Venn cleanup requirements and design | Merged |
+| `jeremycarroll/venn-search-rs` | [#18](https://github.com/jeremycarroll/venn-search-rs/pull/18) | [100-111]: Plan disjoint Venn cleanup work | Merged |
+| `jeremycarroll/venn-search-rs` | [#19](https://github.com/jeremycarroll/venn-search-rs/pull/19) | [100-112]: Map cleanup plan to activated issues | Merged |
+| `jeremycarroll/venn-search-rs` | [#20](https://github.com/jeremycarroll/venn-search-rs/pull/20) | [100-123]: Recover PR 14 cleanup with compatibility | Merged |
+| `jeremycarroll/venn-search-rs` | [#21](https://github.com/jeremycarroll/venn-search-rs/pull/21) | [100-124]: Own state and indexed undo log; migrate every caller | Open |
+| `jeremycarroll/venn-search-rs` | [#22](https://github.com/jeremycarroll/venn-search-rs/pull/22) | [100-125]: Clarify MEMO construction without changing tables | Open |
+| `jeremycarroll/venn-search-rs` | [#23](https://github.com/jeremycarroll/venn-search-rs/pull/23) | [100-130]: Isolate Venn fixtures and add missing invariants | Open |
+| `jeremycarroll/venn-search-rs` | [#24](https://github.com/jeremycarroll/venn-search-rs/pull/24) | [100-127]: Clarify restriction cascade and central setup | Open |
+| `jeremycarroll/venn-search-rs` | [#25](https://github.com/jeremycarroll/venn-search-rs/pull/25) | [100-129]: Clarify engine re-entry and predicate contracts | Open |
+| `jeremycarroll/venn-search-rs` | [#26](https://github.com/jeremycarroll/venn-search-rs/pull/26) | [100-126]: Clarify vertex linking and crossing checks | Open |
+| `jeremycarroll/venn-search-rs` | [#27](https://github.com/jeremycarroll/venn-search-rs/pull/27) | [100-128]: Bound inactive disconnection helpers | Open |
+
+The shared-workflows merge (#16) added deterministic Linear reconciliation on PR
+close. The workflow test work (#18 and `test-repo-1` #1) remained open; opening a
+fixture PR does not establish that its test campaign completed.
+
+### Defects and interventions
+
+The following consolidates the three logs, deduplicated by failure mechanism.
+These are reported observations, not a claim that every root cause was independently
+reproduced. The first three classes are the failures Jeremy highlighted.
+
+1. **Review triggering and completion — Venn:** setup review jobs were skipped on
+   #16; #17's review was still running when the human merged and cancelled it.
+   The log also records three failed Cadence AI Review Events runs and one failed
+   Review Handoff run; their root causes were unread. **ESLint:** no setup review
+   was recorded on #1 in its log. A skipped review and a cancelled in-flight review
+   are distinct from a completed verdict.
+2. **Automated review/comment cleanup — Memray:** #2's publication job refused to
+   hide a review that had changed, leaving the original visible and reporting a
+   failure despite correct approval/ready/review-request state. This is the logged
+   instance of automated output that should have been hidden remaining visible.
+3. **Ticket transitions and manual recovery — Venn:** the PR-close reconciliation
+   job failed on unlinked setup PR #16 and passed on linked #17; no ticket needed
+   a manual move for #16. **Memray:** the log could not determine whether merge-to-Done
+   failed or whether Jeremy moved tickets manually. Jeremy reports manual transitions
+   during the day; their exact PR/ticket mapping remains TBC below. The shared
+   workflows fix is merged, but that does not prove every transition recovered.
+4. **Label-helper permissions — Memray and Venn:** `ensure-pr-labels.mjs` returned
+   HTTP 403 with narrowed permissions; the existing author App credential could
+   apply the labels through a REST fallback. The logs identify a shared helper issue.
+5. **Generated CI requires manual integration — Memray and Venn:** both removed a
+   redundant generated build/test workflow and registered their existing checks.
+   **Memray and ESLint:** the generated required-check list was empty; ESLint's
+   planned narrowing was still unwritten in its log.
+6. **Generated commands — Memray:** the build command was `true`, YAML block-scalar
+   quoting corrupted the test command, and Docker command spelling needed correction.
+   **ESLint:** installation needed `--no-package-lock`; the accepted whole-suite test
+   command was an expensive inner loop for one-rule changes.
+7. **Generated formatting and identities — ESLint:** generated JSON failed its
+   Prettier check and `.gitattributes` needed combining. **Venn:** generated App
+   slugs needed manual correction to the bot identities.
+8. **Unexpanded check names — Venn:** literal GitHub expressions appeared in
+   Cadence job names instead of the PR number.
+9. **Incomplete runtime bundle — Memray:** compiled DAG modules were absent from
+   the hosted tooling checkout; an isolated build of the same revision unblocked it.
+10. **DAG content loss — Memray:** rendered ticket payloads omitted inline scope,
+    file lists, acceptance checks and validation commands; fan-out transcribed them.
+11. **Progress fetcher assumes a current node — Memray:** planning/fan-out seed
+    tickets outside the implementation graph required a workaround.
+12. **Runner recovery permissions — Memray:** a Python documentation inventory
+    connection reset failed docs CI; the App's read-only Actions grant prevented
+    a rerun. GitHub now confirms run 34713703824 succeeded on attempt 2; the
+    permission limitation remains separate from that recovered network failure.
+13. **Browser availability — Memray:** Mermaid verification needed a pinned
+    Playwright container because the host had no browser. ESLint PR #3 later
+    reports a container fallback for missing native Chrome libraries too.
+14. **Dependency-wait churn — Memray:** a completed independent task repeatedly
+    resumed while its soft prerequisite remained unchanged.
+15. **Linear workspace visibility — all three logs:** the logging sessions reached
+    `orchestrabio`, not the `1000lines` team. ESLint's missing-project assertion was
+    therefore not proof that no project existed; later #2/#3 link that project.
+16. **Unexplained local recovery branch — Memray:** `fix/linear-team-key` had no
+    commits and was never pushed; its purpose and any alternative fix are unresolved.
+
+### What was not achieved
+
+- The Memray fork's completed code and submission preparation did not establish
+  upstream submission, DCO certification, news-fragment renaming to an observed
+  upstream PR number, or upstream acceptance. The log and #11 explicitly leave
+  that handoff pending.
+- The Venn cleanup project was not complete at the inventory snapshot: seven
+  implementation PRs remained open. Its design's 16/17 versus 3/23 solution-count
+  discrepancy remains unanswered; recovered cleanup is not a resolution of it.
+- ESLint had no completed per-rule implementation in the inventoried PRs. Six lanes
+  were proposed out of 37 candidates; neither those six nor the whole project
+  was delivered by the plan merge.
+- We did not establish a completed Cadence review/feedback/revision cycle in every
+  participant repository, unattended installation, or reliable automatic cleanup
+  and ticket transitions without human intervention.
+- Memray's plan/replan did not demonstrate discovery of a nontrivial dependency.
+  Nor do the snapshots establish the promised final credential/access cutoff or
+  completion of the separate workflow-test campaign.
+
+The unresolved questions from the logs are retained below. Later PR merges do
+not answer them. The rerun question has GitHub evidence above, but is also retained
+so the original log's open question remains traceable.
+
+**From [jeremycarroll--pytest-memray.md](jeremycarroll--pytest-memray.md):**
+
+- `2fb5c3b` 08:09: removed `Run zizmor 🌈` from `requiredChecks` and switched `zizmor.yml` from `push`/`pull_request` to `workflow_dispatch`. TBC — Jeremy: did zizmor fail on the Copier-generated workflows, or was this pre-emptive?
+- **Actions grant is read-only** (#8). Push Run [34713703824](https://github.com/jeremycarroll/pytest-memray/actions/runs/34713703824) failed when `docs.python.org/3/objects.inv` reset the connection; the App's rerun attempt returned `Resource not accessible by integration`. TBC — Jeremy: was that run ever rerun green?
+- **Local branch `fix/linear-team-key`**: local clone only, created from `HEAD` at 08:10 (the PR #1 merge), zero commits, identical to `main`, never pushed, never a PR. The Copier answer `linear_team_key: '100'` matches the template default and README. TBC — Jeremy: what was this branch for, and was the problem it was named for fixed another way?
+- TBC — Jeremy: did any merged PR here fail to move its ticket to Done, and did you move any manually?
+- TBC — Jeremy: the template README gained its "Known defect" note at 11:07 today, mid-run — was it this repository that triggered it?
+
+**From [jeremycarroll--venn-search-rs.md](jeremycarroll--venn-search-rs.md):**
+
+- TBC — Jeremy: why was #15 abandoned rather than merged — template revision, the deferred Cadence caller, or something else?
+- TBC — Jeremy: what does the "Reconcile current PR associations" step log say — is it the unlinked-PR case failing loudly, or a genuine Linear API/permission failure?
+- TBC — Jeremy: what are `Cadence AI Review Events` and `Cadence Review Handoff` failing on after merge?
+- TBC — Jeremy: what does "the full Rust workload" (100-96) actually cover, is it venn-search-rs, and has the rehearsal it refers to happened?
+- TBC — Jeremy: is the 16/17 vs 3/23 discrepancy a stale brief, or a real regression in the N=4/N=5 tests on main?
+
+**From [1000lines--eslint.md](1000lines--eslint.md):**
+
+- Linear project: TBC — Jeremy. No project or ticket for this work is visible from the Linear connection available here, which reaches workspace `orchestrabio` (teams `Symphony`/ABC and `Orchestra`). Team key `100` is not in that workspace. Which Linear workspace holds team 100, and has the project been created there yet?
+- TBC — Jeremy: has this probe been run yet? It is not visible from here, and the available GitHub tooling cannot list workflow-dispatch runs.
+- TBC — Jeremy: which ubuntu leg is the gating one, and does an empty `requiredChecks` mean "none gate" or "fall back to all"?
+- TBC — Jeremy: confirm a first wave of six lanes?
+- What was completed: TBC — Jeremy
+- What remains: TBC — Jeremy
+- Where to retrieve the work: TBC — Jeremy
+- Follow-up: TBC — Jeremy
+
 ## What it does
 
 **Software engineering is and has always been a conversation between engineers;
