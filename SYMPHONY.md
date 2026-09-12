@@ -125,7 +125,7 @@ review. Verify the installed caller jobs and a real review/check/Linear handoff
 before reporting onboarding complete.
 
 Author App: "1000lines-symphony". Reviewer App: "1000lines-cadence".
-Reviewer choice: "claude"; see [review context](.github/symphony/REVIEW.md).
+Reviewer choice: "codex"; see [review context](.github/symphony/REVIEW.md).
 Provision credentials separately from answers and commands. At runtime an OpenAI
 key selects Codex (including when both keys exist), otherwise an Anthropic key
 selects Claude. Neither key fails early; authentication failures never fall back.

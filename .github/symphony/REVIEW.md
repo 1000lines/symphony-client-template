@@ -5,7 +5,7 @@ Review "1000lines/symphony-client-template" against the issue's selected base (d
 instructions, the Linear issue/project and current human PR feedback. Use the
 target's `.symphony.cfg.json` and actual current-head CI evidence.
 
-The onboarding preference is "claude"; runtime selection
+The onboarding preference is "codex"; runtime selection
 uses the credentials actually forwarded to the review job:
 
 | Actions secret availability | Reviewer |
