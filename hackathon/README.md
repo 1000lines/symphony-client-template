@@ -330,7 +330,22 @@ Review and merge the setup PR only when its CI behavior is understood and the
 integration is ready. The generated files must be on the default branch before
 continuing.
 
-## 4. Create and start the Linear project
+## 4. Set the shared tooling checkout
+
+Clone `symphony-example` as a separate checkout outside the repository you are
+working on:
+
+```sh
+git clone https://github.com/1000lines/symphony-example.git /absolute/path/to/symphony-example
+export SYMPHONY_TOOLING_ROOT=/absolute/path/to/symphony-example
+```
+
+Use the real absolute path on your machine. Keep the export in the same shell
+that will start Codex so the session inherits it. `SYMPHONY_TOOLING_ROOT` points
+to shared Symphony planning and proof tooling; it must not point to the
+participant repository.
+
+## 5. Create and start the Linear project
 
 Start Codex from the repository root. Have a conversation about the project:
 explain the problem, share your notes and Markdown documents, and answer its
@@ -353,7 +368,7 @@ activity does not appear, especially the creation of tickets in Linear, ask
 Jeremy for help. Individual ticket state is mainly for troubleshooting; do not
 manage the project ticket by ticket when the automation is progressing normally.
 
-## 5. Review the work
+## 6. Review the work
 
 When Symphony finishes a ticket, review its pull request. Cadence will normally
 add an advisory review at low effort for faster event turnaround. Cadence's
