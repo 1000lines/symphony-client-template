@@ -21,19 +21,20 @@ Select `ci.mode` during onboarding without changing the eight Copier answers:
   arrays to build and run it. The field does not wrap commands automatically.
   Mount only the issue workspace, use its UID/GID, remove task containers and
   record image digest/results. No generic Dockerfile is supplied.
-- `remote`: run useful available checks and record missing tools, then publish
-  for mandatory current-head GitHub CI. Fix known failures; unrun checks are not
-  passes. No host toolchain installation or Docker setup is required.
+- `remote`: run available checks, record missing tools and fix known failures, then
+  publish for mandatory current-head CI. Unrun checks are not passes; no host/Docker setup.
 
 GitHub CI needs its own working toolchain/commands in every mode. Required CI
 pending or missing uses Unhappy with `wake:15m`; failures return nonterminal
 tickets to Active; passing checks return them to Inactive for review. Preserve
 terminal states and current-head guards. Live mode/bridge proof remains CT-A.
 
-The generated review event, direct/manual, handoff and cleanup callers use
-explicit named secrets and the same reviewed shared workflow/helper revision.
-Ingress remains secret-free. Follow the review context for provider selection
-and report live execution separately from generated-file verification.
+Review event/manual, handoff and cleanup callers share a reviewed workflow/helper
+revision and explicit named secrets. Ingress is secret-free. Follow review context
+for provider selection; report live execution separately from generated files.
+
+Run the [PR guidance](docs/engineering/symphony/pull-requests.md) fetch/render
+commands on creation and every refresh; retain generated state colors and links.
 
 ## Merge conflict wakeups
 
@@ -78,9 +79,8 @@ Load these skills from this generated client in the human-operated session:
   authenticated script with the same identity/preflight/staging/readback guards.
   Auth failure stops dependent writes without switching identity or transport;
   hosted workers retain injected auth. Already-authorized writes need no extra confirmation.
-- [Replan](scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md), loaded
-  explicitly from this nested location with the client
-  [replanning guide](docs/engineering/symphony/replanning.md) and factory templates.
+- Load [Replan](scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md) from
+  its nested path with the [guide](docs/engineering/symphony/replanning.md) and factory templates.
 
 Keep a separate [reviewed tooling checkout](https://github.com/1000lines/symphony-example/tree/fd383f5760a2ba62ea6f6295bd6dd21cc0cb9e9e)
 with locked dependencies and the CT-C reader; verify hosted `ci.mode` support before

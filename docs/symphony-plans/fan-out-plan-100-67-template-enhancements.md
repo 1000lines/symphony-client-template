@@ -639,10 +639,14 @@ seams; any introduced seam needs existing `integration_pattern` and
 ### D — 100-61: generate PR diagrams and concise guidance
 
 - **scope:** R4/AC6: deterministic rendering and actual creation/refresh invocation, reproducing #49's Done-with-pending-prose regression.
-- **owned_files:** T `template/scripts/symphony/render-pr-progress.mjs`, `template/scripts/symphony/fetch-pr-progress.mjs`, `template/.github/pull_request_template.md`, `template/docs/engineering/symphony/pull-requests.md`, `tests/test-pr-progress.mjs`, `tests/test_pr_guidance.py` (new), `tests/test_render.py`, `template/SYMPHONY.md.jinja` (creation/refresh link only, after G). Reuse the installed shared parser through the documented tooling location; do not copy/fork its schema or emit a client Node package just for parsing.
+- **owned_files:** T `template/scripts/symphony/render-pr-progress.mjs`, `template/scripts/symphony/fetch-pr-progress.mjs`, `template/.github/pull_request_template.md`, `template/docs/engineering/symphony/pull-requests.md`, `tests/test-pr-progress.mjs`, `tests/test_pr_guidance.py` (new), `tests/test_render.py`, `template/SYMPHONY.md.jinja` (creation/refresh link after G; preserve and condense merged guidance to the existing 120-line limit). Reuse the installed shared parser through the documented tooling location; do not copy/fork its schema or emit a client Node package just for parsing.
 - **owned_external_resources:** own Misc task PR; state/PR acquisition is read-only. **dependencies:** G's recorded-root validation and SYMPHONY handoff on main; preserve the explicit Copier-readiness hold described above.
 - **acceptance_checks:** pure same-input/same-output; exact topology/IDs; escaped labels/URLs; Done green, Active/Evaluating blue, waiting amber, unknown/terminal non-Done neutral; independent purple Current PR outline; real links/no-PR text; omit undersized graphs. Generated guidance and its SYMPHONY link invoke fetching/rendering on creation and refresh; A verifies the installed path/browser result. Add every new generated path to `GENERATED` and retain exact file-set equality; current renders contain the new assets while recorded-root validation still passes before A adopts them.
 - **validation:** T, `node --test tests/test-pr-progress.mjs`; fixtures for #49, failed lookup, hostile label/URL and all states. The Python integration test invokes the Node suite so mandatory template CI runs it. **delivery_notes / exclusions:** ≤60-line PR template, ≤160-line reference; no new planning format, legend or hand-edited state classes. A owns root propagation and live proof; retain this issue's AC6 obligation until linked proof exists.
+
+D execution amendment: merged conflict-wakeup guidance made SYMPHONY 151 lines
+and failed the existing 120-line test at `4758ebe`. D also condenses that guidance,
+preserving its guards and live-proof requirements. No topology or dependency change.
 
 ### G — TE-G: align factory transports and reduce guidance bloat
 
