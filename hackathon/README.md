@@ -238,11 +238,14 @@ includes the repository:
 | `CADENCE_REVIEWER` | Variable | HackCadence's actual `slug[bot]` login |
 | `SYMPHONY_BOT_USER` | Variable | `1000lines-symphony[bot]` |
 | `CADENCE_LINEAR_API_TOKEN` | Secret | Your Linear API key |
+| `CADENCE_OPENAI_API_KEY` | Secret | Your OpenAI API key for Codex review |
 | `CADENCE_AI_REVIEW_ANTHROPIC_API_KEY` | Secret | Your Anthropic API key |
 | `CADENCE_CLAUDE_MODEL` | Variable | `claude-opus-5` |
 
-The event uses the tested Claude review path. OpenAI-only review is not part of
-this walkthrough yet.
+At least one provider key is required. An OpenAI key selects Codex, including
+when both provider keys are present. Otherwise, an Anthropic key selects Claude
+and requires `CADENCE_CLAUDE_MODEL=claude-opus-5`. The Claude path is tested;
+the OpenAI-only event path still needs testing.
 
 HackCadence is a shared event identity. Its private key can authenticate across
 its event installations until it is revoked. At 4 p.m., Jeremy will delete the
