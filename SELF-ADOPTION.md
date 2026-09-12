@@ -158,17 +158,22 @@ running its setup workflow; do not widen admission to run PR-controlled code.
 
 ## Merge conflict wakeups — 100-85
 
-Copier 9.18.2 rendered source `702e69c` with the recorded answers, preserving the
+Copier 9.18.2 rendered source `0b666c5` with the recorded answers, preserving the
 public source URL through a local Git transport mapping. The generated wakeup
 caller, `SYMPHONY.md` and Copier metadata were refreshed; package CI/config
 customizations were preserved. Tests cover two repository/default-branch/team
 combinations, root parity and updating the prior caller with the new push and
 schedule triggers.
 
+The follow-up render updates CI recovery guidance: unknown mergeability uses
+`Unhappy` with `wake:15m` so the Symphony timer rechecks both the PR and CI.
+Only generated instructions and source metadata changed from the first render
+at `702e69c`; existing workflow callers and package CI/config were preserved.
+
 Validation used Python 3.12.14 in
 `python@sha256:cd7c412d000912f29075a1b8803e43cb2f38bb67f104019df526df5ceaf30569`
 with only the issue workspace mounted and the workspace UID/GID. The host's
-Python 3.9 cannot run this pinned Copier environment. Shared bridge candidate
+Python 3.9 cannot run this pinned Copier environment. Initial shared bridge candidate
 `b43879f5233375fef65a8b1363399228114d58fd` has fixture proof of a base-advance
 conflict waking an unchanged PR head, unknown-mergeability recovery and duplicate
 suppression. This render still references the shared `alpha` publication.
