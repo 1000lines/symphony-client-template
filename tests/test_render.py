@@ -261,8 +261,10 @@ class RenderTest(unittest.TestCase):
 
         wakeups = yaml.safe_load((output / WAKEUPS).read_text())
         self.assertEqual(set(wakeups[True]), {
-            "pull_request_target", "workflow_run", "check_run", "status",
+            "pull_request_target", "workflow_run", "check_run", "status", "push", "schedule",
         })
+        self.assertEqual(wakeups[True]["push"], {"branches": [answers["default_branch"]]})
+        self.assertEqual(wakeups[True]["schedule"], [{"cron": "7,22,37,52 * * * *"}])
         self.assertEqual(wakeups[True]["workflow_run"], {
             "workflows": ["*"], "types": ["completed"],
         })
@@ -346,6 +348,9 @@ class RenderTest(unittest.TestCase):
     def test_update_removes_bundled_skill_and_preserves_adopter_changes(self):
         skill = ".agents/skills/karpathy-guidelines/SKILL.md"
         examples = ".agents/skills/karpathy-guidelines/EXAMPLES.md"
+        caller = self.source / "template" / (WAKEUPS + ".jinja")
+        caller.write_text(caller.read_text().replace(
+            '  push:\n    branches: [[ [default_branch] | to_json ]]\n  schedule:\n    - cron: "7,22,37,52 * * * *"\n', ''))
         # A prior template revision with the removed distribution. Keep the
         # fixture self-contained so updates also run in shallow CI checkouts.
         for relative in (skill, examples):
@@ -396,6 +401,7 @@ class RenderTest(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertFalse((output / examples).exists())
+                self.check_ci_callers(output, self.answers())
                 for relative in ("SYMPHONY.md", f"{FACTORY}/SKILL.md"):
                     self.assertNotIn("karpathy", (output / relative).read_text().lower())
                 saved = yaml.safe_load((output / ".copier-answers.yml").read_text())

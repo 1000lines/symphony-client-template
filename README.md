@@ -28,6 +28,11 @@ organization provisioning, and the native `Symphony Client Setup` probe. Record
 files generated, credentials configured and live review verified separately;
 secret presence and a successful probe do not establish live review readiness.
 
+The generated wakeup caller also detects merge conflicts after base-branch pushes,
+with scheduled recovery for unknown mergeability. See the generated
+[conflict setup and evidence guide](template/SYMPHONY.md.jinja#merge-conflict-wakeups)
+for permissions, publication order and live verification.
+
 The package includes CI/wakeup, review event/manual, handoff and cleanup callers,
 configuration, and client skills. Both provider secrets are explicitly forwarded:
 `CADENCE_OPENAI_API_KEY` selects Codex, otherwise
