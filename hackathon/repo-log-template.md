@@ -9,6 +9,7 @@ Do not record credentials or other secrets in this file.
 - Working repository:
 - Setup path: HackCadence / own App / fork
 - Linear project:
+- Mermaid plan / PR:
 - Project or problem:
 - Intended outcome:
 

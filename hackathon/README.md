@@ -24,6 +24,8 @@ By the end of the day, we want to show:
 
 - a complete path from a Linear project definition to Symphony-authored code,
   Cadence review, human feedback, revision, approval, and merge;
+- a human-reviewed Mermaid dependency graph that makes the proposed work,
+  ordering, and parallelism visible before implementation fans out;
 - repeated installation and execution across several participant repositories;
 - real development completed on those repositories, not a staged demonstration;
 - per-repository evidence of what worked and a concrete defect list wherever the
@@ -80,11 +82,25 @@ get out of the agent's way. That gives the agent room to run, but delays the
 moment when a human discovers that it ran in the wrong direction.
 
 1000lines uses a dependency graph of small tasks to keep the work correctable
-while it is moving. The graph exposes the shape and order of the work; focused
-pull requests create natural points for the conversation to change it. Projects
-are cheap enough that a half-finished project going in the wrong direction does
-not have to be rescued. Keep what you learned, discard the project, and start a
-better one.
+while it is moving. Projects are cheap enough that a half-finished project going
+in the wrong direction does not have to be rescued. Keep what you learned,
+discard the project, and start a better one.
+
+### The plan is a Mermaid graph
+
+Every project plan is a Mermaid dependency graph. It renders directly on the
+GitHub pull request page, so the human and both agents can discuss the same
+picture in the same medium as the rest of the engineering conversation. The
+nodes are focused tasks that can become pull requests. The arrows state which
+results must exist before other work can begin. Unconnected branches show where
+Symphony can work in parallel.
+
+The graph is both a human-readable proposal and Symphony's machine-readable
+execution plan. Reviewing it before fan-out makes missing work, false
+dependencies, unsafe parallelism, and unnecessary scope visible before they
+turn into a pile of code. When implementation changes what the team understands,
+the graph changes too. It records the replan instead of pretending the first
+plan was final.
 
 ### A real replan
 
@@ -143,7 +159,7 @@ flowchart LR
 
   subgraph LINEAR[Linear]
     PROJECT[Project definition]
-    DAG[Correctable DAG plan]
+    DAG[Human-reviewed Mermaid DAG<br/>machine-readable execution plan]
     AGENTLINEAR[Cadence and Symphony<br/>ticket state and workpads]
   end
 
