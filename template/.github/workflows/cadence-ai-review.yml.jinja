@@ -20,9 +20,9 @@ permissions:
 
 jobs:
   review:
-    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-ai-review.yml@main
+    uses: 1000lines/symphony-client-workflows/.github/workflows/cadence-ai-review.yml@[[ workflow_ref ]]
     with:
-      helpers-ref: main
+      helpers-ref: [[ workflow_ref | to_json ]]
       pr_numbers: ${{ inputs.pr_numbers }}
       review_label: ${{ inputs.review_label }}
     secrets:

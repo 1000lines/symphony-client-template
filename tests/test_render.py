@@ -25,8 +25,6 @@ REVIEW_CALLERS = {
     '.github/workflows/cadence-review-check-cleanup.yml',
 }
 CI_SOURCE = "1000lines/symphony-client-workflows"
-CI_REF = "main"
-REVIEW_REF = "main"
 REPLAN = "scripts/symphony/runtime-bundle/skills/symphony-replan/SKILL.md"
 FACTORY = ".agents/skills/symphony-project-factory"
 SKILLS = {
@@ -260,12 +258,12 @@ class RenderTest(unittest.TestCase):
                     build_command="printf '%s\\n' 'build: \"quoted\"'\nmake build\n",
                     test_command="printf '%s' \"backslash: \\\\ and $HOME\"\nmake test --flag='yes'\n")
 
-    def render(self, answers, name="output", *options):
+    def render(self, answers, name="output", *options, ref="alpha"):
         data_file = self.root / f"{name}.yml"
         data_file.write_text(yaml.safe_dump(answers))
         output = self.root / name
         result = subprocess.run(
-            [sys.executable, "-m", "copier", "copy", "--defaults", "--vcs-ref=alpha",
+            [sys.executable, "-m", "copier", "copy", "--defaults", f"--vcs-ref={ref}",
              "--data-file", str(data_file), *options, str(self.source), str(output)],
             stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=30,
         )
@@ -367,7 +365,7 @@ class RenderTest(unittest.TestCase):
                 self.check_bot_identities(output, expected)
                 saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
                 self.assertEqual({key: saved[key] for key in expected}, expected)
-                self.assertEqual(set(saved), set(expected) | {"_src_path", "_commit"})
+                self.assertEqual(set(saved), set(expected) | {"workflow_ref", "_src_path", "_commit"})
 
     def test_lifecycle_update_from_prior_template_preserves_answers(self):
         paths = ["copier.yml", "template/SYMPHONY.md.jinja",
@@ -421,7 +419,7 @@ class RenderTest(unittest.TestCase):
                 self.check_bot_identities(output, expected)
                 saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
                 self.assertEqual({key: saved[key] for key in expected}, expected)
-                self.assertEqual(set(saved), set(expected) | {"_src_path", "_commit"})
+                self.assertEqual(set(saved), set(expected) | {"workflow_ref", "_src_path", "_commit"})
                 self.assertEqual((output / "application.txt").read_text(),
                                  "Preserve the adopter's application\n")
 
@@ -459,7 +457,7 @@ class RenderTest(unittest.TestCase):
                         json.loads(content)
 
                 saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
-                self.assertEqual(set(saved), set(answers) | {"_src_path", "_commit"})
+                self.assertEqual(set(saved), set(answers) | {"workflow_ref", "_src_path", "_commit"})
                 self.assertEqual({key: saved[key] for key in answers}, answers)
                 self.assertEqual(saved["_src_path"], str(self.source))
                 self.assertEqual(self.git(self.source, "rev-parse", saved["_commit"]).strip(), self.commit)
@@ -511,7 +509,7 @@ class RenderTest(unittest.TestCase):
         self.assertEqual(self.git(output, "status", "--porcelain"), "")
         self.assertEqual((output / "application.txt").read_text(), "adopter-owned file\n")
         saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
-        self.assertEqual(set(saved), set(self.answers()) | {"_src_path", "_commit"})
+        self.assertEqual(set(saved), set(self.answers()) | {"workflow_ref", "_src_path", "_commit"})
         workflow = yaml.safe_load((output / ".github/workflows/symphony-client-setup.yml").read_text())
         self.assertEqual(set(workflow[True]), {"workflow_dispatch"})
         repository_job = workflow["jobs"]["repository-settings"]
@@ -537,7 +535,7 @@ class RenderTest(unittest.TestCase):
         self.assertNotIn("codex-action", str(workflow))
         self.assertNotIn("claude-code-action", str(workflow))
 
-    def check_review_callers(self, output):
+    def check_review_callers(self, output, workflow_ref="main"):
         for relative in REVIEW_CALLERS:
             workflow = yaml.safe_load((output / relative).read_text())
             job, = workflow["jobs"].values()
@@ -551,15 +549,183 @@ class RenderTest(unittest.TestCase):
             })
             source, ref = job["uses"].split("@")
             self.assertEqual(source, "1000lines/symphony-client-workflows/" + relative)
-            self.assertEqual(ref, REVIEW_REF)
+            self.assertEqual(ref, workflow_ref)
             self.assertEqual(job["with"]["helpers-ref"], ref)
             self.assertLessEqual(set(job), {"uses", "with", "secrets", "if"})
             self.assertNotIn("inherit", (output / relative).read_text())
         review = (output / ".github/symphony/REVIEW.md").read_text()
-        for phrase in ("Both | Codex", "Neither | Early configuration error", "openai-api-key"):
-            self.assertIn(phrase, review)
+        for pattern in (r"Both\s*\| Codex", r"Neither\s*\| Early configuration error", "openai-api-key"):
+            self.assertRegex(review, pattern)
+
+    def check_workflow_refs(self, output, answers):
+        ref = answers.get("workflow_ref", "main")
+        self.check_ci_callers(output, answers)
+        self.check_review_callers(output, ref)
+        self.check_ingress(output, answers)
+        shared, helpers = set(), set()
+        for path in (output / ".github/workflows").glob("*.yml"):
+            relative = path.relative_to(output).as_posix()
+            workflow = yaml.safe_load(path.read_text())
+            for job in workflow.get("jobs", {}).values():
+                if "uses" in job:
+                    self.assertTrue(job["uses"].startswith(CI_SOURCE + "/"), relative)
+                    self.assertTrue(job["uses"].endswith("@" + ref), relative)
+                    shared.add(relative)
+                if "helpers-ref" in job.get("with", {}):
+                    self.assertEqual(job["with"]["helpers-ref"], ref, relative)
+                    helpers.add(relative)
+        self.assertEqual(shared, REVIEW_CALLERS | {CI, WAKEUPS})
+        self.assertEqual(helpers, REVIEW_CALLERS | {WAKEUPS})
+        # Setup is native, byte-for-byte source, with its own default-branch checkout.
+        setup = ".github/workflows/symphony-client-setup.yml"
+        self.assertEqual((output / setup).read_bytes(),
+                         (PACKAGE / "template" / (setup + ".jinja")).read_bytes())
+        for relative in ("SYMPHONY.md", ".github/symphony/REVIEW.md"):
+            self.assertIn(f"`{ref}`", (output / relative).read_text())
+
+    def commit_fixture(self, directory, message):
+        self.git(directory, "add", ".")
+        self.git(directory, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                 "-c", "commit.gpgsign=false", "commit", "-m", message)
+        return self.git(directory, "rev-parse", "HEAD").strip()
+
+    def update_fixture(self, output, template_ref, *options):
+        result = subprocess.run(
+            [sys.executable, "-m", "copier", "update", "--defaults",
+             f"--vcs-ref={template_ref}", *options], cwd=output,
+            stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        return result.stdout + result.stderr
+
+    def check_no_conflicts(self, output):
+        for relative in file_set(output):
+            self.assertFalse(relative.endswith(".rej"), relative)
+            self.assertNotRegex((output / relative).read_text(),
+                                r"(?m)^(<{7}|={7}|>{7}|\|{7})( |$)", relative)
+        self.assertEqual(self.git(output, "ls-files", "--unmerged"), "")
+        self.git(output, "diff", "--check")
+
+    def test_explicit_workflow_refs_render_and_repeat_update(self):
+        for index, ref in enumerate(("v1.0.0", "abcdef0123" * 4, "1" * 40)):
+            with self.subTest(ref=ref):
+                answers = dict(self.answers(index % 2), workflow_ref=ref)
+                output = self.render(answers, f"pinned-{index}", ref=self.commit)
+                self.check_workflow_refs(output, answers)
+                saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+                self.assertEqual({k: v for k, v in saved.items() if not k.startswith("_")}, answers)
+                self.assertEqual(saved["_src_path"], str(self.source))
+                self.assertEqual(self.git(self.source, "rev-parse", saved["_commit"]).strip(),
+                                 self.commit)
+                # Compare every output byte against the main render, allowing only
+                # the selected workflow ref to differ. Includes third-party pins,
+                # native workflows, provider selection and named-secret forwarding.
+                default = self.render(self.answers(index % 2), f"default-{index}")
+                self.assertEqual(file_set(output), GENERATED)
+                for relative in GENERATED - {".copier-answers.yml"}:
+                    self.assertEqual((output / relative).read_text().replace(ref, "main"),
+                                     (default / relative).read_text(), relative)
+                self.git(output, "init", "--initial-branch=main")
+                self.commit_fixture(output, "Adopt pinned workflows")
+                self.update_fixture(output, self.commit)
+                self.assertEqual(self.git(output, "status", "--porcelain"), "")
+                self.check_workflow_refs(output, answers)
+                self.check_no_conflicts(output)
+
+    def test_old_eight_answers_update_preserves_target_files(self):
+        # A committed pre-workflow_ref revision that works in shallow CI too.
+        config = yaml.safe_load((self.source / "copier.yml").read_text())
+        del config["workflow_ref"]
+        (self.source / "copier.yml").write_text(yaml.safe_dump(config))
+        for path in (self.source / "template").rglob("*.jinja"):
+            path.write_text(path.read_text().replace('[[ workflow_ref | to_json ]]', 'main')
+                            .replace('[[ workflow_ref ]]', 'main'))
+        prior = self.commit_fixture(self.source, "Old eight-answer template")
+        self.git(self.source, "branch", "-f", "alpha", prior)
+        clients = []
+        for index, ref in enumerate(("main", "v1.0.0")):
+            answers = self.answers(index)
+            output = self.render(answers, f"old-client-{index}")
+            saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+            self.assertEqual(set(saved), set(answers) | {"_src_path", "_commit"})
+            self.assertEqual(self.git(self.source, "rev-parse", saved["_commit"]).strip(), prior)
+            preserved = {
+                "src/application.txt": "Preserved application\n",
+                ".github/workflows/main.yml": "name: Application CI\n",
+                ".github/workflows/storybook-tests.yml": "name: Storybook CI\n",
+                ".agents/skills/adopter/SKILL.md": "Adopter instructions\n",
+                ".gitattributes": (output / ".gitattributes").read_text() + "*.dat binary\n",
+            }
+            target_config = json.loads((output / ".symphony.cfg.json").read_text())
+            target_config["ci"]["requiredChecks"] = [{"name": "Application CI",
+                "workflow": ".github/workflows/main.yml", "appId": 15368}]
+            preserved[".symphony.cfg.json"] = json.dumps(target_config) + "\n"
+            for relative, content in preserved.items():
+                path = output / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(content)
+            guidance = output / "SYMPHONY.md"
+            guidance.write_text(guidance.read_text() + "\nAdopter's local guidance.\n")
+            self.git(output, "init", "--initial-branch=main")
+            self.commit_fixture(output, "Existing adopter customizations")
+            clients.append((output, dict(answers, workflow_ref=ref), preserved))
+
+        self.git(self.source, "restore", f"--source={self.commit}",
+                 "--staged", "--worktree", "copier.yml", "template")
+        current = self.commit_fixture(self.source, "Add optional workflow ref")
+        for output, answers, preserved in clients:
+            with self.subTest(ref=answers["workflow_ref"]):
+                options = [] if answers["workflow_ref"] == "main" else ["--data", "workflow_ref=v1.0.0"]
+                self.update_fixture(output, current, *options)
+                saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+                self.assertEqual({k: v for k, v in saved.items() if not k.startswith("_")}, answers)
+                self.assertEqual(saved["_src_path"], str(self.source))
+                self.assertEqual(self.git(self.source, "rev-parse", saved["_commit"]).strip(), current)
+                for relative, content in preserved.items():
+                    self.assertEqual((output / relative).read_text(), content, relative)
+                self.assertTrue((output / "SYMPHONY.md").read_text().endswith("Adopter's local guidance.\n"))
+                self.assertIn("binary: set", self.git(output, "check-attr", "binary", "--", "data.dat"))
+                self.check_workflow_refs(output, answers)
+                self.check_no_conflicts(output)
+                self.commit_fixture(output, "Reviewed template update")
+                # No ref override: Copier must use the previously recorded answer.
+                self.update_fixture(output, current)
+                self.assertEqual(self.git(output, "status", "--porcelain"), "")
+
+    def test_workflow_ref_update_exposes_resolvable_local_conflict(self):
+        answers = dict(self.answers(), workflow_ref="v1.0.0")
+        output = self.render(answers)
+        caller = output / ".github/workflows/cadence-ai-review-trigger.yml"
+        caller.write_text(caller.read_text().replace("name: Cadence AI Review Trigger",
+                                                   "name: Adopter Review Trigger"))
+        self.git(output, "init", "--initial-branch=main")
+        self.commit_fixture(output, "Adopter trigger name")
+        source_caller = self.source / "template/.github/workflows/cadence-ai-review-trigger.yml.jinja"
+        source_caller.write_text(source_caller.read_text().replace("name: Cadence AI Review Trigger",
+                                                                 "name: Shared Review Trigger"))
+        current = self.commit_fixture(self.source, "Upstream trigger name")
+        ref = "abcdef0123" * 4
+        messages = self.update_fixture(output, current, "--data", f"workflow_ref={ref}")
+        self.assertIn("conflict", messages.lower())
+        conflict = caller.read_text()
+        self.assertIn("<<<<<<<", conflict)
+        self.assertIn("Adopter Review Trigger", conflict)
+        self.assertIn("Shared Review Trigger", conflict)
+        self.assertIn(caller.relative_to(output).as_posix(), self.git(output, "ls-files", "--unmerged"))
+        # Review resolution keeps the local name and the new upstream pin.
+        fresh = self.render(dict(answers, workflow_ref=ref), "conflict-resolution", ref=current)
+        resolved = (fresh / caller.relative_to(output)).read_text().replace(
+            "name: Shared Review Trigger", "name: Adopter Review Trigger")
+        caller.write_text(resolved)
+        self.git(output, "add", ".")
+        self.check_no_conflicts(output)
+        self.check_workflow_refs(output, dict(answers, workflow_ref=ref))
+        self.commit_fixture(output, "Resolve trigger conflict with pinned workflows")
+        self.update_fixture(output, current)
+        self.assertEqual(self.git(output, "status", "--porcelain"), "")
 
     def check_ci_callers(self, output, answers):
+        workflow_ref = answers.get("workflow_ref", "main")
         ci = yaml.safe_load((output / CI).read_text())
         self.assertEqual(ci[True], {
             "push": {"branches": [answers["default_branch"]]},
@@ -593,7 +759,7 @@ class RenderTest(unittest.TestCase):
             "event-name": "${{ github.event_name }}",
             "event-payload": "${{ toJSON(github.event) }}",
             "helpers-repository": CI_SOURCE,
-            "helpers-ref": CI_REF,
+            "helpers-ref": workflow_ref,
         })
         self.assertEqual(wake_job["secrets"], {
             "CADENCE_LINEAR_API_TOKEN": "${{ secrets.CADENCE_LINEAR_API_TOKEN }}",
@@ -602,7 +768,7 @@ class RenderTest(unittest.TestCase):
             (CI, command_job, "symphony-client-commands.yml"),
             (WAKEUPS, wake_job, "symphony-linear-wakeups.yml"),
         ):
-            self.assertEqual(job["uses"], f"{CI_SOURCE}/.github/workflows/{entry}@{CI_REF}")
+            self.assertEqual(job["uses"], f"{CI_SOURCE}/.github/workflows/{entry}@{workflow_ref}")
             self.assertLessEqual(set(job), {"uses", "with", "if", "secrets"})
             self.assertNotIn("inherit", (output / path).read_text())
             source = (PACKAGE / "template" / (path + ".jinja")).read_text()

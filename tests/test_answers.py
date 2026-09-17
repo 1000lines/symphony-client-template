@@ -137,8 +137,9 @@ jobs:
                 }
                 output = self.render(answers, f"output-{index}", ref="alpha")
                 saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
-                self.assertEqual(set(saved), QUESTIONS | {"_src_path", "_commit"})
+                self.assertEqual(set(saved), QUESTIONS | {"workflow_ref", "_src_path", "_commit"})
                 self.assertEqual({k: saved[k] for k in QUESTIONS}, answers)
+                self.assertEqual(saved["workflow_ref"], "main")
                 self.assertEqual(saved["_src_path"], str(self.source))
                 # Copier uses Git's ordinary describe value, which can be abbreviated.
                 self.assertEqual(self.git("rev-parse", saved["_commit"]).strip(), self.commit)
@@ -174,10 +175,10 @@ jobs:
 
     def test_default_branch_and_ordinary_question_contract(self):
         configuration = yaml.safe_load((PACKAGE / "copier.yml").read_text())
-        self.assertEqual({k for k in configuration if not k.startswith("_")}, QUESTIONS)
+        self.assertEqual({k for k in configuration if not k.startswith("_")}, QUESTIONS | {"workflow_ref"})
         self.assertNotIn("_tasks", configuration)
         self.assertNotIn("_vcs_ref", configuration)
-        for question in QUESTIONS:
+        for question in QUESTIONS | {"workflow_ref"}:
             self.assertEqual(configuration[question]["type"], "str")
         answers = {
             "repo_slug": "example/defaults", "linear_team_key": "100",
@@ -188,6 +189,7 @@ jobs:
         output = self.render(answers)
         saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
         self.assertEqual(saved["default_branch"], "main")
+        self.assertEqual(saved["workflow_ref"], "main")
         self.assertEqual({k: saved[k] for k in answers}, answers)
 
     def test_reviewer_must_be_supplied_as_a_supported_choice(self):
@@ -202,6 +204,32 @@ jobs:
                 if reviewer is not None:
                     data["cadence_reviewer"] = reviewer
                 self.render(data, f"invalid-{index}", expect_error=True)
+
+    def test_workflow_ref_accepts_stable_releases_and_full_commits(self):
+        answers = {"repo_slug": "example/widget", "cadence_reviewer": "codex",
+                   "build_command": "make build", "test_command": "make test"}
+        for index, ref in enumerate(("main", "v1.0.0", "v0.12.345", "aB12" * 10, "1" * 40)):
+            with self.subTest(ref=ref):
+                output = self.render(dict(answers, workflow_ref=ref), f"ref-{index}")
+                saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
+                self.assertEqual(saved["workflow_ref"], ref)
+                self.assertEqual(self.git("rev-parse", saved["_commit"]).strip(), self.commit)
+
+    def test_workflow_ref_rejects_unsafe_syntax_and_non_release_refs(self):
+        answers = {"repo_slug": "example/widget", "cadence_reviewer": "codex",
+                   "build_command": "make build", "test_command": "make test"}
+        invalid = (
+            "", "develop", "refs/tags/v1.0.0", "v1", "v1.0", "v01.0.0", "v1.00.0",
+            "v1.0.00", "v1.0.0-rc.1", "v1.0.0+build", "abcdef0", "a" * 39, "a" * 41,
+            "g" * 40, " main", "main ", "main\n", "main\r\n", "main\t", "main#comment",
+            "main\n      injected: true", "main: value", "main@other", "main'", 'main"',
+            "${{ github.ref }}", "[[ repo_slug ]]", "[% if true %]main[% endif %]",
+            "{{ repo_slug }}", "*alias", "[main]", "main; echo injected", True,
+        )
+        for index, ref in enumerate(invalid):
+            with self.subTest(ref=ref):
+                self.render(dict(answers, workflow_ref=ref), f"unsafe-ref-{index}",
+                            expect_error=True, error_question="workflow_ref")
 
     def test_app_identities_reject_duplicate_bot_suffixes_and_invalid_slugs(self):
         answers = {"repo_slug": "example/widget", "cadence_reviewer": "codex",
