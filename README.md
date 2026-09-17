@@ -73,7 +73,7 @@ All generated CI, wakeup, review, handoff and cleanup callers use the optional
 updates for existing adopters. Setup and ingress stay native; third-party Actions
 retain their existing version pins.
 
-To pin shared execution, supply a stable `vMAJOR.MINOR.PATCH` tag (such as `v1.0.0`,
+To pin shared execution, supply a stable `vMAJOR.MINOR.PATCH` tag (such as `v0.1.0`,
 without leading zeroes) or a full 40-character hexadecimal commit SHA. Other
 branches, abbreviated SHAs, prereleases, expressions and whitespace are rejected.
 The selected revision must exist in the shared-workflow repository and preserve
@@ -85,9 +85,9 @@ The template revision and shared-workflow revision are separate. Substitute a
 reviewed full **template** SHA for `TEMPLATE_SHA` in these commands:
 
 ```sh
-copier copy --vcs-ref=TEMPLATE_SHA --data workflow_ref=v1.0.0 https://github.com/1000lines/symphony-client-template.git ./my-client
+copier copy --vcs-ref=TEMPLATE_SHA --data workflow_ref=v0.1.0 https://github.com/1000lines/symphony-client-template.git ./my-client
 cd my-client
-copier update --defaults --vcs-ref=TEMPLATE_SHA --data workflow_ref=v1.0.0
+copier update --defaults --vcs-ref=TEMPLATE_SHA --data workflow_ref=v0.1.0
 ```
 
 Commit client edits before updating. Old answer files acquire `workflow_ref: main`

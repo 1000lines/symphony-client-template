@@ -607,7 +607,7 @@ class RenderTest(unittest.TestCase):
         self.git(output, "diff", "--check")
 
     def test_explicit_workflow_refs_render_and_repeat_update(self):
-        for index, ref in enumerate(("v1.0.0", "abcdef0123" * 4, "1" * 40)):
+        for index, ref in enumerate(("v0.1.0", "abcdef0123" * 4, "1" * 40)):
             with self.subTest(ref=ref):
                 answers = dict(self.answers(index % 2), workflow_ref=ref)
                 output = self.render(answers, f"pinned-{index}", ref=self.commit)
@@ -643,7 +643,7 @@ class RenderTest(unittest.TestCase):
         prior = self.commit_fixture(self.source, "Old eight-answer template")
         self.git(self.source, "branch", "-f", "alpha", prior)
         clients = []
-        for index, ref in enumerate(("main", "v1.0.0")):
+        for index, ref in enumerate(("main", "v0.1.0")):
             answers = self.answers(index)
             output = self.render(answers, f"old-client-{index}")
             saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
@@ -675,7 +675,7 @@ class RenderTest(unittest.TestCase):
         current = self.commit_fixture(self.source, "Add optional workflow ref")
         for output, answers, preserved in clients:
             with self.subTest(ref=answers["workflow_ref"]):
-                options = [] if answers["workflow_ref"] == "main" else ["--data", "workflow_ref=v1.0.0"]
+                options = [] if answers["workflow_ref"] == "main" else ["--data", "workflow_ref=v0.1.0"]
                 self.update_fixture(output, current, *options)
                 saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
                 self.assertEqual({k: v for k, v in saved.items() if not k.startswith("_")}, answers)
@@ -693,7 +693,7 @@ class RenderTest(unittest.TestCase):
                 self.assertEqual(self.git(output, "status", "--porcelain"), "")
 
     def test_workflow_ref_update_exposes_resolvable_local_conflict(self):
-        answers = dict(self.answers(), workflow_ref="v1.0.0")
+        answers = dict(self.answers(), workflow_ref="v0.1.0")
         output = self.render(answers)
         caller = output / ".github/workflows/cadence-ai-review-trigger.yml"
         caller.write_text(caller.read_text().replace("name: Cadence AI Review Trigger",

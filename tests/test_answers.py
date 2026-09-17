@@ -208,7 +208,7 @@ jobs:
     def test_workflow_ref_accepts_stable_releases_and_full_commits(self):
         answers = {"repo_slug": "example/widget", "cadence_reviewer": "codex",
                    "build_command": "make build", "test_command": "make test"}
-        for index, ref in enumerate(("main", "v1.0.0", "v0.12.345", "aB12" * 10, "1" * 40)):
+        for index, ref in enumerate(("main", "v0.1.0", "v0.12.345", "aB12" * 10, "1" * 40)):
             with self.subTest(ref=ref):
                 output = self.render(dict(answers, workflow_ref=ref), f"ref-{index}")
                 saved = yaml.safe_load((output / ".copier-answers.yml").read_text())
@@ -219,8 +219,8 @@ jobs:
         answers = {"repo_slug": "example/widget", "cadence_reviewer": "codex",
                    "build_command": "make build", "test_command": "make test"}
         invalid = (
-            "", "develop", "refs/tags/v1.0.0", "v1", "v1.0", "v01.0.0", "v1.00.0",
-            "v1.0.00", "v1.0.0-rc.1", "v1.0.0+build", "abcdef0", "a" * 39, "a" * 41,
+            "", "develop", "refs/tags/v0.1.0", "v1", "v1.0", "v01.0.0", "v1.00.0",
+            "v0.1.00", "v0.1.0-rc.1", "v0.1.0+build", "abcdef0", "a" * 39, "a" * 41,
             "g" * 40, " main", "main ", "main\n", "main\r\n", "main\t", "main#comment",
             "main\n      injected: true", "main: value", "main@other", "main'", 'main"',
             "${{ github.ref }}", "[[ repo_slug ]]", "[% if true %]main[% endif %]",
