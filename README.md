@@ -67,11 +67,41 @@ fails early. The reviewer answer is an onboarding preference. See the generated
 [review context](template/.github/symphony/REVIEW.md.jinja) for the exact secret
 mapping and provisioning boundary with 100-62.
 
-All generated CI, wakeup, review, handoff and cleanup callers use
-`1000lines/symphony-client-workflows@main`, with `helpers-ref: main` wherever
-helpers are checked out. Merged shared-workflow changes reach clients on their
-next run without a template pin update. Client workflow definitions still update
-through Copier. Third-party Actions retain their existing version pins.
+All generated CI, wakeup, review, handoff and cleanup callers use the optional
+`workflow_ref` answer for `1000lines/symphony-client-workflows`, including every
+`helpers-ref` input. It defaults to `main`, preserving automatic shared-workflow
+updates for existing adopters. Setup and ingress stay native; third-party Actions
+retain their existing version pins.
+
+To pin shared execution, supply a stable `vMAJOR.MINOR.PATCH` tag (such as `v0.1.0`,
+without leading zeroes) or a full 40-character hexadecimal commit SHA. Other
+branches, abbreviated SHAs, prereleases, expressions and whitespace are rejected.
+The selected revision must exist in the shared-workflow repository and preserve
+that ref through its nested calls and helper checkouts. Rendering validates syntax;
+it does not publish a release or prove provider compatibility. Verify a tag's
+peeled SHA and immutability before adoption.
+
+The template revision and shared-workflow revision are separate. Substitute a
+reviewed full **template** SHA for `TEMPLATE_SHA` in these commands:
+
+```sh
+copier copy --vcs-ref=TEMPLATE_SHA --data workflow_ref=v0.1.0 https://github.com/1000lines/symphony-client-template.git ./my-client
+cd my-client
+copier update --defaults --vcs-ref=TEMPLATE_SHA --data workflow_ref=v0.1.0
+```
+
+Commit client edits before updating. Old answer files acquire `workflow_ref: main`
+unless explicitly overridden; subsequent `--defaults` updates retain the selected
+ref and the eight existing answers. Copier records the actual template source and
+`_commit` itself (Git may abbreviate it); resolve that value to the full source SHA
+for the handoff. Never edit generated answers to manufacture provenance.
+
+Review and merge target attributes/configuration, preserve application CI and
+skills, and use reviewed `--exclude` paths for adopter-owned collisions. Repeat
+the same update to check for an unexpected diff. Overlapping edits can produce
+inline conflict markers (or `.rej` files with `--conflict=rej`); resolve them,
+check `git diff --check`, remove resolved rejection files, and commit before
+publishing. See [Copier's update guide](https://copier.readthedocs.io/en/stable/updating/).
 
 ## Development
 
